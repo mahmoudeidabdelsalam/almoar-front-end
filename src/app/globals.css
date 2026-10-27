@@ -1,0 +1,116 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --color-navy: #101E39;
+    --color-navy-dark: #0A1426;
+    --color-navy-deep: #060D1A;
+    --color-navy-light: #1A2E56;
+    
+    --color-emerald: #1B4332;
+    --color-emerald-dark: #122E22;
+    --color-emerald-light: #245A43;
+    
+    --color-gold: #B7913D;
+    --color-gold-light: #D4AF37;
+    --color-gold-warm: #C5A265;
+    
+    --color-sand: #F8F9F4;
+    --color-sand-subtle: #F1F3EB;
+    
+    --font-arabic: 'IBM Plex Sans Arabic', 'Cairo', system-ui, -apple-system, sans-serif;
+    --font-serif: 'Playfair Display', Georgia, serif;
+    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: #F8F9F4;
+    color: #101E39;
+    font-family: var(--font-arabic);
+    overflow-x: hidden;
+  }
+
+  /* Directional Font Harmony */
+  [dir="ltr"] body {
+    font-family: var(--font-sans);
+  }
+
+  [dir="ltr"] .font-display {
+    font-family: var(--font-serif);
+  }
+
+  [dir="rtl"] .font-display {
+    font-family: var(--font-arabic);
+    font-weight: 700;
+  }
+}
+
+/* Luxury Utilities & Components */
+.glass-header {
+  background: rgba(16, 30, 57, 0.92);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.gold-gradient-text {
+  background: linear-gradient(135deg, #D4AF37 0%, #B7913D 50%, #E6C280 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gold-gradient-bg {
+  background: linear-gradient(135deg, #B7913D 0%, #96742B 100%);
+}
+
+.gold-gradient-bg:hover {
+  background: linear-gradient(135deg, #C5A265 0%, #B7913D 100%);
+}
+
+.navy-gradient-bg {
+  background: linear-gradient(180deg, #101E39 0%, #0A1426 100%);
+}
+
+.emerald-pattern-bg {
+  background-color: #1B4332;
+  background-image: radial-gradient(rgba(183, 145, 61, 0.15) 1.5px, transparent 1.5px), radial-gradient(rgba(255, 255, 255, 0.05) 1.5px, #1B4332 1.5px);
+  background-size: 32px 32px;
+  background-position: 0 0, 16px 16px;
+}
+
+/* Card hover elevations */
+.luxury-card {
+  transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.luxury-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px -15px rgba(16, 30, 57, 0.15);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0A1426;
+}
+::-webkit-scrollbar-thumb {
+  background: #B7913D;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #D4AF37;
+}
+
+/* Selection Color */
+::selection {
+  background: #B7913D;
+  color: #FFFFFF;
+}
