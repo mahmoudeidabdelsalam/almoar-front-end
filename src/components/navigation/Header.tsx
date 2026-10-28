@@ -8,7 +8,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { Menu, X, Globe, PhoneCall } from 'lucide-react';
 
 export const Header: React.FC = () => {
-  const { locale, toggleLocale, t } = useLanguage();
+  const { locale, toggleLocale, t, content } = useLanguage();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
@@ -21,14 +21,15 @@ export const Header: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const prefix = `/${locale}`;
   const navLinks = [
-    { href: '/', label: t.nav.home },
-    { href: '/about', label: t.nav.about },
-    { href: '/sectors', label: t.nav.sectors },
-    { href: '/companies', label: t.nav.companies },
-    { href: '/projects', label: t.nav.projects },
-    { href: '/news', label: t.nav.news },
-    { href: '/contact', label: t.nav.contact },
+    { href: prefix, label: t.nav.home },
+    { href: `${prefix}/about`, label: t.nav.about },
+    { href: `${prefix}/companies`, label: t.nav.companies },
+    { href: `${prefix}/investments`, label: locale === 'ar' ? 'استثماراتنا' : 'Our Investments' },
+    { href: `${prefix}/media-center`, label: locale === 'ar' ? 'المركز الإعلامي' : 'Media Center' },
+    { href: `${prefix}/news`, label: t.nav.news },
+    { href: `${prefix}/contact-us`, label: t.nav.contact },
   ];
 
   return (
@@ -43,7 +44,7 @@ export const Header: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             {/* Brand Logo */}
-            <Link href="/" className="flex items-center gap-3 group focus:outline-none">
+            <Link href={`/${locale}`} className="flex items-center gap-3 group focus:outline-none">
               <div className="relative w-10 h-10 md:w-11 md:h-11 flex-shrink-0 transition-transform duration-300 group-hover:scale-105">
                 <Image
                   src="/branding/alomar_logo_mark.png"
@@ -55,10 +56,10 @@ export const Header: React.FC = () => {
               </div>
               <div className="flex flex-col">
                 <span className="text-white text-lg md:text-xl font-bold tracking-tight leading-none">
-                  {locale === 'ar' ? 'العمر القابضة' : 'ALOMAR HOLDING'}
+                  {locale === 'ar' ? content.settings.site_name.ar : content.settings.site_name.en}
                 </span>
                 <span className="text-[#B7913D] text-[10px] md:text-xs tracking-widest uppercase font-medium mt-1">
-                  {locale === 'ar' ? 'استثمار برؤية أوسع' : 'Investment with a Broader Vision'}
+                  {locale === 'ar' ? content.settings.tagline.ar : content.settings.tagline.en}
                 </span>
               </div>
             </Link>
@@ -96,7 +97,7 @@ export const Header: React.FC = () => {
               </button>
 
               <Link
-                href="/contact"
+                href={`/${locale}/contact-us`}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs md:text-sm font-semibold text-[#101E39] gold-gradient-bg shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 active:scale-95"
               >
                 <PhoneCall className="w-3.5 h-3.5" />
@@ -149,7 +150,7 @@ export const Header: React.FC = () => {
               })}
               <div className="pt-4 mt-2 border-t border-white/10">
                 <Link
-                  href="/contact"
+                  href={`/${locale}/contact-us`}
                   className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-[#101E39] gold-gradient-bg shadow-lg"
                 >
                   <PhoneCall className="w-4 h-4" />

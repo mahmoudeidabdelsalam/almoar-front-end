@@ -52,6 +52,84 @@ export interface HeroSlide {
   secondary_link: string;
 }
 
+export interface PageBannerContent {
+  pageKey: string;
+  badge: LocalizedString;
+  title: LocalizedString;
+  description: LocalizedString;
+  image: string;
+  seoTitle: LocalizedString;
+  seoDescription: LocalizedString;
+}
+
+export interface SectionCopy {
+  sectionKey: string;
+  badge: LocalizedString;
+  title: LocalizedString;
+  description: LocalizedString;
+  ctaLabel: LocalizedString;
+  ctaUrl: string;
+}
+
+export interface ContentPillar {
+  icon: string;
+  title: LocalizedString;
+  description: LocalizedString;
+}
+
+export interface HomeAboutContent {
+  badge: LocalizedString;
+  title: LocalizedString;
+  descriptionOne: LocalizedString;
+  descriptionTwo: LocalizedString;
+  image: string;
+  pillars: ContentPillar[];
+}
+
+export interface AboutPageContent {
+  chairmanImage: string;
+  chairmanName: LocalizedString;
+  chairmanRole: LocalizedString;
+  messageHeading: LocalizedString;
+  quote: LocalizedString;
+  messageOne: LocalizedString;
+  messageTwo: LocalizedString;
+  visionTitle: LocalizedString;
+  visionDescription: LocalizedString;
+  missionTitle: LocalizedString;
+  missionDescription: LocalizedString;
+  values: Array<{ title: LocalizedString; description: LocalizedString }>;
+}
+
+export interface VisionSectionContent {
+  badge: LocalizedString;
+  title: LocalizedString;
+  description: LocalizedString;
+  pillars: ContentPillar[];
+  footerLine: LocalizedString;
+  ctaLabel: LocalizedString;
+  ctaUrl: string;
+}
+
+export interface FooterContent {
+  companyDescription: LocalizedString;
+  visionBadge: LocalizedString;
+}
+
+export interface SiteContent {
+  previewMode: boolean;
+  settings: SiteSettings;
+  sectors: Sector[];
+  companies: SubsidiaryCompany[];
+  heroSlides: HeroSlide[];
+  pageBanners: Record<string, PageBannerContent>;
+  sectionCopy: Record<string, SectionCopy>;
+  homeAbout: HomeAboutContent;
+  aboutPage: AboutPageContent;
+  visionSection: VisionSectionContent;
+  footer: FooterContent;
+}
+
 export interface Project {
   id: number;
   slug: string;
@@ -72,6 +150,7 @@ export interface Project {
   completion_year: string;
   brochure_url?: string;
   featured?: boolean;
+  highlights?: LocalizedString[];
 }
 
 export interface Sector {
@@ -116,6 +195,7 @@ export interface NewsArticle {
   date: string;
   category: LocalizedString;
   read_time: string;
+  read_time_en?: string;
 }
 
 export interface ContactFormPayload {
@@ -125,4 +205,7 @@ export interface ContactFormPayload {
   subject?: string;
   message: string;
   sector_interest?: string;
+  lang?: Locale;
+  website?: string;
+  _wpnonce?: string;
 }

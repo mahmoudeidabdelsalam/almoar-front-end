@@ -14,7 +14,7 @@ interface StatProps {
 }
 
 export const StatsSection: React.FC<StatProps> = ({ stats }) => {
-  const { locale } = useLanguage();
+  const { locale, content } = useLanguage();
 
   const defaultStats = [
     {
@@ -50,7 +50,8 @@ export const StatsSection: React.FC<StatProps> = ({ stats }) => {
   const items = stats && stats.length > 0 ? stats.map((s, i) => ({
     ...s,
     icon: defaultStats[i % defaultStats.length].icon,
-  })) : defaultStats;
+  })) : content.previewMode ? defaultStats : [];
+  if (!items.length) return null;
 
   return (
     <section className="relative z-20 -mt-10 lg:-mt-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

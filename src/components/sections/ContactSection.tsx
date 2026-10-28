@@ -4,9 +4,12 @@ import React, { useState } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 import { submitContact } from '@/lib/wordpress/contact';
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle2, AlertCircle } from 'lucide-react';
+import type { Sector } from '@/types';
 
-export const ContactSection: React.FC = () => {
-  const { locale, t } = useLanguage();
+export const ContactSection: React.FC<{ sectors?: Sector[] }> = ({ sectors = [] }) => {
+  const { locale, t, content } = useLanguage();
+  const copy = content.sectionCopy.contact;
+  const contact = content.settings.contact;
   const [formData, setFormData] = useState({
     full_name: '',
     email: '',
@@ -20,6 +23,8 @@ export const ContactSection: React.FC = () => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [generalError, setGeneralError] = useState<string | null>(null);
+
+  if (!copy?.title[locale] && !content.previewMode && !contact.email && !contact.phone) return null;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -70,15 +75,15 @@ export const ContactSection: React.FC = () => {
         <div className="text-center max-w-3xl mx-auto space-y-4 mb-16">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#101E39]/5 border border-[#101E39]/10 text-xs font-bold text-[#101E39]">
             <span className="w-1.5 h-1.5 rounded-full bg-[#B7913D]" />
-            <span>{t.contact_section.badge}</span>
+            <span>{copy?.badge[locale] || (content.previewMode ? t.contact_section.badge : '')}</span>
           </div>
 
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#101E39] tracking-tight">
-            {t.contact_section.title}
+            {copy?.title[locale] || (content.previewMode ? t.contact_section.title : '')}
           </h2>
 
           <p className="text-base sm:text-lg text-[#5A677B]">
-            {t.contact_section.subtitle}
+            {copy?.description[locale] || (content.previewMode ? t.contact_section.subtitle : '')}
           </p>
         </div>
 
@@ -92,82 +97,79 @@ export const ContactSection: React.FC = () => {
                 {t.contact_section.hq_title}
               </span>
               <h3 className="text-2xl font-bold">
-                {locale === 'ar' ? 'العمر القابضة — المركز الرئيسي' : 'Alomar Holding HQ'}
+                {locale === 'ar' ? `${content.settings.site_name.ar} — المركز الرئيسي` : `${content.settings.site_name.en} HQ`}
               </h3>
-              <p className="text-white/70 text-sm leading-relaxed">
+              {content.previewMode && <p className="text-white/70 text-sm leading-relaxed">
                 {locale === 'ar'
                   ? 'يسرنا استقبال المستثمرين والشركاء في مقرنا الرئيسي بالرياض لمناقشة فرص التعاون والتطوير.'
                   : 'We welcome investors and institutional partners at our Riyadh headquarters to discuss transformative opportunities.'}
-              </p>
+              </p>}
             </div>
 
             <div className="space-y-5 text-sm relative z-10">
-              <div className="flex items-start gap-4">
-                <div className="p-2.5 rounded-xl bg-white/10 text-[#B7913D] flex-shrink-0 mt-1">
-                  <MapPin className="w-5 h-5" />
+              {(contact.address_ar || contact.address_en) && (
+                <div className="flex items-start gap-4">
+                  <div className="p-2.5 rounded-xl bg-white/10 text-[#B7913D] flex-shrink-0 mt-1">
+                    <MapPin className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <span className="text-xs text-white/50 block font-semibold">
+                      {locale === 'ar' ? 'العنوان' : 'Address'}
+                    </span>
+                    <span className="text-white font-medium leading-relaxed block mt-0.5">
+                      {locale === 'ar' ? contact.address_ar : contact.address_en}
+                    </span>
+                  </div>
                 </div>
-                <div>
-                  <span className="text-xs text-white/50 block font-semibold">
-                    {locale === 'ar' ? 'العنوان' : 'Address'}
-                  </span>
-                  <span className="text-white font-medium leading-relaxed block mt-0.5">
-                    {locale === 'ar'
-                      ? 'الرياض، طريق أنس بن مالك، حي الملقا، المملكة العربية السعودية'
-                      : 'Anas Bin Malik Road, Al Malqa District, Riyadh, Saudi Arabia'}
-                  </span>
+              )}
+              {contact.phone && (
+                <div className="flex items-start gap-4">
+                  <div className="p-2.5 rounded-xl bg-white/10 text-[#B7913D] flex-shrink-0 mt-1">
+                    <Phone className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <span className="text-xs text-white/50 block font-semibold">{t.contact_section.phone}</span>
+                    <a href={`tel:${contact.phone.replace(/[^\d+]/g, '')}`} dir="ltr" className="text-white font-medium hover:text-[#B7913D] transition-colors block mt-0.5">
+                      {contact.phone}
+                    </a>
+                  </div>
                 </div>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <div className="p-2.5 rounded-xl bg-white/10 text-[#B7913D] flex-shrink-0 mt-1">
-                  <Phone className="w-5 h-5" />
+              )}
+              {contact.email && (
+                <div className="flex items-start gap-4">
+                  <div className="p-2.5 rounded-xl bg-white/10 text-[#B7913D] flex-shrink-0 mt-1">
+                    <Mail className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <span className="text-xs text-white/50 block font-semibold">{t.contact_section.email}</span>
+                    <a href={`mailto:${contact.email}`} className="text-white font-medium hover:text-[#B7913D] transition-colors block mt-0.5">
+                      {contact.email}
+                    </a>
+                  </div>
                 </div>
-                <div>
-                  <span className="text-xs text-white/50 block font-semibold">
-                    {t.contact_section.phone}
-                  </span>
-                  <a href="tel:+966114128888" dir="ltr" className="text-white font-medium hover:text-[#B7913D] transition-colors block mt-0.5">
-                    +966 11 412 8888
-                  </a>
+              )}
+              {(contact.working_hours_ar || contact.working_hours_en) && (
+                <div className="flex items-start gap-4">
+                  <div className="p-2.5 rounded-xl bg-white/10 text-[#B7913D] flex-shrink-0 mt-1">
+                    <Clock className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <span className="text-xs text-white/50 block font-semibold">{t.contact_section.hours}</span>
+                    <span className="text-white font-medium block mt-0.5">
+                      {locale === 'ar' ? contact.working_hours_ar : contact.working_hours_en}
+                    </span>
+                  </div>
                 </div>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <div className="p-2.5 rounded-xl bg-white/10 text-[#B7913D] flex-shrink-0 mt-1">
-                  <Mail className="w-5 h-5" />
-                </div>
-                <div>
-                  <span className="text-xs text-white/50 block font-semibold">
-                    {t.contact_section.email}
-                  </span>
-                  <a href="mailto:info@alomarholding.sa" className="text-white font-medium hover:text-[#B7913D] transition-colors block mt-0.5">
-                    info@alomarholding.sa
-                  </a>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <div className="p-2.5 rounded-xl bg-white/10 text-[#B7913D] flex-shrink-0 mt-1">
-                  <Clock className="w-5 h-5" />
-                </div>
-                <div>
-                  <span className="text-xs text-white/50 block font-semibold">
-                    {t.contact_section.hours}
-                  </span>
-                  <span className="text-white font-medium block mt-0.5">
-                    {locale === 'ar' ? 'الأحد - الخميس: 8:00 صباحاً - 5:00 مساءً' : 'Sunday - Thursday: 8:00 AM - 5:00 PM'}
-                  </span>
-                </div>
-              </div>
+              )}
             </div>
 
             {/* Quick Map Coordinates Box */}
-            <div className="p-4 rounded-2xl bg-white/5 border border-white/10 text-xs text-white/70">
+            {contact.coordinates.lat !== 0 && contact.coordinates.lng !== 0 && <div className="p-4 rounded-2xl bg-white/5 border border-white/10 text-xs text-white/70">
               <span className="text-[#B7913D] font-bold block mb-1">
                 {locale === 'ar' ? 'إحداثيات الموقع الجغرافي:' : 'GPS Coordinates:'}
               </span>
-              <span>24.8105° N, 46.6190° E — طريق أنس بن مالك</span>
-            </div>
+              <span>{contact.coordinates.lat}° N, {contact.coordinates.lng}° E — {contact.address_ar}</span>
+            </div>}
           </div>
 
           {/* Interactive Form Card */}
@@ -275,10 +277,11 @@ export const ContactSection: React.FC = () => {
                       className="w-full px-4 py-3 rounded-xl border border-[#101E39]/15 text-sm text-[#101E39] bg-[#F8F9F4] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#B7913D]/30 focus:border-[#B7913D] transition-all"
                     >
                       <option value="">{locale === 'ar' ? 'اختر مجال الاهتمام' : 'Select Sector of Interest'}</option>
-                      <option value="real_estate">{locale === 'ar' ? 'التطوير العقاري والمشاريع السكنية' : 'Real Estate Development'}</option>
-                      <option value="venture_capital">{locale === 'ar' ? 'الاستثمار الجريء وتمويل الشركات' : 'Venture Capital & Startups'}</option>
-                      <option value="commercial">{locale === 'ar' ? 'الأصول والمجمعات التجارية' : 'Commercial Assets'}</option>
-                      <option value="asset_management">{locale === 'ar' ? 'إدارة الثروات والصناديق' : 'Asset Management'}</option>
+                      {sectors.filter((sector) => sector.title[locale]).map((sector) => (
+                        <option key={sector.id} value={sector.slug}>
+                          {sector.title[locale]}
+                        </option>
+                      ))}
                       <option value="other">{locale === 'ar' ? 'استفسار عام / علاقات المستثمرين' : 'General / Investor Relations'}</option>
                     </select>
                   </div>

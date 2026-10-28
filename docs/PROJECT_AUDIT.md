@@ -35,20 +35,22 @@
 - Header/footer/navigation are implemented.
 - Contact form validation and mock API flow are present.
 - Locale switching and translations exist for Arabic and English.
-- Fallback mock data exists to allow frontend rendering without a live WordPress backend.
+- Development-only mock data exists for local rendering without a configured WordPress backend; production does not fall back to mock records.
 
-## 3. What was missing or incomplete
+## 3. What remains incomplete
 
-- The WordPress theme is generic `erbify-headless` and not yet tailored to the Alomar brand/content model.
-- ACF fields are not aligned to the actual Alomar content structure; they are mostly generic Erbify boilerplate.
-- There is no project-specific Alomar field group or structured content model in the backend yet.
-- The `Figma` and `Claude prototype` references were not available as source files inside the workspace, so the repo cannot be matched pixel-perfect against those references without the original design assets.
-- The frontend has a few brittle state patterns that could trigger React issues; these were fixed during implementation.
-- The repo contains no direct audit documentation for the actual code state before this change.
+- The WordPress theme remains a headless presentation shell; Alomar-specific post types and ACF/GraphQL content registration live in the `alomar-holding-core` plugin.
+- Editorial fields now cover localized route banners and SEO, homepage section copy, homepage about content, chairman message and values, Vision 2030, and footer content. The local CMS seed and live query verification are documented in [CMS content integration results](./CMS_CONTENT_RESULTS.md).
+- The `Figma` and prototype references were not available as source files inside the workspace, so pixel-perfect verification remains pending the original design assets.
+- The local sector still lacks English long-form copy and a featured image; it is not supplemented with invented translation or unrelated photography.
+- Browser visual verification against those design references remains outstanding.
 
 ## 4. What was implemented in this pass
 
 - Created the audit/checklist/gap docs in `docs/`.
+- Connected Alomar-specific page and section content to the frontend through WPGraphQL and populated missing local CMS copy with an idempotent seed command.
+- Added a route-by-route CMS mapping, query contract, integration audit, and explicit local-versus-production verification notes in the [CMS documentation](./CMS_INTEGRATION_AUDIT.md).
+- Constrained editorial/mock fallbacks to development preview, surfaced CMS/contact failures, reused site-content data for sectors and companies, and avoided empty-image URLs or unrelated record photos.
 - Fixed React state initialization/effect issues in:
   - `src/context/LanguageContext.tsx`
   - `src/components/ui/SplashIntro.tsx`
@@ -59,4 +61,4 @@
 
 ## 5. Current state
 
-The project is in a functional, buildable condition and includes the expected brand structure, but the backend ACF/content model remains a generic template rather than an Alomar-specific CMS setup. The next step for full delivery would be to create a project-specific ACF model and hook it into the connected WordPress REST/GraphQL flow.
+The project has an Alomar-specific editorial content model exposed through WPGraphQL, repeatably seeded and verified local CMS data, a successful CMS-backed build, and a no-CMS production build without development-only mock copy. Remaining readiness work includes entering/approving complete production bilingual content, configuring and testing the production contact endpoint, and comparing against the original design assets.

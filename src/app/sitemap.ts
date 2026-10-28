@@ -6,34 +6,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const projects = await wpClient.getProjects('all');
   const news = await wpClient.getNews();
 
-  const staticPages = [
-    '',
-    '/about',
-    '/sectors',
-    '/companies',
-    '/projects',
-    '/news',
-    '/contact',
-  ].map((route) => ({
-    url: `${baseUrl}${route}`,
+  const locales = ['ar', 'en'] as const;
+  const staticRoutes = ['', '/about', '/investments', '/companies', '/media-center', '/news', '/contact-us', '/invest-with-us'];
+  const staticPages = locales.flatMap((locale) => staticRoutes.map((route) => ({
+    url: `${baseUrl}/${locale}${route}`,
     lastModified: new Date(),
     changeFrequency: 'weekly' as const,
     priority: route === '' ? 1.0 : 0.8,
-  }));
+  })));
 
-  const projectPages = projects.map((project) => ({
-    url: `${baseUrl}/projects/${project.slug}`,
+  const projectPages = locales.flatMap((locale) => projects.map((project) => ({
+    url: `${baseUrl}/${locale}/investments/${project.slug}`,
     lastModified: new Date(),
     changeFrequency: 'monthly' as const,
     priority: 0.7,
-  }));
+  })));
 
-  const newsPages = news.map((article) => ({
-    url: `${baseUrl}/news/${article.slug}`,
+  const newsPages = locales.flatMap((locale) => news.map((article) => ({
+    url: `${baseUrl}/${locale}/media-center/${article.slug}`,
     lastModified: new Date(),
     changeFrequency: 'monthly' as const,
     priority: 0.6,
-  }));
+  })));
 
   return [...staticPages, ...projectPages, ...newsPages];
 }

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Cairo, IBM_Plex_Sans_Arabic, Playfair_Display, Inter } from 'next/font/google';
 import './globals.css';
 import { LanguageProvider } from '@/context/LanguageContext';
+import { wpClient } from '@/lib/wordpress/client';
 
 const cairo = Cairo({
   subsets: ['arabic', 'latin'],
@@ -38,10 +39,26 @@ export const viewport: Viewport = {
   maximumScale: 5,
 };
 
-export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://alomarholding.sa'),
-  title: 'العمر القابضة | استثمار برؤية أوسع - Alomar Holding',
-  description: 'شركة العمر القابضة — مجموعة استثمارية وتطويرية سعودية رائدة، نبني مجتمعات المستقبل ونستثمر برؤية أوسع عبر التطوير العقاري والاستثمار الجريء وإدارة الأصول.',
+export async function generateMetadata(): Promise<Metadata> {
+  const siteContent = await wpClient.getSiteContent();
+  const homeBanner = siteContent.pageBanners.home;
+  const siteName = siteContent.settings.site_name;
+  const title = homeBanner?.seoTitle.ar || (siteContent.previewMode
+    ? `${siteName.ar} | ${siteContent.settings.tagline.ar}`
+    : siteName.ar || undefined);
+  const description = homeBanner?.seoDescription.ar || (siteContent.previewMode
+    ? 'شركة العمر القابضة — مجموعة استثمارية وتطويرية سعودية رائدة.'
+    : undefined);
+
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://alomarholding.sa';
+  return {
+  metadataBase: new URL(baseUrl),
+  title,
+  description,
+  alternates: {
+    canonical: `${baseUrl}/ar`,
+    languages: { ar: `${baseUrl}/ar`, en: `${baseUrl}/en`, 'x-default': `${baseUrl}/ar` },
+  },
   keywords: [
     'العمر القابضة',
     'Alomar Holding',
@@ -60,8 +77,8 @@ export const metadata: Metadata = {
     apple: '/branding/alomar_logo_mark.png',
   },
   openGraph: {
-    title: 'العمر القابضة | استثمار برؤية أوسع',
-    description: 'العمر القابضة — استثمار برؤية أوسع في التطوير العقاري والمشاريع الاستراتيجية بالمملكة العربية السعودية.',
+    title,
+    description,
     url: 'https://alomarholding.sa',
     siteName: 'Alomar Holding',
     images: [
@@ -77,25 +94,28 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'العمر القابضة | استثمار برؤية أوسع',
-    description: 'العمر القابضة — استثمار برؤية أوسع في التطوير العقاري والفرص التنموية بالمملكة.',
+    title,
+    description,
     images: ['/images/hero_riyadh.jpg'],
   },
   robots: {
     index: true,
     follow: true,
   },
-};
+  };
+}
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const siteContent = await wpClient.getSiteContent();
+
   return (
     <html lang="ar" dir="rtl" className={`${ibmPlexArabic.variable} ${cairo.variable} ${playfair.variable} ${inter.variable}`}>
       <body className="antialiased min-h-screen flex flex-col selection:bg-[#B7913D] selection:text-white">
-        <LanguageProvider>
+        <LanguageProvider content={siteContent}>
           {children}
         </LanguageProvider>
       </body>

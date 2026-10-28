@@ -14,7 +14,7 @@ interface Props {
 
 export async function generateStaticParams() {
   const news = await wpClient.getNews();
-  return news.map((n) => ({ slug: n.slug }));
+  return news.length ? news.map((n) => ({ slug: n.slug })) : [{ slug: '__no-cms-content__' }];
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -88,13 +88,17 @@ export default async function SingleNewsPage({ params }: Props) {
 
           {/* Featured Image */}
           <div className="relative h-96 sm:h-[480px] rounded-3xl overflow-hidden shadow-2xl border-4 border-white">
-            <Image
-              src={article.image}
-              alt={article.title.ar}
-              fill
-              className="object-cover"
-              priority
-            />
+            {article.image ? (
+              <Image
+                src={article.image}
+                alt={article.title.ar}
+                fill
+                className="object-cover"
+                priority
+              />
+            ) : (
+              <div className="absolute inset-0 bg-gradient-to-br from-[#101E39] to-[#1B4332]" aria-hidden="true" />
+            )}
           </div>
 
           {/* Article Body */}
@@ -121,12 +125,16 @@ export default async function SingleNewsPage({ params }: Props) {
                     className="bg-white rounded-2xl p-5 border border-[#101E39]/10 shadow-sm hover:shadow-md transition-all flex gap-4 group"
                   >
                     <div className="relative w-24 h-24 rounded-xl overflow-hidden flex-shrink-0">
-                      <Image
-                        src={n.image}
-                        alt={n.title.ar}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform"
-                      />
+                      {n.image ? (
+                        <Image
+                          src={n.image}
+                          alt={n.title.ar}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 bg-gradient-to-br from-[#101E39] to-[#1B4332]" aria-hidden="true" />
+                      )}
                     </div>
                     <div className="space-y-1">
                       <span className="text-[10px] font-bold text-[#B7913D] block">{n.date}</span>

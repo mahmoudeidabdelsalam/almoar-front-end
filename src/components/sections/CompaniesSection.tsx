@@ -12,7 +12,10 @@ interface CompaniesProps {
 }
 
 export const CompaniesSection: React.FC<CompaniesProps> = ({ companies }) => {
-  const { locale, t } = useLanguage();
+  const { locale, t, content } = useLanguage();
+  const copy = content.sectionCopy.companies;
+  const localizedCompanies = companies.filter((company) => company.name[locale]);
+  if (!localizedCompanies.length && !content.previewMode) return null;
 
   return (
     <section className="py-20 lg:py-28 bg-white relative">
@@ -20,21 +23,21 @@ export const CompaniesSection: React.FC<CompaniesProps> = ({ companies }) => {
         <div className="text-center max-w-3xl mx-auto space-y-4 mb-16">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#101E39]/5 border border-[#101E39]/10 text-xs font-bold text-[#101E39]">
             <span className="w-1.5 h-1.5 rounded-full bg-[#B7913D]" />
-            <span>{t.companies_section.badge}</span>
+            <span>{copy?.badge[locale] || (content.previewMode ? t.companies_section.badge : '')}</span>
           </div>
 
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#101E39] tracking-tight">
-            {t.companies_section.title}
+            {copy?.title[locale] || (content.previewMode ? t.companies_section.title : '')}
           </h2>
 
           <p className="text-base sm:text-lg text-[#5A677B]">
-            {t.companies_section.subtitle}
+            {copy?.description[locale] || (content.previewMode ? t.companies_section.subtitle : '')}
           </p>
         </div>
 
         {/* Subsidiaries Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {companies.map((company) => (
+          {localizedCompanies.map((company) => (
             <div
               key={company.id}
               className="bg-[#F8F9F4] rounded-2xl p-8 border border-[#101E39]/10 shadow-md luxury-card flex flex-col justify-between group relative overflow-hidden"

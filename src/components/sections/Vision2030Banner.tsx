@@ -6,10 +6,11 @@ import { useLanguage } from '@/context/LanguageContext';
 import { Leaf, Award, Rocket, ArrowRight, ArrowLeft } from 'lucide-react';
 
 export const Vision2030Banner: React.FC = () => {
-  const { locale, dir, t } = useLanguage();
+  const { locale, dir, t, content } = useLanguage();
   const ArrowIcon = dir === 'rtl' ? ArrowLeft : ArrowRight;
+  const vision = content.visionSection;
 
-  const pillars = [
+  const fallbackPillars = [
     {
       icon: Award,
       title_ar: 'جودة الحياة والرفاهية المجتمعية',
@@ -32,6 +33,17 @@ export const Vision2030Banner: React.FC = () => {
       desc_en: 'Deploying strategic growth capital into ambitious Saudi founders accelerating digital diversification.',
     },
   ];
+  const pillarIcons: Record<string, typeof Award> = { award: Award, leaf: Leaf, rocket: Rocket };
+  const pillars = vision.pillars.length
+    ? vision.pillars.map((pillar) => ({
+        icon: pillarIcons[pillar.icon] || Award,
+        title_ar: pillar.title.ar,
+        title_en: pillar.title.en,
+        desc_ar: pillar.description.ar,
+        desc_en: pillar.description.en,
+      }))
+    : content.previewMode ? fallbackPillars : [];
+  if (!vision.title[locale] && !content.previewMode) return null;
 
   return (
     <section className="py-20 lg:py-28 emerald-pattern-bg text-white relative overflow-hidden">
@@ -43,16 +55,16 @@ export const Vision2030Banner: React.FC = () => {
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md">
             <span className="w-2 h-2 rounded-full bg-[#B7913D]" />
             <span className="text-xs font-bold tracking-wider text-[#B7913D]">
-              {t.vision_section.badge}
+              {vision.badge[locale] || (content.previewMode ? t.vision_section.badge : '')}
             </span>
           </div>
 
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight">
-            {t.vision_section.title}
+            {vision.title[locale] || (content.previewMode ? t.vision_section.title : '')}
           </h2>
 
           <p className="text-base sm:text-lg text-white/80 leading-relaxed">
-            {t.vision_section.description}
+            {vision.description[locale] || (content.previewMode ? t.vision_section.description : '')}
           </p>
         </div>
 
@@ -84,15 +96,15 @@ export const Vision2030Banner: React.FC = () => {
         {/* CTA Bar */}
         <div className="mt-14 pt-8 border-t border-white/15 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-white/80">
-            {locale === 'ar'
+            {vision.footerLine[locale] || (content.previewMode && (locale === 'ar'
               ? 'تلتزم مجموعة العمر القابضة بدعم الاقتصاد الوطني وبناء شراكات تترك أثراً ممتداً للأجيال القادمة.'
-              : 'Alomar Holding remains resolutely committed to driving national economic resilience and leaving an enduring legacy.'}
+              : 'Alomar Holding remains resolutely committed to driving national economic resilience and leaving an enduring legacy.'))}
           </p>
           <Link
-            href="/about"
+            href={vision.ctaUrl || (content.previewMode ? '/about' : '#')}
             className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-xs sm:text-sm font-bold text-[#101E39] gold-gradient-bg shadow-md hover:scale-105 transition-all flex-shrink-0"
           >
-            <span>{locale === 'ar' ? 'اكتشف ركائزنا' : 'Discover Our Pillars'}</span>
+            <span>{vision.ctaLabel[locale] || (content.previewMode ? (locale === 'ar' ? 'اكتشف ركائزنا' : 'Discover Our Pillars') : '')}</span>
             <ArrowIcon className="w-4 h-4" />
           </Link>
         </div>

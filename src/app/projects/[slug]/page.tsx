@@ -14,7 +14,7 @@ interface Props {
 
 export async function generateStaticParams() {
   const projects = await wpClient.getProjects('all');
-  return projects.map((p) => ({ slug: p.slug }));
+  return projects.length ? projects.map((p) => ({ slug: p.slug })) : [{ slug: '__no-cms-content__' }];
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -26,14 +26,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `${project.title.ar} | العمر القابضة`,
     description: project.excerpt.ar,
     openGraph: {
-      images: [project.image],
+      images: project.image ? [project.image] : [],
     },
   };
 }
 
 export default async function SingleProjectPage({ params }: Props) {
   const { slug } = await params;
-  const project = await wpClient.getProjectBySlug(slug);
+  const [project, siteContent] = await Promise.all([
+    wpClient.getProjectBySlug(slug),
+    wpClient.getSiteContent(),
+  ]);
 
   if (!project) {
     notFound();
@@ -41,6 +44,15 @@ export default async function SingleProjectPage({ params }: Props) {
 
   const allProjects = await wpClient.getProjects('all');
   const relatedProjects = allProjects.filter((p) => p.slug !== slug).slice(0, 3);
+  const previewHighlights = [
+    'أنظمة المنازل الذكية والتحكم في الطاقة',
+    'حدائق ومسطحات خضراء وممشى رياضي',
+    'أمن وحراسة وأنظمة مراقبة ذكية 24/7',
+    'مواقف سيارات مخصصة وشواحن كهربائية',
+  ];
+  const projectHighlights = project.highlights?.length
+    ? project.highlights.map((highlight) => highlight.ar).filter(Boolean)
+    : siteContent.previewMode ? previewHighlights : [];
 
   return (
     <>
@@ -89,13 +101,17 @@ export default async function SingleProjectPage({ params }: Props) {
           {/* Main Visual Image & Gallery */}
           <div className="space-y-4">
             <div className="relative h-[380px] sm:h-[500px] lg:h-[600px] rounded-3xl overflow-hidden shadow-2xl border-4 border-white">
-              <Image
-                src={project.image}
-                alt={project.title.ar}
-                fill
-                className="object-cover"
-                priority
-              />
+              {project.image ? (
+                <Image
+                  src={project.image}
+                  alt={project.title.ar}
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              ) : (
+                <div className="absolute inset-0 bg-gradient-to-br from-[#101E39] to-[#1B4332]" aria-hidden="true" />
+              )}
             </div>
 
             {project.gallery && project.gallery.length > 1 && (
@@ -128,27 +144,17 @@ export default async function SingleProjectPage({ params }: Props) {
               </div>
 
               {/* Architectural Highlights */}
-              <div className="pt-6 border-t border-[#101E39]/10 space-y-4">
+              {projectHighlights.length > 0 && <div className="pt-6 border-t border-[#101E39]/10 space-y-4">
                 <h3 className="text-lg font-bold text-[#101E39]">أبرز المزايا والمواصفات:</h3>
                 <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-[#5A677B]">
-                  <li className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-[#B7913D]" />
-                    <span>أنظمة المنازل الذكية والتحكم في الطاقة</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-[#B7913D]" />
-                    <span>حدائق ومسطحات خضراء وممشى رياضي</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-[#B7913D]" />
-                    <span>أمن وحراسة وأنظمة مراقبة ذكية 24/7</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-[#B7913D]" />
-                    <span>مواقف سيارات مخصصة وشواحن كهربائية</span>
-                  </li>
+                  {projectHighlights.map((highlight, index) => (
+                    <li key={`${highlight}-${index}`} className="flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-[#B7913D]" />
+                      <span>{highlight}</span>
+                    </li>
+                  ))}
                 </ul>
-              </div>
+              </div>}
             </div>
 
             {/* Right Specs Sidebar */}
@@ -200,13 +206,17 @@ export default async function SingleProjectPage({ params }: Props) {
                     <span>حجز أو استفسار عن المشروع</span>
                   </Link>
 
-                  <a
-                    href="#download"
-                    className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-xs text-white bg-white/10 hover:bg-white/20 border border-white/20 transition-colors"
-                  >
-                    <Download className="w-4 h-4" />
-                    <span>تحميل الكتيب الرقمي (PDF)</span>
-                  </a>
+                  {project.brochure_url && (
+                    <a
+                      href={project.brochure_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-xs text-white bg-white/10 hover:bg-white/20 border border-white/20 transition-colors"
+                    >
+                      <Download className="w-4 h-4" />
+                      <span>تحميل الكتيب الرقمي (PDF)</span>
+                    </a>
+                  )}
                 </div>
               </div>
             </div>
@@ -224,12 +234,16 @@ export default async function SingleProjectPage({ params }: Props) {
                     className="bg-white rounded-2xl overflow-hidden border border-[#101E39]/10 shadow-sm hover:shadow-md transition-all group"
                   >
                     <div className="relative h-44">
-                      <Image
-                        src={p.image}
-                        alt={p.title.ar}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform"
-                      />
+                      {p.image ? (
+                        <Image
+                          src={p.image}
+                          alt={p.title.ar}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 bg-gradient-to-br from-[#101E39] to-[#1B4332]" aria-hidden="true" />
+                      )}
                     </div>
                     <div className="p-4 space-y-1">
                       <span className="text-[10px] font-bold uppercase text-[#B7913D]">{p.category}</span>

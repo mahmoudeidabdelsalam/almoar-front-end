@@ -12,8 +12,11 @@ interface NewsProps {
 }
 
 export const NewsSection: React.FC<NewsProps> = ({ articles }) => {
-  const { locale, dir, t } = useLanguage();
+  const { locale, dir, t, content } = useLanguage();
+  const copy = content.sectionCopy.news;
+  const localizedArticles = articles.filter((article) => article.title[locale]);
   const ArrowIcon = dir === 'rtl' ? ArrowLeft : ArrowRight;
+  if (!localizedArticles.length && !content.previewMode) return null;
 
   return (
     <section className="py-20 lg:py-28 bg-white relative">
@@ -22,40 +25,44 @@ export const NewsSection: React.FC<NewsProps> = ({ articles }) => {
           <div className="space-y-3 max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#101E39]/5 border border-[#101E39]/10 text-xs font-bold text-[#101E39]">
               <span className="w-1.5 h-1.5 rounded-full bg-[#B7913D]" />
-              <span>{t.news_section.badge}</span>
+              <span>{copy?.badge[locale] || (content.previewMode ? t.news_section.badge : '')}</span>
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#101E39] tracking-tight">
-              {t.news_section.title}
+              {copy?.title[locale] || (content.previewMode ? t.news_section.title : '')}
             </h2>
             <p className="text-base sm:text-lg text-[#5A677B]">
-              {t.news_section.subtitle}
+              {copy?.description[locale] || (content.previewMode ? t.news_section.subtitle : '')}
             </p>
           </div>
 
           <Link
-            href="/news"
+            href={copy?.ctaUrl || '/news'}
             className="inline-flex items-center gap-2 text-sm font-bold text-[#B7913D] hover:text-[#96742B] transition-colors self-start md:self-auto group"
           >
-            <span>{t.news_section.view_all_news}</span>
+            <span>{copy?.ctaLabel[locale] || (content.previewMode ? t.news_section.view_all_news : '')}</span>
             <ArrowIcon className="w-4 h-4 transition-transform group-hover:translate-x-1" />
           </Link>
         </div>
 
         {/* Articles Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {articles.map((article) => (
+          {localizedArticles.map((article) => (
             <article
               key={article.id}
               className="bg-[#F8F9F4] rounded-2xl overflow-hidden border border-[#101E39]/10 shadow-sm luxury-card flex flex-col justify-between group"
             >
               <div>
                 <div className="relative h-56 overflow-hidden">
-                  <Image
-                    src={article.image}
-                    alt={locale === 'ar' ? article.title.ar : article.title.en}
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
+                  {article.image ? (
+                    <Image
+                      src={article.image}
+                      alt={locale === 'ar' ? article.title.ar : article.title.en}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#101E39] to-[#1B4332]" aria-hidden="true" />
+                  )}
                   <div className="absolute top-4 right-4">
                     <span className="px-3 py-1 rounded-full text-xs font-bold text-white bg-[#101E39]/80 backdrop-blur-md">
                       {locale === 'ar' ? article.category.ar : article.category.en}
@@ -72,7 +79,7 @@ export const NewsSection: React.FC<NewsProps> = ({ articles }) => {
                     <span>•</span>
                     <span className="flex items-center gap-1.5">
                       <Clock className="w-3.5 h-3.5 text-[#B7913D]" />
-                      <span>{article.read_time}</span>
+                      <span>{locale === 'ar' ? article.read_time : article.read_time_en || article.read_time}</span>
                     </span>
                   </div>
 

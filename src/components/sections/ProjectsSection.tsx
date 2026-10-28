@@ -12,8 +12,10 @@ interface ProjectsSectionProps {
 }
 
 export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects }) => {
-  const { locale, dir, t } = useLanguage();
+  const { locale, dir, t, content } = useLanguage();
+  const copy = content.sectionCopy.projects;
   const [filter, setFilter] = useState('all');
+  if (!projects.length && !content.previewMode) return null;
 
   const ArrowIcon = dir === 'rtl' ? ArrowLeft : ArrowRight;
 
@@ -30,6 +32,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects }) =>
     }
     return true;
   });
+  const localizedProjects = filteredProjects.filter((project) => project.title[locale]);
 
   return (
     <section className="py-20 lg:py-28 bg-[#F8F9F4] relative">
@@ -38,15 +41,15 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects }) =>
         <div className="text-center max-w-3xl mx-auto space-y-4 mb-12">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#101E39]/5 border border-[#101E39]/10 text-xs font-bold text-[#101E39]">
             <span className="w-1.5 h-1.5 rounded-full bg-[#B7913D]" />
-            <span>{t.projects_section.badge}</span>
+            <span>{copy?.badge[locale] || (content.previewMode ? t.projects_section.badge : '')}</span>
           </div>
 
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#101E39] tracking-tight">
-            {t.projects_section.title}
+            {copy?.title[locale] || (content.previewMode ? t.projects_section.title : '')}
           </h2>
 
           <p className="text-base sm:text-lg text-[#5A677B]">
-            {t.projects_section.subtitle}
+            {copy?.description[locale] || (content.previewMode ? t.projects_section.subtitle : '')}
           </p>
 
           {/* Filter Tabs */}
@@ -100,47 +103,59 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects }) =>
 
         {/* Projects Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredProjects.map((project) => (
+          {localizedProjects.map((project) => (
             <div
               key={project.id}
               className="bg-white rounded-2xl overflow-hidden border border-[#101E39]/10 shadow-md luxury-card flex flex-col group"
             >
               {/* Image Container with Badges */}
               <div className="relative h-64 overflow-hidden">
-                <Image
-                  src={project.image}
-                  alt={locale === 'ar' ? project.title.ar : project.title.en}
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-108"
-                />
+                {project.image ? (
+                  <Image
+                    src={project.image}
+                    alt={locale === 'ar' ? project.title.ar : project.title.en}
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-108"
+                  />
+                ) : (
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#101E39] to-[#1B4332]" aria-hidden="true" />
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80" />
 
                 {/* Status Badge */}
-                <div className="absolute top-4 right-4">
+                {project.status && (
+                  <div className="absolute top-4 right-4">
                   <span className="px-3 py-1 rounded-full text-xs font-bold text-white bg-[#101E39]/80 backdrop-blur-md border border-white/20">
                     {locale === 'ar' ? project.status : project.status_en}
                   </span>
-                </div>
+                  </div>
+                )}
 
                 {/* Location Badge */}
-                <div className="absolute bottom-4 right-4 flex items-center gap-1.5 text-white/95 text-xs font-semibold drop-shadow-md">
+                {(locale === 'ar' ? project.location : project.location_en) && (
+                  <div className="absolute bottom-4 right-4 flex items-center gap-1.5 text-white/95 text-xs font-semibold drop-shadow-md">
                   <MapPin className="w-3.5 h-3.5 text-[#B7913D]" />
-                  <span>{locale === 'ar' ? project.location : project.location_en || project.location}</span>
-                </div>
+                    <span>{locale === 'ar' ? project.location : project.location_en}</span>
+                  </div>
+                )}
               </div>
 
               {/* Card Body */}
               <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
                 <div className="space-y-2">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#B7913D]">
-                    {locale === 'ar' ? project.category : project.category_en || project.category}
-                  </span>
+                  {(locale === 'ar' ? project.category : project.category_en) && (
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-[#B7913D]">
+                      {locale === 'ar' ? project.category : project.category_en}
+                    </span>
+                  )}
                   <h3 className="text-xl font-bold text-[#101E39] group-hover:text-[#B7913D] transition-colors leading-snug">
                     {locale === 'ar' ? project.title.ar : project.title.en}
                   </h3>
-                  <p className="text-sm text-[#5A677B] leading-relaxed line-clamp-2">
-                    {locale === 'ar' ? project.excerpt.ar : project.excerpt.en}
-                  </p>
+                  {(locale === 'ar' ? project.excerpt.ar : project.excerpt.en) && (
+                    <p className="text-sm text-[#5A677B] leading-relaxed line-clamp-2">
+                      {locale === 'ar' ? project.excerpt.ar : project.excerpt.en}
+                    </p>
+                  )}
                 </div>
 
                 {/* Key Specs */}
@@ -175,10 +190,10 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects }) =>
         {/* View All Projects CTA */}
         <div className="text-center mt-12">
           <Link
-            href="/projects"
+            href={copy?.ctaUrl || '/projects'}
             className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full text-sm font-bold text-white bg-[#101E39] hover:bg-[#0A1426] shadow-lg hover:shadow-xl transition-all"
           >
-            <span>{locale === 'ar' ? 'عرض كافة المشاريع والمحفظة' : 'View Complete Developments Portfolio'}</span>
+            <span>{copy?.ctaLabel[locale] || (locale === 'ar' ? 'عرض كافة المشاريع والمحفظة' : 'View Complete Developments Portfolio')}</span>
             <ArrowIcon className="w-4 h-4" />
           </Link>
         </div>

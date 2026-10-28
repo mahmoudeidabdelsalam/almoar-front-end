@@ -2,6 +2,23 @@
 
 @layer base {
   :root {
+    --container: 1216px;
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-6: 24px;
+    --space-8: 32px;
+    --space-12: 48px;
+    --space-16: 64px;
+    --radius-sm: 8px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    --motion-duration: 600ms;
+    --motion-easing: cubic-bezier(0.2, 0.8, 0.2, 1);
+    --breakpoint-mobile: 640px;
+    --breakpoint-tablet: 768px;
+    --breakpoint-desktop: 1024px;
     --color-navy: #101E39;
     --color-navy-dark: #0A1426;
     --color-navy-deep: #060D1A;
@@ -51,6 +68,22 @@
     font-weight: 700;
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+[dir="rtl"] .directional-icon,
+[dir="rtl"] [data-directional="true"] {
+  transform: scaleX(-1);
+}
+
+img, video { max-inline-size: 100%; }
 
 /* Luxury Utilities & Components */
 .glass-header {

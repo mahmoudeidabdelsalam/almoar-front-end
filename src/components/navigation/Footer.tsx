@@ -7,7 +7,8 @@ import { useLanguage } from '@/context/LanguageContext';
 import { MapPin, Phone, Mail, Clock, ArrowUpRight } from 'lucide-react';
 
 export const Footer: React.FC = () => {
-  const { locale, t } = useLanguage();
+  const { locale, t, content } = useLanguage();
+  const contact = content.settings.contact;
 
   return (
     <footer className="bg-[#0A1426] text-white border-t border-white/10 pt-16 pb-12 mt-auto">
@@ -26,25 +27,25 @@ export const Footer: React.FC = () => {
               </div>
               <div>
                 <span className="text-white text-xl font-bold tracking-tight block">
-                  {locale === 'ar' ? 'العمر القابضة' : 'ALOMAR HOLDING'}
+                  {locale === 'ar' ? content.settings.site_name.ar : content.settings.site_name.en}
                 </span>
                 <span className="text-[#B7913D] text-xs tracking-wider uppercase font-semibold">
-                  {locale === 'ar' ? 'استثمار برؤية أوسع' : 'Investment with a Broader Vision'}
+                  {locale === 'ar' ? content.settings.tagline.ar : content.settings.tagline.en}
                 </span>
               </div>
             </Link>
 
             <p className="text-white/70 text-sm leading-relaxed max-w-sm">
-              {t.footer.company_desc}
+              {content.footer.companyDescription[locale] || (content.previewMode ? t.footer.company_desc : '')}
             </p>
 
             {/* Vision 2030 Badge */}
-            <div className="inline-flex items-center gap-3 px-4 py-2 rounded-xl bg-white/5 border border-white/10">
+            {(content.footer.visionBadge[locale] || content.previewMode) && <div className="inline-flex items-center gap-3 px-4 py-2 rounded-xl bg-white/5 border border-white/10">
               <div className="w-2.5 h-2.5 rounded-full bg-[#1B4332] ring-4 ring-[#1B4332]/30" />
               <span className="text-xs font-semibold text-white/90">
-                {locale === 'ar' ? 'شريك استثماري فاعل لرؤية السعودية 2030' : 'Strategic Partner to Saudi Vision 2030'}
+                {content.footer.visionBadge[locale] || (content.previewMode ? (locale === 'ar' ? 'شريك استثماري فاعل لرؤية السعودية 2030' : 'Strategic Partner to Saudi Vision 2030') : '')}
               </span>
-            </div>
+            </div>}
           </div>
 
           {/* Column 3: Quick Links */}
@@ -92,32 +93,21 @@ export const Footer: React.FC = () => {
               {t.footer.sectors_links}
             </h3>
             <ul className="space-y-2.5 text-sm text-white/75">
-              <li>
-                <Link href="/sectors#real-estate" className="hover:text-white transition-colors">
-                  {locale === 'ar' ? 'التطوير العقاري والمجتمعات' : 'Real Estate Development'}
-                </Link>
-              </li>
-              <li>
-                <Link href="/sectors#venture" className="hover:text-white transition-colors">
-                  {locale === 'ar' ? 'الاستثمار الجريء والتقنية' : 'Venture Capital & Tech'}
-                </Link>
-              </li>
-              <li>
-                <Link href="/sectors#commercial" className="hover:text-white transition-colors">
-                  {locale === 'ar' ? 'المجمعات والأصول التجارية' : 'Commercial Assets'}
-                </Link>
-              </li>
-              <li>
-                <Link href="/sectors#asset-management" className="hover:text-white transition-colors">
-                  {locale === 'ar' ? 'إدارة الثروات والصناديق' : 'Asset Management'}
-                </Link>
-              </li>
-              <li>
-                <Link href="/companies" className="hover:text-white transition-colors flex items-center gap-1 text-[#B7913D]">
-                  <span>{locale === 'ar' ? 'شركة داما للتطوير العقاري' : 'Dama Real Estate'}</span>
-                  <ArrowUpRight className="w-3.5 h-3.5" />
-                </Link>
-              </li>
+              {content.sectors.map((sector) => (
+                <li key={sector.id}>
+                  <Link href={`/sectors#${sector.slug}`} className="hover:text-white transition-colors">
+                    {locale === 'ar' ? sector.title.ar : sector.title.en}
+                  </Link>
+                </li>
+              ))}
+              {content.companies.map((company) => (
+                <li key={company.id}>
+                  <Link href={`/companies#${company.slug}`} className="hover:text-white transition-colors flex items-center gap-1 text-[#B7913D]">
+                    <span>{locale === 'ar' ? company.name.ar : company.name.en}</span>
+                    <ArrowUpRight className="w-3.5 h-3.5" />
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -127,32 +117,30 @@ export const Footer: React.FC = () => {
               {t.footer.contact_us}
             </h3>
             <ul className="space-y-3 text-sm text-white/75">
-              <li className="flex items-start gap-3">
+              {(locale === 'ar' ? contact.address_ar : contact.address_en) && <li className="flex items-start gap-3">
                 <MapPin className="w-4 h-4 text-[#B7913D] mt-1 flex-shrink-0" />
                 <span>
-                  {locale === 'ar'
-                    ? 'الرياض، طريق أنس بن مالك، حي الملقا، المملكة العربية السعودية'
-                    : 'Anas Bin Malik Road, Al Malqa District, Riyadh, Saudi Arabia'}
+                  {locale === 'ar' ? contact.address_ar : contact.address_en}
                 </span>
-              </li>
-              <li className="flex items-center gap-3">
+              </li>}
+              {contact.phone && <li className="flex items-center gap-3">
                 <Phone className="w-4 h-4 text-[#B7913D] flex-shrink-0" />
-                <a href="tel:+966114128888" dir="ltr" className="hover:text-white transition-colors">
-                  +966 11 412 8888
+                <a href={`tel:${contact.phone.replace(/[^\d+]/g, '')}`} dir="ltr" className="hover:text-white transition-colors">
+                  {contact.phone}
                 </a>
-              </li>
-              <li className="flex items-center gap-3">
+              </li>}
+              {contact.email && <li className="flex items-center gap-3">
                 <Mail className="w-4 h-4 text-[#B7913D] flex-shrink-0" />
-                <a href="mailto:info@alomarholding.sa" className="hover:text-white transition-colors">
-                  info@alomarholding.sa
+                <a href={`mailto:${contact.email}`} className="hover:text-white transition-colors">
+                  {contact.email}
                 </a>
-              </li>
-              <li className="flex items-center gap-3">
+              </li>}
+              {(locale === 'ar' ? contact.working_hours_ar : contact.working_hours_en) && <li className="flex items-center gap-3">
                 <Clock className="w-4 h-4 text-[#B7913D] flex-shrink-0" />
                 <span>
-                  {locale === 'ar' ? 'الأحد - الخميس: 8:00 ص - 5:00 م' : 'Sun - Thu: 8:00 AM - 5:00 PM'}
+                  {locale === 'ar' ? contact.working_hours_ar : contact.working_hours_en}
                 </span>
-              </li>
+              </li>}
             </ul>
           </div>
         </div>

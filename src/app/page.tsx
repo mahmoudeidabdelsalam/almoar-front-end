@@ -16,14 +16,11 @@ import { wpClient } from '@/lib/wordpress/client';
 
 
 export default async function HomePage() {
-  const [settings, sectors, projects, companies, team, news, heroSlides] = await Promise.all([
-    wpClient.getSettings(),
-    wpClient.getSectors(),
+  const [siteContent, projects, team, news] = await Promise.all([
+    wpClient.getSiteContent(),
     wpClient.getProjects('all'),
-    wpClient.getCompanies(),
     wpClient.getTeam(),
     wpClient.getNews(),
-    wpClient.getHomeHeroSlides(),
   ]);
 
   return (
@@ -31,16 +28,16 @@ export default async function HomePage() {
       <SplashIntro />
       <Header />
       <main className="flex-1">
-        <HeroSlider slides={heroSlides} />
-        <StatsSection stats={settings.statistics} />
+        <HeroSlider slides={siteContent.heroSlides} />
+        <StatsSection stats={siteContent.settings.statistics} />
         <AboutSection />
-        <SectorsSection sectors={sectors} />
+        <SectorsSection sectors={siteContent.sectors} />
         <ProjectsSection projects={projects} />
         <Vision2030Banner />
-        <CompaniesSection companies={companies} />
+        <CompaniesSection companies={siteContent.companies} />
         <LeadershipSection members={team} />
         <NewsSection articles={news} />
-        <ContactSection />
+        <ContactSection sectors={siteContent.sectors} />
       </main>
       <Footer />
     </>

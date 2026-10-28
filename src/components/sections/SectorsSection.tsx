@@ -18,8 +18,11 @@ interface SectorsProps {
 }
 
 export const SectorsSection: React.FC<SectorsProps> = ({ sectors }) => {
-  const { locale, dir, t } = useLanguage();
+  const { locale, dir, t, content } = useLanguage();
+  const copy = content.sectionCopy.sectors;
   const [activeTab, setActiveTab] = useState(0);
+  const localizedSectors = sectors.filter((sector) => sector.title[locale]);
+  if (!localizedSectors.length && !content.previewMode) return null;
 
   const ArrowIcon = dir === 'rtl' ? ArrowLeft : ArrowRight;
 
@@ -31,28 +34,28 @@ export const SectorsSection: React.FC<SectorsProps> = ({ sectors }) => {
           <div className="space-y-3 max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#101E39]/5 border border-[#101E39]/10 text-xs font-bold text-[#101E39]">
               <span className="w-1.5 h-1.5 rounded-full bg-[#B7913D]" />
-              <span>{t.sectors_section.badge}</span>
+              <span>{copy?.badge[locale] || (content.previewMode ? t.sectors_section.badge : '')}</span>
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#101E39] tracking-tight">
-              {t.sectors_section.title}
+              {copy?.title[locale] || (content.previewMode ? t.sectors_section.title : '')}
             </h2>
             <p className="text-base sm:text-lg text-[#5A677B]">
-              {t.sectors_section.subtitle}
+              {copy?.description[locale] || (content.previewMode ? t.sectors_section.subtitle : '')}
             </p>
           </div>
 
           <Link
-            href="/sectors"
+            href={copy?.ctaUrl || '/sectors'}
             className="inline-flex items-center gap-2 text-sm font-bold text-[#B7913D] hover:text-[#96742B] transition-colors self-start md:self-auto group"
           >
-            <span>{t.sectors_section.view_all}</span>
+            <span>{copy?.ctaLabel[locale] || (content.previewMode ? t.sectors_section.view_all : '')}</span>
             <ArrowIcon className="w-4 h-4 transition-transform group-hover:translate-x-1" />
           </Link>
         </div>
 
         {/* Sectors Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {sectors.map((sector, index) => {
+          {localizedSectors.map((sector, index) => {
             const IconComponent = iconMap[sector.icon] || Building2;
             const isHovered = activeTab === index;
             return (
@@ -81,7 +84,7 @@ export const SectorsSection: React.FC<SectorsProps> = ({ sectors }) => {
                   </div>
 
                   <h3 className="text-xl font-bold mb-3 tracking-tight">
-                    {locale === 'ar' ? sector.title.ar : sector.title.en}
+                    {sector.title[locale]}
                   </h3>
 
                   <p
@@ -89,7 +92,7 @@ export const SectorsSection: React.FC<SectorsProps> = ({ sectors }) => {
                       isHovered ? 'text-white/80' : 'text-[#5A677B]'
                     }`}
                   >
-                    {locale === 'ar' ? sector.summary.ar : sector.summary.en}
+                    {sector.summary[locale]}
                   </p>
                 </div>
 
@@ -98,7 +101,7 @@ export const SectorsSection: React.FC<SectorsProps> = ({ sectors }) => {
                   {sector.stats && sector.stats.length > 0 ? (
                     <div className="space-y-1">
                       <span className="text-xs text-[#B7913D] font-bold block">
-                        {locale === 'ar' ? sector.stats[0].label.ar : sector.stats[0].label.en}
+                        {sector.stats[0].label[locale]}
                       </span>
                       <span className="text-lg font-black">{sector.stats[0].value}</span>
                     </div>

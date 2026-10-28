@@ -11,8 +11,11 @@ interface LeadershipProps {
 }
 
 export const LeadershipSection: React.FC<LeadershipProps> = ({ members }) => {
-  const { locale, t } = useLanguage();
+  const { locale, t, content } = useLanguage();
+  const copy = content.sectionCopy.leadership;
+  const localizedMembers = members.filter((member) => member.name[locale]);
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
+  if (!localizedMembers.length && !content.previewMode) return null;
 
   return (
     <section className="py-20 lg:py-28 bg-[#F8F9F4] relative">
@@ -20,21 +23,21 @@ export const LeadershipSection: React.FC<LeadershipProps> = ({ members }) => {
         <div className="text-center max-w-3xl mx-auto space-y-4 mb-16">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#101E39]/5 border border-[#101E39]/10 text-xs font-bold text-[#101E39]">
             <span className="w-1.5 h-1.5 rounded-full bg-[#B7913D]" />
-            <span>{t.leadership_section.badge}</span>
+            <span>{copy?.badge[locale] || (content.previewMode ? t.leadership_section.badge : '')}</span>
           </div>
 
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#101E39] tracking-tight">
-            {t.leadership_section.title}
+            {copy?.title[locale] || (content.previewMode ? t.leadership_section.title : '')}
           </h2>
 
           <p className="text-base sm:text-lg text-[#5A677B]">
-            {t.leadership_section.subtitle}
+            {copy?.description[locale] || (content.previewMode ? t.leadership_section.subtitle : '')}
           </p>
         </div>
 
         {/* Members Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {members.map((member) => (
+          {localizedMembers.map((member) => (
             <div
               key={member.id}
               className="bg-white rounded-2xl overflow-hidden border border-[#101E39]/10 shadow-md luxury-card flex flex-col group cursor-pointer"
@@ -42,12 +45,14 @@ export const LeadershipSection: React.FC<LeadershipProps> = ({ members }) => {
             >
               {/* Image Portrait */}
               <div className="relative h-72 overflow-hidden bg-[#101E39]">
-                <Image
-                  src={member.image || '/images/board_chairman.jpg'}
-                  alt={locale === 'ar' ? member.name.ar : member.name.en}
-                  fill
-                  className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
-                />
+                {member.image && (
+                  <Image
+                    src={member.image}
+                    alt={locale === 'ar' ? member.name.ar : member.name.en}
+                    fill
+                    className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                  />
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-[#101E39] via-transparent to-transparent opacity-80" />
 
                 <div className="absolute bottom-3 inset-x-4">
@@ -89,12 +94,14 @@ export const LeadershipSection: React.FC<LeadershipProps> = ({ members }) => {
         >
           <div className="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-white/20 animate-in zoom-in-95 duration-200">
             <div className="relative h-60 bg-[#101E39]">
-              <Image
-                src={selectedMember.image || '/images/board_chairman.jpg'}
-                alt="Portrait"
-                fill
-                className="object-cover object-top"
-              />
+              {selectedMember.image && (
+                <Image
+                  src={selectedMember.image}
+                  alt={locale === 'ar' ? selectedMember.name.ar : selectedMember.name.en}
+                  fill
+                  className="object-cover object-top"
+                />
+              )}
               <div className="absolute inset-0 bg-gradient-to-t from-[#101E39] via-[#101E39]/40 to-transparent" />
               <button
                 type="button"

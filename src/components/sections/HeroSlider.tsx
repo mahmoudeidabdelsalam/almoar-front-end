@@ -47,11 +47,16 @@ const defaultSlides: HeroSlide[] = [
 ];
 
 export const HeroSlider: React.FC<{ slides?: HeroSlide[] }> = ({ slides: contentSlides }) => {
-  const { locale, dir, t } = useLanguage();
-  const slides = contentSlides?.length ? contentSlides : defaultSlides;
+  const { locale, dir, t, content } = useLanguage();
+  const slides = contentSlides?.length
+    ? contentSlides
+    : content.heroSlides.length
+      ? content.heroSlides
+      : content.previewMode ? defaultSlides : [];
   const [current, setCurrent] = useState(0);
 
   useEffect(() => {
+    if (!slides.length) return;
     const timer = setInterval(() => {
       setCurrent((prev) => (prev + 1) % slides.length);
     }, 6500);
@@ -61,7 +66,8 @@ export const HeroSlider: React.FC<{ slides?: HeroSlide[] }> = ({ slides: content
   const nextSlide = () => setCurrent((prev) => (prev + 1) % slides.length);
   const prevSlide = () => setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
 
-  const activeSlide = slides[current];
+  if (!slides.length) return null;
+  const activeSlide = slides[current] || slides[0];
   const NextIcon = dir === 'rtl' ? ChevronLeft : ChevronRight;
   const PrevIcon = dir === 'rtl' ? ChevronRight : ChevronLeft;
   const ArrowIcon = dir === 'rtl' ? ArrowLeft : ArrowRight;

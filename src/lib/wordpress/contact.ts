@@ -23,18 +23,22 @@ export async function submitContact(payload: ContactFormPayload): Promise<{ succ
   }
 
   if (!WP_API_URL) {
-    await new Promise((resolve) => setTimeout(resolve, 800));
     return {
-      success: true,
-      message: 'تم استلام رسالتكم بنجاح. سيتواصل معكم فريق العمر القابضة في أقرب وقت.',
+      success: false,
+      message: 'تعذر إرسال الرسالة حالياً. يرجى المحاولة لاحقاً أو التواصل معنا مباشرة.',
     };
   }
 
   try {
+    const lang = payload.lang || (typeof document !== 'undefined' && document.documentElement.lang === 'en' ? 'en' : 'ar');
     const res = await fetch(`${WP_API_URL}/wp-json/alomar/v1/contact`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
+      body: JSON.stringify({
+        ...payload,
+        lang,
+        website: payload.website || '',
+      }),
     });
     const data = await res.json();
     if (!res.ok) {
@@ -48,10 +52,11 @@ export async function submitContact(payload: ContactFormPayload): Promise<{ succ
       success: true,
       message: data.message || 'تم استلام رسالتكم بنجاح.',
     };
-  } catch {
+  } catch (error) {
+    console.error('[WordPress CMS] Contact submission failed.', error);
     return {
-      success: true,
-      message: 'تم استلام رسالتكم بنجاح ومزامنتها مع الخادم.',
+      success: false,
+      message: 'تعذر إرسال الرسالة حالياً. يرجى المحاولة لاحقاً أو التواصل معنا مباشرة.',
     };
   }
 }

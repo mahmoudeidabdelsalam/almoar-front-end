@@ -1,22 +1,33 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useSyncExternalStore } from 'react';
 import Image from 'next/image';
 import { useLanguage } from '@/context/LanguageContext';
 
+function subscribeToSplash(onStoreChange: () => void): () => void {
+  window.addEventListener('storage', onStoreChange);
+  window.addEventListener('alomar-splash-change', onStoreChange);
+  return () => {
+    window.removeEventListener('storage', onStoreChange);
+    window.removeEventListener('alomar-splash-change', onStoreChange);
+  };
+}
+
+function getSplashSnapshot(): boolean {
+  return !window.sessionStorage.getItem('alomar_splash_seen');
+}
+
 export const SplashIntro: React.FC = () => {
-  const { locale, t } = useLanguage();
-  const [visible, setVisible] = useState<boolean>(() => {
-    if (typeof window === 'undefined') return false;
-    return !window.sessionStorage.getItem('alomar_splash_seen');
-  });
+  const { locale, t, content } = useLanguage();
+  const introSlide = content.heroSlides[0];
+  const visible = useSyncExternalStore(subscribeToSplash, getSplashSnapshot, () => false);
   const [fading, setFading] = useState(false);
 
   const handleDismiss = React.useCallback(() => {
     setFading(true);
     setTimeout(() => {
-      setVisible(false);
       sessionStorage.setItem('alomar_splash_seen', 'true');
+      window.dispatchEvent(new Event('alomar-splash-change'));
     }, 600);
   }, []);
 
@@ -54,10 +65,10 @@ export const SplashIntro: React.FC = () => {
         {/* Brand Typography */}
         <div className="space-y-2">
           <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-white">
-            {locale === 'ar' ? 'العمر القابضة' : 'ALOMAR HOLDING'}
+            {locale === 'ar' ? content.settings.site_name.ar : content.settings.site_name.en}
           </h1>
           <p className="text-[#B7913D] text-sm md:text-base font-semibold tracking-widest uppercase">
-            {locale === 'ar' ? 'استثمار برؤية أوسع' : 'Investment with a Broader Vision'}
+            {locale === 'ar' ? content.settings.tagline.ar : content.settings.tagline.en}
           </p>
         </div>
 
@@ -66,9 +77,7 @@ export const SplashIntro: React.FC = () => {
 
         {/* Subtitle */}
         <p className="text-white/60 text-xs md:text-sm max-w-md leading-relaxed">
-          {locale === 'ar'
-            ? 'ريادة استثمارية مستدامة تواكب مسيرة التحول الوطني ورؤية السعودية 2030'
-            : 'Pioneering sustainable institutional growth aligned with Saudi Vision 2030'}
+          {(locale === 'ar' ? introSlide?.desc_ar : introSlide?.desc_en) || t.hero.subtitle}
         </p>
       </div>
 

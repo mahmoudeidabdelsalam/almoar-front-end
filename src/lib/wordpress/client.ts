@@ -6,6 +6,7 @@ import {
   TeamMember,
   NewsArticle,
   HeroSlide,
+  SiteContent,
 } from '@/types';
 import {
   mockSettings,
@@ -17,11 +18,15 @@ import {
 } from './mock-data';
 import { cacheLife } from 'next/cache';
 
-const WP_API_URL = process.env.NEXT_PUBLIC_WORDPRESS_API_URL || process.env.WORDPRESS_API_URL || '';
+const WP_API_URL = process.env.WORDPRESS_API_URL || process.env.NEXT_PUBLIC_WORDPRESS_API_URL || '';
 const WP_GRAPHQL_URL =
   process.env.NEXT_PUBLIC_WORDPRESS_GRAPHQL_URL ||
   process.env.WORDPRESS_GRAPHQL_URL ||
   (WP_API_URL ? `${WP_API_URL.replace(/\/$/, '')}/graphql` : '');
+const PREVIEW_MODE = process.env.NODE_ENV === 'development' && !WP_GRAPHQL_URL && !WP_API_URL;
+if (PREVIEW_MODE) {
+  console.warn('[WordPress CMS] No endpoint is configured; development-only mock content is active.');
+}
 
 type GraphQLNode = {
   databaseId?: number;
@@ -65,32 +70,48 @@ type GraphQLNode = {
     } | null;
   } | null;
   projectCategories?: {
-    nodes?: Array<{ name?: string | null }> | null;
+    nodes?: Array<{ name?: string | null; nameEn?: string | null }> | null;
   } | null;
   projectLocations?: {
+    nodes?: Array<{ name?: string | null; nameEn?: string | null }> | null;
+  } | null;
+  categories?: {
     nodes?: Array<{ name?: string | null }> | null;
   } | null;
+  projectGallery?: string[] | null;
+  projectHighlights?: Array<{ ar?: string | null; en?: string | null }> | null;
+  newsCategoryAr?: string | null;
+  newsCategoryEn?: string | null;
+  readTimeAr?: string | null;
+  readTimeEn?: string | null;
 };
 
 type GraphQLResponse<T> = {
-  data?: T;
+  data?: T | null;
   errors?: Array<{ message?: string }>;
 };
+
+class GraphQLResponseError extends Error {}
+
+function reportCMSIssue(operation: string, error: unknown): void {
+  const message = error instanceof Error ? error.message : String(error);
+  const log = process.env.NODE_ENV === 'development' ? console.warn : console.error;
+  log(`[WordPress CMS] ${operation} failed: ${message}`);
+}
 
 function stripHtml(value?: string | null): string {
   return (value || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
-function toLocalizedText(value?: string | null): { ar: string; en: string } {
-  const text = stripHtml(value || '');
+function toLocalizedText(value?: string | null, valueEn?: string | null): { ar: string; en: string } {
   return {
-    ar: text || '—',
-    en: text || '—',
+    ar: stripHtml(value),
+    en: stripHtml(valueEn),
   };
 }
 
 function pickImage(node?: GraphQLNode | null): string {
-  return node?.featuredImage?.node?.sourceUrl || node?.sourceUrl || '/images/hero_riyadh.jpg';
+  return node?.featuredImage?.node?.sourceUrl || node?.sourceUrl || '';
 }
 
 async function fetchWithTimeout(url: string, options: RequestInit = {}, timeoutMs = 3000): Promise<Response> {
@@ -131,18 +152,181 @@ async function fetchGraphQL<T>(query: string): Promise<T> {
   const body = (await res.json()) as GraphQLResponse<T>;
 
   if (body.errors?.length) {
-    throw new Error(body.errors[0]?.message || 'GraphQL request returned an error');
+    throw new GraphQLResponseError(body.errors[0]?.message || 'GraphQL request returned an error');
   }
 
-  return (body.data ?? {}) as T;
+  if (!body.data) {
+    throw new Error('GraphQL response did not contain data');
+  }
+
+  return body.data;
 }
 
 export const wpClient = {
-  async getHomeHeroSlides(): Promise<HeroSlide[]> {
-    if (!WP_GRAPHQL_URL) return [];
+  async getSiteContent(): Promise<SiteContent> {
+    'use cache';
+    cacheLife('minutes');
+
+    const emptyContent: SiteContent = {
+      previewMode: PREVIEW_MODE,
+      settings: PREVIEW_MODE ? mockSettings : {
+        site_name: { ar: '', en: '' },
+        tagline: { ar: '', en: '' },
+        contact: {
+          phone: '',
+          email: '',
+          address_ar: '',
+          address_en: '',
+          working_hours_ar: '',
+          working_hours_en: '',
+          coordinates: { lat: 0, lng: 0 },
+        },
+        statistics: [],
+        social_links: { x: '', linkedin: '', instagram: '' },
+      },
+      sectors: PREVIEW_MODE ? mockSectors : [],
+      companies: PREVIEW_MODE ? mockCompanies : [],
+      heroSlides: [],
+      pageBanners: {},
+      sectionCopy: {},
+      homeAbout: {
+        badge: { ar: '', en: '' },
+        title: { ar: '', en: '' },
+        descriptionOne: { ar: '', en: '' },
+        descriptionTwo: { ar: '', en: '' },
+        image: '',
+        pillars: [],
+      },
+      aboutPage: {
+        chairmanImage: '',
+        chairmanName: { ar: '', en: '' },
+        chairmanRole: { ar: '', en: '' },
+        messageHeading: { ar: '', en: '' },
+        quote: { ar: '', en: '' },
+        messageOne: { ar: '', en: '' },
+        messageTwo: { ar: '', en: '' },
+        visionTitle: { ar: '', en: '' },
+        visionDescription: { ar: '', en: '' },
+        missionTitle: { ar: '', en: '' },
+        missionDescription: { ar: '', en: '' },
+        values: [],
+      },
+      visionSection: {
+        badge: { ar: '', en: '' },
+        title: { ar: '', en: '' },
+        description: { ar: '', en: '' },
+        pillars: [],
+        footerLine: { ar: '', en: '' },
+        ctaLabel: { ar: '', en: '' },
+        ctaUrl: '',
+      },
+      footer: {
+        companyDescription: { ar: '', en: '' },
+        visionBadge: { ar: '', en: '' },
+      },
+    };
+
+    if (!WP_GRAPHQL_URL) return emptyContent;
 
     try {
       const data = await fetchGraphQL<{
+        alomarSiteContent?: {
+          settings?: {
+            siteNameAr?: string | null;
+            siteNameEn?: string | null;
+            taglineAr?: string | null;
+            taglineEn?: string | null;
+            phone?: string | null;
+            email?: string | null;
+            addressAr?: string | null;
+            addressEn?: string | null;
+            workingHoursAr?: string | null;
+            workingHoursEn?: string | null;
+            mapLat?: number | null;
+            mapLng?: number | null;
+            statistics?: Array<{ key?: string | null; number?: string | null; labelAr?: string | null; labelEn?: string | null }> | null;
+            socialX?: string | null;
+            socialLinkedin?: string | null;
+            socialInstagram?: string | null;
+          } | null;
+          pageBanners?: Array<{
+            pageKey?: string | null;
+            badgeAr?: string | null;
+            badgeEn?: string | null;
+            titleAr?: string | null;
+            titleEn?: string | null;
+            descriptionAr?: string | null;
+            descriptionEn?: string | null;
+            imageUrl?: string | null;
+            seoTitleAr?: string | null;
+            seoTitleEn?: string | null;
+            seoDescriptionAr?: string | null;
+            seoDescriptionEn?: string | null;
+          }> | null;
+          sectionCopy?: Array<{
+            sectionKey?: string | null;
+            badgeAr?: string | null;
+            badgeEn?: string | null;
+            titleAr?: string | null;
+            titleEn?: string | null;
+            descriptionAr?: string | null;
+            descriptionEn?: string | null;
+            ctaLabelAr?: string | null;
+            ctaLabelEn?: string | null;
+            ctaUrl?: string | null;
+          }> | null;
+          homeAbout?: {
+            badgeAr?: string | null;
+            badgeEn?: string | null;
+            titleAr?: string | null;
+            titleEn?: string | null;
+            descriptionOneAr?: string | null;
+            descriptionOneEn?: string | null;
+            descriptionTwoAr?: string | null;
+            descriptionTwoEn?: string | null;
+            imageUrl?: string | null;
+            pillars?: Array<{ icon?: string | null; titleAr?: string | null; titleEn?: string | null; descriptionAr?: string | null; descriptionEn?: string | null }> | null;
+          } | null;
+          aboutPage?: {
+            chairmanImageUrl?: string | null;
+            chairmanNameAr?: string | null;
+            chairmanNameEn?: string | null;
+            chairmanRoleAr?: string | null;
+            chairmanRoleEn?: string | null;
+            messageHeadingAr?: string | null;
+            messageHeadingEn?: string | null;
+            quoteAr?: string | null;
+            quoteEn?: string | null;
+            messageOneAr?: string | null;
+            messageOneEn?: string | null;
+            messageTwoAr?: string | null;
+            messageTwoEn?: string | null;
+            visionTitleAr?: string | null;
+            visionTitleEn?: string | null;
+            visionDescriptionAr?: string | null;
+            visionDescriptionEn?: string | null;
+            missionTitleAr?: string | null;
+            missionTitleEn?: string | null;
+            missionDescriptionAr?: string | null;
+            missionDescriptionEn?: string | null;
+            values?: Array<{ titleAr?: string | null; titleEn?: string | null; descriptionAr?: string | null; descriptionEn?: string | null }> | null;
+          } | null;
+          visionSection?: {
+            badgeAr?: string | null;
+            badgeEn?: string | null;
+            titleAr?: string | null;
+            titleEn?: string | null;
+            descriptionAr?: string | null;
+            descriptionEn?: string | null;
+            pillars?: Array<{ icon?: string | null; titleAr?: string | null; titleEn?: string | null; descriptionAr?: string | null; descriptionEn?: string | null }> | null;
+            footerLineAr?: string | null;
+            footerLineEn?: string | null;
+            ctaLabelAr?: string | null;
+            ctaLabelEn?: string | null;
+            ctaUrl?: string | null;
+          } | null;
+          footer?: { companyDescriptionAr?: string | null; companyDescriptionEn?: string | null; visionBadgeAr?: string | null; visionBadgeEn?: string | null } | null;
+        } | null;
         homePageContent?: Array<{
           image?: string | null;
           badgeAr?: string | null;
@@ -154,59 +338,214 @@ export const wpClient = {
           primaryLink?: string | null;
           secondaryLink?: string | null;
         }> | null;
+        sectors?: { nodes?: GraphQLNode[] | null } | null;
+        companies?: { nodes?: GraphQLNode[] | null } | null;
       }>(`{
-        homePageContent {
-          image
-          badgeAr
-          badgeEn
-          titleAr
-          titleEn
-          descAr
-          descEn
-          primaryLink
-          secondaryLink
+        alomarSiteContent {
+          settings {
+            siteNameAr siteNameEn taglineAr taglineEn phone email addressAr addressEn
+            workingHoursAr workingHoursEn mapLat mapLng socialX socialLinkedin socialInstagram
+            statistics { key number labelAr labelEn }
+          }
+          pageBanners {
+            pageKey badgeAr badgeEn titleAr titleEn descriptionAr descriptionEn imageUrl
+            seoTitleAr seoTitleEn seoDescriptionAr seoDescriptionEn
+          }
+          sectionCopy { sectionKey badgeAr badgeEn titleAr titleEn descriptionAr descriptionEn ctaLabelAr ctaLabelEn ctaUrl }
+          homeAbout {
+            badgeAr badgeEn titleAr titleEn descriptionOneAr descriptionOneEn descriptionTwoAr descriptionTwoEn imageUrl
+            pillars { icon titleAr titleEn descriptionAr descriptionEn }
+          }
+          aboutPage {
+            chairmanImageUrl chairmanNameAr chairmanNameEn chairmanRoleAr chairmanRoleEn messageHeadingAr messageHeadingEn
+            quoteAr quoteEn messageOneAr messageOneEn messageTwoAr messageTwoEn visionTitleAr visionTitleEn
+            visionDescriptionAr visionDescriptionEn missionTitleAr missionTitleEn missionDescriptionAr missionDescriptionEn
+            values { titleAr titleEn descriptionAr descriptionEn }
+          }
+          visionSection {
+            badgeAr badgeEn titleAr titleEn descriptionAr descriptionEn
+            pillars { icon titleAr titleEn descriptionAr descriptionEn }
+            footerLineAr footerLineEn ctaLabelAr ctaLabelEn ctaUrl
+          }
+          footer { companyDescriptionAr companyDescriptionEn visionBadgeAr visionBadgeEn }
+        }
+        homePageContent { image badgeAr badgeEn titleAr titleEn descAr descEn primaryLink secondaryLink }
+        sectors(first: 20) {
+          nodes { databaseId slug title excerpt content contentEn titleEn summaryEn sectorIcon featuredImage { node { sourceUrl } } }
+        }
+        companies(first: 20) {
+          nodes {
+            databaseId slug title excerpt content nameEn taglineAr taglineEn descriptionEn companyWebsite companyYear
+            featuredImage { node { sourceUrl } }
+          }
         }
       }`);
 
-      return (data.homePageContent ?? []).map((slide, index) => ({
-        id: index + 1,
-        image: slide.image || '/images/hero_riyadh.jpg',
-        badge_ar: slide.badgeAr || '',
-        badge_en: slide.badgeEn || '',
-        title_ar: slide.titleAr || '',
-        title_en: slide.titleEn || '',
-        desc_ar: slide.descAr || '',
-        desc_en: slide.descEn || '',
-        primary_link: slide.primaryLink || '/sectors',
-        secondary_link: slide.secondaryLink || '/projects',
-      }));
-    } catch {
-      return [];
+      const cms = data.alomarSiteContent;
+      if (!cms) {
+        reportCMSIssue('getSiteContent', new Error('The alomarSiteContent field returned null'));
+        return emptyContent;
+      }
+      const rawSettings = cms.settings;
+      const validStatistics = rawSettings?.statistics?.filter((stat) =>
+        Boolean(stat.key && stat.number && stat.labelAr && stat.labelEn)
+      ) || [];
+      const statistics = validStatistics.length
+        ? validStatistics.map((stat) => ({
+            key: stat.key || '',
+            number: stat.number || '',
+            label_ar: stat.labelAr || '',
+            label_en: stat.labelEn || '',
+          }))
+        : PREVIEW_MODE ? mockSettings.statistics : [];
+      const mapPillars = (items: Array<{ icon?: string | null; titleAr?: string | null; titleEn?: string | null; descriptionAr?: string | null; descriptionEn?: string | null }> | null | undefined) =>
+        (items || []).map((item) => ({
+          icon: item.icon || '',
+          title: { ar: item.titleAr || '', en: item.titleEn || '' },
+          description: { ar: item.descriptionAr || '', en: item.descriptionEn || '' },
+        }));
+      const sectors = (data.sectors?.nodes || []).map((node) => ({
+        id: node.databaseId ?? 0,
+        slug: node.slug || node.uri || 'sector',
+        title: { ar: stripHtml(node.title), en: stripHtml(node.titleEn) },
+        summary: { ar: stripHtml(node.excerpt), en: stripHtml(node.summaryEn) },
+        content: toLocalizedText(node.content, node.contentEn),
+        icon: node.sectorIcon || 'building',
+        image: pickImage(node),
+        stats: [],
+      } as Sector));
+      const companies = (data.companies?.nodes || []).map((node) => ({
+        id: node.databaseId ?? 0,
+        slug: node.slug || node.uri || 'company',
+        name: { ar: stripHtml(node.title), en: stripHtml(node.nameEn) },
+        tagline: { ar: stripHtml(node.taglineAr), en: stripHtml(node.taglineEn) },
+        description: { ar: stripHtml(node.content) || stripHtml(node.excerpt), en: stripHtml(node.descriptionEn) },
+        logo: pickImage(node),
+        website: node.companyWebsite || undefined,
+        year: node.companyYear || undefined,
+      } as SubsidiaryCompany));
+
+      return {
+        previewMode: false,
+        sectors: sectors.length ? sectors : PREVIEW_MODE ? mockSectors : [],
+        companies: companies.length ? companies : PREVIEW_MODE ? mockCompanies : [],
+        settings: {
+          site_name: {
+            ar: rawSettings?.siteNameAr || (PREVIEW_MODE ? mockSettings.site_name.ar : ''),
+            en: rawSettings?.siteNameEn || (PREVIEW_MODE ? mockSettings.site_name.en : ''),
+          },
+          tagline: {
+            ar: rawSettings?.taglineAr || (PREVIEW_MODE ? mockSettings.tagline.ar : ''),
+            en: rawSettings?.taglineEn || (PREVIEW_MODE ? mockSettings.tagline.en : ''),
+          },
+          contact: {
+            phone: rawSettings?.phone || (PREVIEW_MODE ? mockSettings.contact.phone : ''),
+            email: rawSettings?.email || (PREVIEW_MODE ? mockSettings.contact.email : ''),
+            address_ar: rawSettings?.addressAr || (PREVIEW_MODE ? mockSettings.contact.address_ar : ''),
+            address_en: rawSettings?.addressEn || (PREVIEW_MODE ? mockSettings.contact.address_en : ''),
+            working_hours_ar: rawSettings?.workingHoursAr || (PREVIEW_MODE ? mockSettings.contact.working_hours_ar : ''),
+            working_hours_en: rawSettings?.workingHoursEn || (PREVIEW_MODE ? mockSettings.contact.working_hours_en : ''),
+            coordinates: {
+              lat: rawSettings?.mapLat ?? (PREVIEW_MODE ? mockSettings.contact.coordinates.lat : 0),
+              lng: rawSettings?.mapLng ?? (PREVIEW_MODE ? mockSettings.contact.coordinates.lng : 0),
+            },
+          },
+          statistics,
+          social_links: {
+            x: rawSettings?.socialX || (PREVIEW_MODE ? mockSettings.social_links.x : ''),
+            linkedin: rawSettings?.socialLinkedin || (PREVIEW_MODE ? mockSettings.social_links.linkedin : ''),
+            instagram: rawSettings?.socialInstagram || (PREVIEW_MODE ? mockSettings.social_links.instagram : ''),
+          },
+        },
+        heroSlides: (data.homePageContent || [])
+          .filter((slide) => Boolean(slide.image && slide.titleAr && slide.titleEn))
+          .map((slide, index) => ({
+          id: index + 1,
+          image: slide.image || '',
+          badge_ar: slide.badgeAr || '',
+          badge_en: slide.badgeEn || '',
+          title_ar: slide.titleAr || '',
+          title_en: slide.titleEn || '',
+          desc_ar: slide.descAr || '',
+          desc_en: slide.descEn || '',
+          primary_link: slide.primaryLink || '/sectors',
+          secondary_link: slide.secondaryLink || '/projects',
+        })),
+        pageBanners: Object.fromEntries((cms.pageBanners || []).filter((item) => item.pageKey).map((item) => [item.pageKey as string, {
+          pageKey: item.pageKey || '',
+          badge: { ar: item.badgeAr || '', en: item.badgeEn || '' },
+          title: { ar: item.titleAr || '', en: item.titleEn || '' },
+          description: { ar: item.descriptionAr || '', en: item.descriptionEn || '' },
+          image: item.imageUrl || '',
+          seoTitle: { ar: item.seoTitleAr || '', en: item.seoTitleEn || '' },
+          seoDescription: { ar: item.seoDescriptionAr || '', en: item.seoDescriptionEn || '' },
+        }])),
+        sectionCopy: Object.fromEntries((cms.sectionCopy || []).filter((item) => item.sectionKey).map((item) => [item.sectionKey as string, {
+          sectionKey: item.sectionKey || '',
+          badge: { ar: item.badgeAr || '', en: item.badgeEn || '' },
+          title: { ar: item.titleAr || '', en: item.titleEn || '' },
+          description: { ar: item.descriptionAr || '', en: item.descriptionEn || '' },
+          ctaLabel: { ar: item.ctaLabelAr || '', en: item.ctaLabelEn || '' },
+          ctaUrl: item.ctaUrl || '',
+        }])),
+        homeAbout: {
+          badge: { ar: cms.homeAbout?.badgeAr || '', en: cms.homeAbout?.badgeEn || '' },
+          title: { ar: cms.homeAbout?.titleAr || '', en: cms.homeAbout?.titleEn || '' },
+          descriptionOne: { ar: cms.homeAbout?.descriptionOneAr || '', en: cms.homeAbout?.descriptionOneEn || '' },
+          descriptionTwo: { ar: cms.homeAbout?.descriptionTwoAr || '', en: cms.homeAbout?.descriptionTwoEn || '' },
+          image: cms.homeAbout?.imageUrl || '',
+          pillars: mapPillars(cms.homeAbout?.pillars),
+        },
+        aboutPage: {
+          chairmanImage: cms.aboutPage?.chairmanImageUrl || '',
+          chairmanName: { ar: cms.aboutPage?.chairmanNameAr || '', en: cms.aboutPage?.chairmanNameEn || '' },
+          chairmanRole: { ar: cms.aboutPage?.chairmanRoleAr || '', en: cms.aboutPage?.chairmanRoleEn || '' },
+          messageHeading: { ar: cms.aboutPage?.messageHeadingAr || '', en: cms.aboutPage?.messageHeadingEn || '' },
+          quote: { ar: cms.aboutPage?.quoteAr || '', en: cms.aboutPage?.quoteEn || '' },
+          messageOne: { ar: cms.aboutPage?.messageOneAr || '', en: cms.aboutPage?.messageOneEn || '' },
+          messageTwo: { ar: cms.aboutPage?.messageTwoAr || '', en: cms.aboutPage?.messageTwoEn || '' },
+          visionTitle: { ar: cms.aboutPage?.visionTitleAr || '', en: cms.aboutPage?.visionTitleEn || '' },
+          visionDescription: { ar: cms.aboutPage?.visionDescriptionAr || '', en: cms.aboutPage?.visionDescriptionEn || '' },
+          missionTitle: { ar: cms.aboutPage?.missionTitleAr || '', en: cms.aboutPage?.missionTitleEn || '' },
+          missionDescription: { ar: cms.aboutPage?.missionDescriptionAr || '', en: cms.aboutPage?.missionDescriptionEn || '' },
+          values: (cms.aboutPage?.values || []).map((value) => ({
+            title: { ar: value.titleAr || '', en: value.titleEn || '' },
+            description: { ar: value.descriptionAr || '', en: value.descriptionEn || '' },
+          })),
+        },
+        visionSection: {
+          badge: { ar: cms.visionSection?.badgeAr || '', en: cms.visionSection?.badgeEn || '' },
+          title: { ar: cms.visionSection?.titleAr || '', en: cms.visionSection?.titleEn || '' },
+          description: { ar: cms.visionSection?.descriptionAr || '', en: cms.visionSection?.descriptionEn || '' },
+          pillars: mapPillars(cms.visionSection?.pillars),
+          footerLine: { ar: cms.visionSection?.footerLineAr || '', en: cms.visionSection?.footerLineEn || '' },
+          ctaLabel: { ar: cms.visionSection?.ctaLabelAr || '', en: cms.visionSection?.ctaLabelEn || '' },
+          ctaUrl: cms.visionSection?.ctaUrl || '',
+        },
+        footer: {
+          companyDescription: { ar: cms.footer?.companyDescriptionAr || '', en: cms.footer?.companyDescriptionEn || '' },
+          visionBadge: { ar: cms.footer?.visionBadgeAr || '', en: cms.footer?.visionBadgeEn || '' },
+        },
+      };
+    } catch (error) {
+      reportCMSIssue('getSiteContent', error);
+      return emptyContent;
     }
   },
 
-  async getSettings(): Promise<SiteSettings> {
-    'use cache';
-    cacheLife('minutes');
+  async getHomeHeroSlides(): Promise<HeroSlide[]> {
+    return (await this.getSiteContent()).heroSlides;
+  },
 
-    if (!WP_API_URL) return mockSettings;
-    try {
-      const res = await fetchWithTimeout(`${WP_API_URL}/wp-json/alomar/v1/settings`, {
-        next: { revalidate: 300 },
-      });
-      if (!res.ok) throw new Error('Failed to fetch settings');
-      return await res.json();
-    } catch {
-      return mockSettings;
-    }
+  async getSettings(): Promise<SiteSettings> {
+    return (await this.getSiteContent()).settings;
   },
 
   async getProjects(category?: string): Promise<Project[]> {
     if (!WP_GRAPHQL_URL && !WP_API_URL) {
-      if (!category || category === 'all') return mockProjects;
-      return mockProjects.filter(
-        (p) => p.category.toLowerCase().includes(category.toLowerCase()) || p.category_en?.toLowerCase().includes(category.toLowerCase())
-      );
+      if (PREVIEW_MODE && (!category || category === 'all')) return mockProjects;
+      if (PREVIEW_MODE) return mockProjects.filter((p) => p.category.includes(category || ''));
+      return [];
     }
 
     try {
@@ -221,9 +560,9 @@ export const wpClient = {
               title
               excerpt
               content
+              contentEn
               titleEn
               excerptEn
-              contentEn
               statusAr
               statusEn
               locationAr
@@ -235,8 +574,10 @@ export const wpClient = {
               brochureUrl
               featured
               featuredImage { node { sourceUrl } }
-              projectCategories { nodes { name } }
-              projectLocations { nodes { name } }
+              projectGallery
+              projectHighlights { ar en }
+              projectCategories { nodes { name nameEn } }
+              projectLocations { nodes { name nameEn } }
             }
           }
         }`);
@@ -245,62 +586,57 @@ export const wpClient = {
           const title = stripHtml(node.title || '');
           const excerpt = stripHtml(node.excerpt || '');
           const content = stripHtml(node.content || '');
-          const categoryName = node.projectCategories?.nodes?.[0]?.name || 'Residential';
-          const locationName = node.projectLocations?.nodes?.[0]?.name || 'Riyadh';
+          const categoryName = node.projectCategories?.nodes?.[0]?.name || '';
+          const locationName = node.projectLocations?.nodes?.[0]?.name || '';
+          const categoryNameEn = node.projectCategories?.nodes?.[0]?.nameEn || '';
+          const locationNameEn = node.projectLocations?.nodes?.[0]?.nameEn || '';
 
           return {
             id: node.databaseId ?? 0,
             slug: node.slug || node.uri || title.toLowerCase().replace(/\s+/g, '-'),
             title: {
-              ar: title || 'مشروع العمر',
-              en: stripHtml(node.titleEn) || title || 'Alomar project',
+              ar: title,
+              en: stripHtml(node.titleEn),
             },
             excerpt: {
-              ar: excerpt || 'مشروع من محفظة العمر القابضة.',
-              en: stripHtml(node.excerptEn) || excerpt || 'A project from Alomar Holding.',
+              ar: excerpt,
+              en: stripHtml(node.excerptEn),
             },
             content: {
-              ar: content || 'مشروع من محفظة العمر القابضة.',
-              en: stripHtml(node.contentEn) || content || 'A project from Alomar Holding.',
+              ar: content,
+              en: stripHtml(node.contentEn),
             },
             image: pickImage(node),
+            gallery: node.projectGallery || [],
             category: categoryName,
-            category_en: categoryName,
+            category_en: categoryNameEn,
             location: stripHtml(node.locationAr) || locationName,
-            location_en: stripHtml(node.locationEn) || locationName,
-            status: stripHtml(node.statusAr) || 'قيد التطوير',
-            status_en: stripHtml(node.statusEn) || 'Under Development',
+            location_en: stripHtml(node.locationEn) || locationNameEn,
+            status: stripHtml(node.statusAr),
+            status_en: stripHtml(node.statusEn),
             units_count: node.unitsCount || undefined,
             land_area: node.landArea || undefined,
             built_area: node.builtArea || undefined,
-            completion_year: node.completionYear || '2026',
+            completion_year: node.completionYear || '',
             brochure_url: node.brochureUrl || undefined,
-            featured: node.featured ?? true,
+            featured: node.featured ?? false,
+            highlights: (node.projectHighlights || []).map((highlight) => ({
+              ar: highlight.ar || '',
+              en: highlight.en || '',
+            })),
           } as Project;
         });
 
-        if (mapped.length > 0) {
-          if (!category || category === 'all') return mapped;
-          return mapped.filter(
-            (p) => p.category.toLowerCase().includes(category.toLowerCase()) || p.category_en?.toLowerCase().includes(category.toLowerCase())
-          );
-        }
-        if (!category || category === 'all') return mockProjects;
-        return mockProjects.filter((p) => p.category.includes(category));
+        if (!category || category === 'all') return mapped;
+        return mapped.filter(
+          (p) => p.category.toLowerCase().includes(category.toLowerCase()) || p.category_en?.toLowerCase().includes(category.toLowerCase())
+        );
       }
 
-      if (!WP_API_URL) throw new Error('WordPress REST API is not configured');
-
-      const url = new URL(`${WP_API_URL}/wp-json/alomar/v1/projects`);
-      if (category && category !== 'all') {
-        url.searchParams.set('category', category);
-      }
-      const res = await fetchWithTimeout(url.toString(), { next: { revalidate: 60 } });
-      if (!res.ok) throw new Error('Failed to fetch projects');
-      return await res.json();
-    } catch {
-      if (!category || category === 'all') return mockProjects;
-      return mockProjects.filter((p) => p.category.includes(category));
+      return [];
+    } catch (error) {
+      reportCMSIssue('getProjects', error);
+      return [];
     }
   },
 
@@ -310,7 +646,7 @@ export const wpClient = {
   },
 
   async getSectors(): Promise<Sector[]> {
-    if (!WP_GRAPHQL_URL && !WP_API_URL) return mockSectors;
+    if (!WP_GRAPHQL_URL && !WP_API_URL) return PREVIEW_MODE ? mockSectors : [];
 
     try {
       if (WP_GRAPHQL_URL) {
@@ -324,6 +660,7 @@ export const wpClient = {
               title
               excerpt
               content
+              contentEn
               titleEn
               summaryEn
               sectorIcon
@@ -335,30 +672,26 @@ export const wpClient = {
         const mapped = (data.sectors?.nodes ?? []).map((node) => ({
           id: node.databaseId ?? 0,
           slug: node.slug || node.uri || 'sector',
-          title: { ar: stripHtml(node.title), en: stripHtml(node.titleEn) || stripHtml(node.title) },
-          summary: { ar: stripHtml(node.excerpt), en: stripHtml(node.summaryEn) || stripHtml(node.excerpt) },
-          content: toLocalizedText(node.content),
+          title: { ar: stripHtml(node.title), en: stripHtml(node.titleEn) },
+          summary: { ar: stripHtml(node.excerpt), en: stripHtml(node.summaryEn) },
+          content: toLocalizedText(node.content, node.contentEn),
           icon: node.sectorIcon || 'building',
           image: pickImage(node),
           stats: [],
         } as Sector));
 
-        return mapped.length > 0 ? mapped : mockSectors;
+        return mapped;
       }
 
-      if (!WP_API_URL) return mockSectors;
-      const res = await fetchWithTimeout(`${WP_API_URL}/wp-json/alomar/v1/sectors`, {
-        next: { revalidate: 300 },
-      });
-      if (!res.ok) throw new Error('Failed to fetch sectors');
-      return await res.json();
-    } catch {
-      return mockSectors;
+      return [];
+    } catch (error) {
+      reportCMSIssue('getSectors', error);
+      return [];
     }
   },
 
   async getCompanies(): Promise<SubsidiaryCompany[]> {
-    if (!WP_GRAPHQL_URL && !WP_API_URL) return mockCompanies;
+    if (!WP_GRAPHQL_URL && !WP_API_URL) return PREVIEW_MODE ? mockCompanies : [];
 
     try {
       if (WP_GRAPHQL_URL) {
@@ -386,36 +719,32 @@ export const wpClient = {
         const mapped = (data.companies?.nodes ?? []).map((node) => ({
           id: node.databaseId ?? 0,
           slug: node.slug || node.uri || 'company',
-          name: { ar: stripHtml(node.title), en: stripHtml(node.nameEn) || stripHtml(node.title) },
+          name: { ar: stripHtml(node.title), en: stripHtml(node.nameEn) },
           tagline: {
-            ar: stripHtml(node.taglineAr) || stripHtml(node.excerpt),
-            en: stripHtml(node.taglineEn) || stripHtml(node.excerpt),
+            ar: stripHtml(node.taglineAr),
+            en: stripHtml(node.taglineEn),
           },
           description: {
             ar: stripHtml(node.content) || stripHtml(node.excerpt),
-            en: stripHtml(node.descriptionEn) || stripHtml(node.content) || stripHtml(node.excerpt),
+            en: stripHtml(node.descriptionEn),
           },
           logo: pickImage(node),
           website: node.companyWebsite || undefined,
           year: node.companyYear || undefined,
         } as SubsidiaryCompany));
 
-        return mapped.length > 0 ? mapped : mockCompanies;
+        return mapped;
       }
 
-      if (!WP_API_URL) return mockCompanies;
-      const res = await fetchWithTimeout(`${WP_API_URL}/wp-json/alomar/v1/companies`, {
-        next: { revalidate: 300 },
-      });
-      if (!res.ok) throw new Error('Failed to fetch companies');
-      return await res.json();
-    } catch {
-      return mockCompanies;
+      return [];
+    } catch (error) {
+      reportCMSIssue('getCompanies', error);
+      return [];
     }
   },
 
   async getTeam(): Promise<TeamMember[]> {
-    if (!WP_GRAPHQL_URL && !WP_API_URL) return mockTeam;
+    if (!WP_GRAPHQL_URL && !WP_API_URL) return PREVIEW_MODE ? mockTeam : [];
 
     try {
       if (WP_GRAPHQL_URL) {
@@ -442,36 +771,32 @@ export const wpClient = {
           id: node.databaseId ?? 0,
           name: {
             ar: stripHtml(node.title),
-            en: stripHtml(node.nameEn) || stripHtml(node.title),
+            en: stripHtml(node.nameEn),
           },
           role: {
-            ar: node.roleAr || 'مجلس الإدارة',
-            en: node.roleEn || 'Board Member',
+            ar: node.roleAr || '',
+            en: node.roleEn || '',
           },
           bio: {
             ar: stripHtml(node.content),
-            en: stripHtml(node.bioEn) || stripHtml(node.content),
+            en: stripHtml(node.bioEn),
           },
           image: pickImage(node),
           order: node.displayOrder ?? 0,
         } as TeamMember));
 
-        return mapped.length > 0 ? mapped : mockTeam;
+        return mapped;
       }
 
-      if (!WP_API_URL) return mockTeam;
-      const res = await fetchWithTimeout(`${WP_API_URL}/wp-json/alomar/v1/team`, {
-        next: { revalidate: 300 },
-      });
-      if (!res.ok) throw new Error('Failed to fetch team');
-      return await res.json();
-    } catch {
-      return mockTeam;
+      return [];
+    } catch (error) {
+      reportCMSIssue('getTeam', error);
+      return [];
     }
   },
 
   async getNews(): Promise<NewsArticle[]> {
-    if (!WP_GRAPHQL_URL && !WP_API_URL) return mockNews;
+    if (!WP_GRAPHQL_URL && !WP_API_URL) return PREVIEW_MODE ? mockNews : [];
 
     try {
       if (WP_GRAPHQL_URL) {
@@ -486,6 +811,13 @@ export const wpClient = {
               title
               excerpt
               content
+              titleEn
+              excerptEn
+              contentEn
+              newsCategoryAr
+              newsCategoryEn
+              readTimeAr
+              readTimeEn
               featuredImage { node { sourceUrl } }
             }
           }
@@ -494,52 +826,30 @@ export const wpClient = {
         const mapped = (data.posts?.nodes ?? []).filter((node) => node.slug !== 'hello-world').map((node) => ({
           id: node.databaseId ?? 0,
           slug: node.slug || node.uri || 'news-item',
-          title: toLocalizedText(node.title),
-          excerpt: toLocalizedText(node.excerpt),
-          content: toLocalizedText(node.content),
+          title: { ar: stripHtml(node.title), en: stripHtml(node.titleEn) },
+          excerpt: { ar: stripHtml(node.excerpt), en: stripHtml(node.excerptEn) },
+          content: { ar: node.content || '', en: node.contentEn || '' },
           image: pickImage(node),
           date: node.date ? new Date(node.date).toLocaleDateString('ar-SA', {
             day: 'numeric',
             month: 'long',
             year: 'numeric',
-          }) : mockNews[0]?.date || '1 يناير 2025',
-          category: { ar: 'أخبار المجموعة', en: 'Corporate News' },
-          read_time: '3 دقائق',
+          }) : '',
+          category: {
+            ar: node.newsCategoryAr || '',
+            en: node.newsCategoryEn || '',
+          },
+          read_time: node.readTimeAr || '',
+          read_time_en: node.readTimeEn || '',
         } as NewsArticle));
 
-        return mapped.length > 0 ? mapped : mockNews;
+        return mapped;
       }
 
-      if (!WP_API_URL) return mockNews;
-      const res = await fetchWithTimeout(`${WP_API_URL}/wp-json/wp/v2/posts?_embed&per_page=10`, {
-        next: { revalidate: 60 },
-      });
-      if (!res.ok) throw new Error('Failed to fetch news');
-      const posts = (await res.json()) as Array<{
-        id: number;
-        slug: string;
-        title: { rendered: string };
-        excerpt?: { rendered?: string };
-        content?: { rendered?: string };
-        date: string;
-        _embedded?: {
-          'wp:featuredmedia'?: Array<{ source_url?: string }>;
-        };
-      }>;
-
-      return posts.map((post) => ({
-        id: post.id,
-        slug: post.slug,
-        title: { ar: post.title.rendered, en: post.title.rendered },
-        excerpt: { ar: post.excerpt?.rendered?.replace(/<[^>]+>/g, '') || '', en: '' },
-        content: { ar: post.content?.rendered || '', en: '' },
-        image: post._embedded?.['wp:featuredmedia']?.[0]?.source_url || '/images/hero_riyadh.jpg',
-        date: new Date(post.date).toLocaleDateString('ar-SA', { day: 'numeric', month: 'long', year: 'numeric' }),
-        category: { ar: 'أخبار المجموعة', en: 'Corporate News' },
-        read_time: '3 دقائق',
-      }));
-    } catch {
-      return mockNews;
+      return [];
+    } catch (error) {
+      reportCMSIssue('getNews', error);
+      return [];
     }
   },
 
