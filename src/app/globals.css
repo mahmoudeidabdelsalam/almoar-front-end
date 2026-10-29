@@ -142,6 +142,11 @@ img, video { max-inline-size: 100%; }
   background: #D4AF37;
 }
 
+@keyframes menuImageIn {
+  from { transform: scale(1.035); opacity: 0.4; }
+  to { transform: scale(1); opacity: 1; }
+}
+
 /* Selection Color */
 ::selection {
   background: #B7913D;

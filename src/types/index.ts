@@ -111,9 +111,61 @@ export interface VisionSectionContent {
   ctaUrl: string;
 }
 
+export interface FooterLink {
+  label: LocalizedString;
+  url: string;
+  icon?: string;
+}
+
+export interface FooterColumn {
+  title: LocalizedString;
+  links: FooterLink[];
+}
+
 export interface FooterContent {
   companyDescription: LocalizedString;
   visionBadge: LocalizedString;
+  logo: string;
+  logoAlt: string;
+  columns: FooterColumn[];
+  newsletterTitle: LocalizedString;
+  newsletterDescription: LocalizedString;
+  newsletterPlaceholder: LocalizedString;
+  newsletterButton: LocalizedString;
+  copyright: LocalizedString;
+  socialLinks: Array<{ platform: string; url: string }>;
+}
+
+export interface HeaderMenuItem {
+  label: LocalizedString;
+  url: string;
+  image: string;
+  children: HeaderMenuItem[];
+  category?: LocalizedString;
+}
+
+export interface HeaderContent {
+  logo: string;
+  logo_en: string;
+  menu: HeaderMenuItem[];
+  cta_label: LocalizedString;
+  cta_url: string;
+}
+
+export interface ContactPageContent {
+  badge: LocalizedString;
+  title: LocalizedString;
+  description: LocalizedString;
+  bannerImage: string;
+  heading: LocalizedString;
+  email: string;
+  phone: string;
+  address: LocalizedString;
+  workingHours: LocalizedString;
+  coordinates: { lat: number; lng: number };
+  linkedinUrl: string;
+  twitterUrl: string;
+  formTitle: LocalizedString;
 }
 
 export interface SiteContent {
@@ -196,6 +248,35 @@ export interface NewsArticle {
   category: LocalizedString;
   read_time: string;
   read_time_en?: string;
+}
+
+export interface InvestmentArticle {
+  id: number;
+  slug: string;
+  title: LocalizedString;
+  summary: LocalizedString;
+  description: LocalizedString;
+  image: string;
+  gallery?: string[];
+  location: LocalizedString;
+  status: LocalizedString;
+  website?: string;
+  statistics?: Array<{ label: LocalizedString; value: string }>;
+}
+
+export interface MediaCenterItem {
+  id: number;
+  slug: string;
+  title: LocalizedString;
+  summary: LocalizedString;
+  content: LocalizedString;
+  image: string;
+  date: string;
+  mediaType: string;
+  videoUrl?: string;
+  documentUrl?: string;
+  externalUrl?: string;
+  gallery?: string[];
 }
 
 export interface ContactFormPayload {

@@ -4,12 +4,23 @@ import React, { useState } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 import { submitContact } from '@/lib/wordpress/contact';
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle2, AlertCircle } from 'lucide-react';
-import type { Sector } from '@/types';
+import type { ContactPageContent, Sector } from '@/types';
 
-export const ContactSection: React.FC<{ sectors?: Sector[] }> = ({ sectors = [] }) => {
+export const ContactSection: React.FC<{ sectors?: Sector[]; pageContent?: ContactPageContent | null }> = ({ sectors = [], pageContent = null }) => {
   const { locale, t, content } = useLanguage();
-  const copy = content.sectionCopy.contact;
-  const contact = content.settings.contact;
+  const address = {
+    ar: pageContent?.address.ar || '',
+    en: pageContent?.address.en || '',
+  };
+  const email = pageContent?.email || '';
+  const phone = pageContent?.phone || '';
+  const workingHours = {
+    ar: pageContent?.workingHours.ar || '',
+    en: pageContent?.workingHours.en || '',
+  };
+  const coordinates = pageContent?.coordinates.lat || pageContent?.coordinates.lng
+    ? pageContent.coordinates
+    : { lat: 0, lng: 0 };
   const [formData, setFormData] = useState({
     full_name: '',
     email: '',
@@ -24,7 +35,7 @@ export const ContactSection: React.FC<{ sectors?: Sector[] }> = ({ sectors = [] 
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [generalError, setGeneralError] = useState<string | null>(null);
 
-  if (!copy?.title[locale] && !content.previewMode && !contact.email && !contact.phone) return null;
+  if (!pageContent?.title[locale] && !content.previewMode && !email && !phone) return null;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -75,15 +86,15 @@ export const ContactSection: React.FC<{ sectors?: Sector[] }> = ({ sectors = [] 
         <div className="text-center max-w-3xl mx-auto space-y-4 mb-16">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#101E39]/5 border border-[#101E39]/10 text-xs font-bold text-[#101E39]">
             <span className="w-1.5 h-1.5 rounded-full bg-[#B7913D]" />
-            <span>{copy?.badge[locale] || (content.previewMode ? t.contact_section.badge : '')}</span>
+            <span>{pageContent?.badge[locale] || (content.previewMode ? t.contact_section.badge : '')}</span>
           </div>
 
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#101E39] tracking-tight">
-            {copy?.title[locale] || (content.previewMode ? t.contact_section.title : '')}
+            {pageContent?.title[locale] || (content.previewMode ? t.contact_section.title : '')}
           </h2>
 
           <p className="text-base sm:text-lg text-[#5A677B]">
-            {copy?.description[locale] || (content.previewMode ? t.contact_section.subtitle : '')}
+            {pageContent?.description[locale] || (content.previewMode ? t.contact_section.subtitle : '')}
           </p>
         </div>
 
@@ -97,7 +108,9 @@ export const ContactSection: React.FC<{ sectors?: Sector[] }> = ({ sectors = [] 
                 {t.contact_section.hq_title}
               </span>
               <h3 className="text-2xl font-bold">
-                {locale === 'ar' ? `${content.settings.site_name.ar} — المركز الرئيسي` : `${content.settings.site_name.en} HQ`}
+                {pageContent?.heading[locale] || (locale === 'ar'
+                  ? `${content.settings.site_name.ar} — المركز الرئيسي`
+                  : `${content.settings.site_name.en} HQ`)}
               </h3>
               {content.previewMode && <p className="text-white/70 text-sm leading-relaxed">
                 {locale === 'ar'
@@ -107,7 +120,7 @@ export const ContactSection: React.FC<{ sectors?: Sector[] }> = ({ sectors = [] 
             </div>
 
             <div className="space-y-5 text-sm relative z-10">
-              {(contact.address_ar || contact.address_en) && (
+              {(address.ar || address.en) && (
                 <div className="flex items-start gap-4">
                   <div className="p-2.5 rounded-xl bg-white/10 text-[#B7913D] flex-shrink-0 mt-1">
                     <MapPin className="w-5 h-5" />
@@ -117,38 +130,38 @@ export const ContactSection: React.FC<{ sectors?: Sector[] }> = ({ sectors = [] 
                       {locale === 'ar' ? 'العنوان' : 'Address'}
                     </span>
                     <span className="text-white font-medium leading-relaxed block mt-0.5">
-                      {locale === 'ar' ? contact.address_ar : contact.address_en}
+                      {locale === 'ar' ? address.ar : address.en}
                     </span>
                   </div>
                 </div>
               )}
-              {contact.phone && (
+              {phone && (
                 <div className="flex items-start gap-4">
                   <div className="p-2.5 rounded-xl bg-white/10 text-[#B7913D] flex-shrink-0 mt-1">
                     <Phone className="w-5 h-5" />
                   </div>
                   <div>
                     <span className="text-xs text-white/50 block font-semibold">{t.contact_section.phone}</span>
-                    <a href={`tel:${contact.phone.replace(/[^\d+]/g, '')}`} dir="ltr" className="text-white font-medium hover:text-[#B7913D] transition-colors block mt-0.5">
-                      {contact.phone}
+                    <a href={`tel:${phone.replace(/[^\d+]/g, '')}`} dir="ltr" className="text-white font-medium hover:text-[#B7913D] transition-colors block mt-0.5">
+                      {phone}
                     </a>
                   </div>
                 </div>
               )}
-              {contact.email && (
+              {email && (
                 <div className="flex items-start gap-4">
                   <div className="p-2.5 rounded-xl bg-white/10 text-[#B7913D] flex-shrink-0 mt-1">
                     <Mail className="w-5 h-5" />
                   </div>
                   <div>
                     <span className="text-xs text-white/50 block font-semibold">{t.contact_section.email}</span>
-                    <a href={`mailto:${contact.email}`} className="text-white font-medium hover:text-[#B7913D] transition-colors block mt-0.5">
-                      {contact.email}
+                    <a href={`mailto:${email}`} className="text-white font-medium hover:text-[#B7913D] transition-colors block mt-0.5">
+                      {email}
                     </a>
                   </div>
                 </div>
               )}
-              {(contact.working_hours_ar || contact.working_hours_en) && (
+              {(workingHours.ar || workingHours.en) && (
                 <div className="flex items-start gap-4">
                   <div className="p-2.5 rounded-xl bg-white/10 text-[#B7913D] flex-shrink-0 mt-1">
                     <Clock className="w-5 h-5" />
@@ -156,7 +169,7 @@ export const ContactSection: React.FC<{ sectors?: Sector[] }> = ({ sectors = [] 
                   <div>
                     <span className="text-xs text-white/50 block font-semibold">{t.contact_section.hours}</span>
                     <span className="text-white font-medium block mt-0.5">
-                      {locale === 'ar' ? contact.working_hours_ar : contact.working_hours_en}
+                      {locale === 'ar' ? workingHours.ar : workingHours.en}
                     </span>
                   </div>
                 </div>
@@ -164,11 +177,11 @@ export const ContactSection: React.FC<{ sectors?: Sector[] }> = ({ sectors = [] 
             </div>
 
             {/* Quick Map Coordinates Box */}
-            {contact.coordinates.lat !== 0 && contact.coordinates.lng !== 0 && <div className="p-4 rounded-2xl bg-white/5 border border-white/10 text-xs text-white/70">
+            {coordinates.lat !== 0 && coordinates.lng !== 0 && <div className="p-4 rounded-2xl bg-white/5 border border-white/10 text-xs text-white/70">
               <span className="text-[#B7913D] font-bold block mb-1">
                 {locale === 'ar' ? 'إحداثيات الموقع الجغرافي:' : 'GPS Coordinates:'}
               </span>
-              <span>{contact.coordinates.lat}° N, {contact.coordinates.lng}° E — {contact.address_ar}</span>
+              <span>{coordinates.lat}° N, {coordinates.lng}° E — {address.ar}</span>
             </div>}
           </div>
 
@@ -193,6 +206,9 @@ export const ContactSection: React.FC<{ sectors?: Sector[] }> = ({ sectors = [] 
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-6">
+                {pageContent?.formTitle[locale] && (
+                  <h3 className="text-xl font-bold text-[#101E39]">{pageContent.formTitle[locale]}</h3>
+                )}
                 {generalError && (
                   <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm flex items-center gap-3">
                     <AlertCircle className="w-5 h-5 flex-shrink-0" />

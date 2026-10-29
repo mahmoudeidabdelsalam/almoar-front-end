@@ -1,11 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
 import { NewsArticle } from '@/types';
-import { Calendar, Clock, ArrowRight, ArrowLeft } from 'lucide-react';
+import { ArrowRight, ArrowLeft } from 'lucide-react';
 
 interface NewsProps {
   articles: NewsArticle[];
@@ -16,12 +16,20 @@ export const NewsSection: React.FC<NewsProps> = ({ articles }) => {
   const copy = content.sectionCopy.news;
   const localizedArticles = articles.filter((article) => article.title[locale]);
   const ArrowIcon = dir === 'rtl' ? ArrowLeft : ArrowRight;
+  const [start, setStart] = useState(0);
   if (!localizedArticles.length && !content.previewMode) return null;
+  if (!localizedArticles.length) return null;
+
+  const visibleArticles = localizedArticles.length > 1
+    ? [localizedArticles[start % localizedArticles.length], localizedArticles[(start + 1) % localizedArticles.length]]
+    : localizedArticles;
+  const previous = () => setStart((value) => (value - 1 + localizedArticles.length) % localizedArticles.length);
+  const next = () => setStart((value) => (value + 1) % localizedArticles.length);
 
   return (
-    <section className="py-20 lg:py-28 bg-white relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 lg:mb-16 gap-6">
+    <section className="bg-white py-20 lg:h-[796px] lg:py-[112px]">
+      <div className="mx-auto max-w-[1216px] px-5 sm:px-8 lg:px-0">
+        <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <div className="space-y-3 max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#101E39]/5 border border-[#101E39]/10 text-xs font-bold text-[#101E39]">
               <span className="w-1.5 h-1.5 rounded-full bg-[#B7913D]" />
@@ -44,68 +52,45 @@ export const NewsSection: React.FC<NewsProps> = ({ articles }) => {
           </Link>
         </div>
 
-        {/* Articles Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {localizedArticles.map((article) => (
-            <article
-              key={article.id}
-              className="bg-[#F8F9F4] rounded-2xl overflow-hidden border border-[#101E39]/10 shadow-sm luxury-card flex flex-col justify-between group"
-            >
-              <div>
-                <div className="relative h-56 overflow-hidden">
-                  {article.image ? (
-                    <Image
-                      src={article.image}
-                      alt={locale === 'ar' ? article.title.ar : article.title.en}
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#101E39] to-[#1B4332]" aria-hidden="true" />
+        <div className="mt-12 grid gap-8 lg:grid-cols-[120px_1fr]">
+          <div className="flex items-start gap-3 lg:flex-col">
+            <button type="button" onClick={next} className="flex h-12 w-12 items-center justify-center rounded-full border border-[#101E39]/20 text-[#101E39] hover:bg-[#101E39] hover:text-white" aria-label={locale === 'ar' ? 'الأخبار التالية' : 'Next news'}>
+              <ArrowIcon className="h-4 w-4" />
+            </button>
+            <button type="button" onClick={previous} className="flex h-12 w-12 items-center justify-center rounded-full border border-[#101E39]/20 text-[#101E39] hover:bg-[#101E39] hover:text-white" aria-label={locale === 'ar' ? 'الأخبار السابقة' : 'Previous news'}>
+              <ArrowIcon className="h-4 w-4 rotate-180" />
+            </button>
+            <span className="hidden text-xl font-bold text-[#101E39] lg:block">
+              {String(start + 1).padStart(2, '0')} <span className="text-sm text-[#5A677B]">/ {String(localizedArticles.length).padStart(2, '0')}</span>
+            </span>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2">
+            {visibleArticles.map((article) => (
+              <article key={article.id} className="group">
+                <Link href={`/news/${article.slug}`} className="relative block h-[300px] overflow-hidden rounded-sm bg-[#F1F3EB]">
+                  {article.image && (
+                    <Image src={article.image} alt={locale === 'ar' ? article.title.ar : article.title.en} fill className="object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
                   )}
-                  <div className="absolute top-4 right-4">
-                    <span className="px-3 py-1 rounded-full text-xs font-bold text-white bg-[#101E39]/80 backdrop-blur-md">
-                      {locale === 'ar' ? article.category.ar : article.category.en}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="p-6 space-y-3">
-                  <div className="flex items-center gap-4 text-xs text-[#5A677B]">
-                    <span className="flex items-center gap-1.5">
-                      <Calendar className="w-3.5 h-3.5 text-[#B7913D]" />
-                      <span>{article.date}</span>
-                    </span>
-                    <span>•</span>
-                    <span className="flex items-center gap-1.5">
-                      <Clock className="w-3.5 h-3.5 text-[#B7913D]" />
-                      <span>{locale === 'ar' ? article.read_time : article.read_time_en || article.read_time}</span>
-                    </span>
-                  </div>
-
-                  <h3 className="text-lg font-bold text-[#101E39] group-hover:text-[#B7913D] transition-colors line-clamp-2 leading-snug">
-                    <Link href={`/news/${article.slug}`}>
-                      {locale === 'ar' ? article.title.ar : article.title.en}
-                    </Link>
-                  </h3>
-
-                  <p className="text-sm text-[#5A677B] leading-relaxed line-clamp-2">
-                    {locale === 'ar' ? article.excerpt.ar : article.excerpt.en}
-                  </p>
-                </div>
-              </div>
-
-              <div className="p-6 pt-0">
-                <Link
-                  href={`/news/${article.slug}`}
-                  className="inline-flex items-center gap-2 text-xs font-bold text-[#101E39] hover:text-[#B7913D] transition-colors"
-                >
-                  <span>{t.news_section.read_more}</span>
-                  <ArrowIcon className="w-3.5 h-3.5" />
                 </Link>
-              </div>
-            </article>
-          ))}
+                <p className="mt-3 text-xs font-semibold text-[#B7913D]">
+                  {locale === 'ar' ? article.category.ar : article.category.en}
+                </p>
+                <h3 className="mt-2 line-clamp-2 min-h-14 text-lg font-bold leading-7 text-[#101E39]">
+                  <Link href={`/news/${article.slug}`}>
+                    {locale === 'ar' ? article.title.ar : article.title.en}
+                  </Link>
+                </h3>
+                <div className="mt-4 flex items-center justify-between text-xs text-[#5A677B]">
+                  <Link href={`/news/${article.slug}`} className="inline-flex items-center gap-2 font-bold text-[#101E39]">
+                    <ArrowIcon className="h-4 w-4" />
+                    <span>{t.news_section.read_more}</span>
+                  </Link>
+                  <span>{article.date}</span>
+                </div>
+              </article>
+            ))}
+          </div>
         </div>
       </div>
     </section>

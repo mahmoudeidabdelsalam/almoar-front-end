@@ -1,209 +1,119 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
-import { ChevronRight, ChevronLeft, ArrowRight, ArrowLeft } from 'lucide-react';
 import type { HeroSlide } from '@/types';
 
-const defaultSlides: HeroSlide[] = [
+const previewSlides: HeroSlide[] = [
   {
     id: 1,
     image: '/images/hero_riyadh.jpg',
-    badge_ar: 'العمر القابضة — الرياض',
-    badge_en: 'Alomar Holding — Riyadh',
-    title_ar: 'استثمار برؤية أوسع',
-    title_en: 'Investment with a Broader Vision',
-    desc_ar: 'نصنع قيمة اقتصادية مستدامة ونبني مجتمعات عصرية رائدة تواكب مستهدفات رؤية المملكة 2030 من خلال استثمارات نوعية وشراكات استراتيجية متكاملة.',
-    desc_en: 'Pioneering institutional excellence and master-planned urban communities advancing Saudi Vision 2030 through strategic real estate and venture investments.',
-    primary_link: '/sectors',
+    badge_ar: 'نبذة عن',
+    badge_en: 'About Us',
+    title_ar: 'العمر القابضة',
+    title_en: 'Alomar Holding',
+    desc_ar: 'استثمار برؤية أوسع، نقود الفرص نحو مستقبل أكثر تطورًا.',
+    desc_en: 'Investment with a broader vision, creating opportunities for a more developed future.',
+    primary_link: '/about',
     secondary_link: '/projects',
   },
   {
     id: 2,
     image: '/images/project_dama_lazurd.jpg',
-    badge_ar: 'مشاريع سكنية استثنائية — داما',
-    badge_en: 'Flagship Residential Living — Dama',
+    badge_ar: 'مشاريعنا',
+    badge_en: 'Our Projects',
     title_ar: 'مجتمعات تصنع جودة الحياة',
-    title_en: 'Communities Inspiring Quality of Life',
-    desc_ar: 'نطور وجهات سكنية متكاملة كـ "داما لازورد" بالخبر والخيّالة بجدة لترسيخ معايير الرفاهية والابتكار المعماري المستدام.',
-    desc_en: 'Developing integrated living destinations such as Dama Lazurd in Khobar and Al-Khayala in Jeddah, elevating contemporary Saudi living standards.',
+    title_en: 'Communities that inspire quality of life',
+    desc_ar: 'نطور وجهات سكنية متكاملة تواكب مستهدفات رؤية المملكة 2030.',
+    desc_en: 'We develop integrated destinations aligned with Saudi Vision 2030.',
     primary_link: '/projects',
     secondary_link: '/contact',
   },
   {
     id: 3,
     image: '/images/project_commercial.jpg',
-    badge_ar: 'الأصول والتطوير التجاري',
-    badge_en: 'Commercial & Mixed-Use Assets',
+    badge_ar: 'استثماراتنا',
+    badge_en: 'Our Investments',
     title_ar: 'بنية أعمال تحتضن المستقبل',
-    title_en: 'Infrastructure Empowering Tomorrow',
-    desc_ar: 'أبراج ومجمعات أعمال ذكية توفر مقرات حيوية تواكب النهضة الاستثمارية الكبرى في المملكة.',
-    desc_en: 'Smart commercial towers and business hubs designed for leading enterprises driving national and regional transformation.',
+    title_en: 'Business infrastructure for tomorrow',
+    desc_ar: 'أصول ومجمعات ذكية تدعم نمو القطاعات الوطنية والاستثمارية.',
+    desc_en: 'Smart assets and developments supporting national economic growth.',
     primary_link: '/companies',
     secondary_link: '/contact',
   },
 ];
 
-export const HeroSlider: React.FC<{ slides?: HeroSlide[] }> = ({ slides: contentSlides }) => {
-  const { locale, dir, t, content } = useLanguage();
-  const slides = contentSlides?.length
-    ? contentSlides
-    : content.heroSlides.length
-      ? content.heroSlides
-      : content.previewMode ? defaultSlides : [];
+export const HeroSlider: React.FC<{ slides?: HeroSlide[] }> = ({ slides: cmsSlides }) => {
+  const { locale, dir, content } = useLanguage();
+  const slides = cmsSlides?.length ? cmsSlides : content.previewMode ? previewSlides : [];
   const [current, setCurrent] = useState(0);
 
   useEffect(() => {
-    if (!slides.length) return;
-    const timer = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % slides.length);
-    }, 6500);
-    return () => clearInterval(timer);
+    if (slides.length < 2) return;
+    const timer = window.setInterval(() => setCurrent((value) => (value + 1) % slides.length), 6500);
+    return () => window.clearInterval(timer);
   }, [slides.length]);
 
-  const nextSlide = () => setCurrent((prev) => (prev + 1) % slides.length);
-  const prevSlide = () => setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
-
   if (!slides.length) return null;
-  const activeSlide = slides[current] || slides[0];
-  const NextIcon = dir === 'rtl' ? ChevronLeft : ChevronRight;
-  const PrevIcon = dir === 'rtl' ? ChevronRight : ChevronLeft;
+
+  const active = slides[current] || slides[0];
   const ArrowIcon = dir === 'rtl' ? ArrowLeft : ArrowRight;
 
   return (
-    <section className="relative min-h-[90vh] lg:min-h-screen flex items-center bg-[#101E39] text-white pt-24 pb-16 overflow-hidden">
-      {/* Background Images with Crossfade */}
+    <section className="relative h-[720px] overflow-hidden bg-[#101E39] text-white lg:h-[900px]" aria-label="Homepage hero">
       {slides.map((slide, index) => (
         <div
           key={slide.id}
-          className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-            index === current ? 'opacity-35 scale-100' : 'opacity-0 scale-105 pointer-events-none'
-          }`}
-          style={{ transitionProperty: 'opacity, transform' }}
+          className={`absolute inset-0 transition-opacity duration-1000 ${index === current ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+          aria-hidden={index !== current}
         >
-          <Image
-            src={slide.image}
-            alt={locale === 'ar' ? slide.title_ar : slide.title_en}
-            fill
-            className="object-cover object-center"
-            priority={index === 0}
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#101E39] via-[#101E39]/80 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#101E39] via-[#101E39]/70 to-transparent" />
+          <Image src={slide.image} alt={locale === 'ar' ? slide.title_ar : slide.title_en} fill priority={index === 0} className="object-cover object-center" />
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(6,13,26,0.78)_0%,rgba(16,30,57,0.18)_58%,rgba(16,30,57,0.08)_100%)]" />
+          <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-[#101E39]/85 to-transparent" />
         </div>
       ))}
 
-      {/* Decorative Gold & Navy Glow */}
-      <div className="absolute top-1/4 -right-20 w-96 h-96 bg-[#B7913D]/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 left-10 w-80 h-80 bg-[#1B4332]/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute left-5 top-1/2 z-20 hidden -translate-y-1/2 flex-col gap-3 lg:left-[72px] lg:flex">
+        {slides.map((slide, index) => (
+          <button
+            key={slide.id}
+            type="button"
+            onClick={() => setCurrent(index)}
+            className={`flex h-10 w-10 items-center justify-center rounded-full border text-xs transition-colors ${
+              index === current ? 'border-white bg-[#B7913D] text-white' : 'border-white/35 text-white/70 hover:border-white'
+            }`}
+            aria-label={`${locale === 'ar' ? 'عرض الشريحة' : 'Show slide'} ${index + 1}`}
+          >
+            {index + 1}
+          </button>
+        ))}
+      </div>
 
-      {/* Content Container */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-12 lg:py-20">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          {/* Main Typography & CTAs */}
-          <div className="lg:col-span-8 space-y-6 lg:space-y-8 animate-in fade-in duration-700">
-            {/* Top Badge */}
-            <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/15">
-              <span className="w-2 h-2 rounded-full bg-[#B7913D] animate-ping" />
-              <span className="text-xs md:text-sm font-semibold tracking-wider text-[#B7913D]">
-                {locale === 'ar' ? activeSlide.badge_ar : activeSlide.badge_en}
-              </span>
-            </div>
-
-            {/* Headline */}
-            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight text-white leading-[1.15]">
-              {locale === 'ar' ? activeSlide.title_ar : activeSlide.title_en}
-            </h1>
-
-            {/* Description */}
-            <p className="text-base sm:text-lg lg:text-xl text-white/80 max-w-2xl leading-relaxed">
-              {locale === 'ar' ? activeSlide.desc_ar : activeSlide.desc_en}
-            </p>
-
-            {/* Action Buttons */}
-            <div className="flex flex-wrap items-center gap-4 pt-2">
-              <Link
-                href={activeSlide.primary_link}
-                className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-full text-sm md:text-base font-bold text-[#101E39] gold-gradient-bg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95"
-              >
-                <span>{t.hero.cta_sectors}</span>
-                <ArrowIcon className="w-4 h-4" />
-              </Link>
-
-              <Link
-                href={activeSlide.secondary_link}
-                className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-full text-sm md:text-base font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-md transition-all duration-300 hover:scale-105"
-              >
-                <span>{t.hero.cta_projects}</span>
-              </Link>
-            </div>
-          </div>
-
-          {/* Right Side: Visual Card Preview */}
-          <div className="lg:col-span-4 hidden lg:block">
-            <div className="relative rounded-2xl overflow-hidden border border-white/20 shadow-2xl p-6 bg-gradient-to-b from-white/15 to-white/5 backdrop-blur-xl">
-              <div className="relative h-56 rounded-xl overflow-hidden mb-5">
-                <Image
-                  src={activeSlide.image}
-                  alt="Slide preview"
-                  fill
-                  className="object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                <span className="absolute bottom-3 right-3 text-xs font-bold text-white bg-[#B7913D] px-2.5 py-1 rounded-md">
-                  0{activeSlide.id} / 0{slides.length}
-                </span>
-              </div>
-
-              <div className="space-y-2">
-                <h2 className="text-white font-bold text-lg">
-                  {locale === 'ar' ? activeSlide.title_ar : activeSlide.title_en}
-                </h2>
-                <p className="text-white/70 text-xs line-clamp-2 leading-relaxed">
-                  {locale === 'ar' ? activeSlide.desc_ar : activeSlide.desc_en}
-                </p>
-              </div>
-
-              {/* Slider Controls */}
-              <div className="flex items-center justify-between pt-5 mt-4 border-t border-white/10">
-                <div className="flex items-center gap-1.5">
-                  {slides.map((_, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => setCurrent(idx)}
-                      className={`h-1.5 rounded-full transition-all duration-300 ${
-                        idx === current ? 'w-8 bg-[#B7913D]' : 'w-2 bg-white/30'
-                      }`}
-                      aria-label={`Go to slide ${idx + 1}`}
-                    />
-                  ))}
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={prevSlide}
-                    className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
-                    aria-label="Previous Slide"
-                  >
-                    <PrevIcon className="w-4 h-4" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={nextSlide}
-                    className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
-                    aria-label="Next Slide"
-                  >
-                    <NextIcon className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+      <div className="relative z-10 mx-auto flex h-full max-w-[1216px] items-center px-5 sm:px-8 lg:px-0">
+        <div className={`w-full max-w-[680px] space-y-6 ${dir === 'rtl' ? 'mr-auto text-right' : 'ml-auto text-left'}`}>
+          <p className="text-sm font-bold text-[#D4AF37]">{locale === 'ar' ? active.badge_ar : active.badge_en}</p>
+          <h1 className="text-5xl font-bold leading-[1.05] sm:text-6xl lg:text-7xl">
+            {locale === 'ar' ? active.title_ar : active.title_en}
+          </h1>
+          <p className="max-w-[520px] text-base leading-8 text-white/85 sm:text-lg lg:ml-auto">
+            {locale === 'ar' ? active.desc_ar : active.desc_en}
+          </p>
+          <Link
+            href={active.primary_link}
+            className="inline-flex h-[54px] items-center gap-3 rounded-sm bg-[#C5A265] px-7 text-sm font-bold text-[#101E39] transition-colors hover:bg-white"
+          >
+            <span>{locale === 'ar' ? 'اكتشف' : 'Discover'}</span>
+            <ArrowIcon className="h-4 w-4" />
+          </Link>
         </div>
+      </div>
+
+      <div className="absolute bottom-20 left-5 z-20 hidden items-center gap-3 text-xs text-white/75 lg:left-[72px] lg:flex">
+        <span>{locale === 'ar' ? 'مرّر للأسفل لاستكشاف المزيد' : 'Scroll to explore more'}</span>
+        <span className="h-8 w-5 rounded-full border border-white/50" />
       </div>
     </section>
   );

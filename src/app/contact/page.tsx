@@ -16,6 +16,7 @@ export function generateMetadata(): Promise<Metadata> {
 
 export default async function ContactPage() {
   const { sectors } = await wpClient.getSiteContent();
+  const pageContent = await wpClient.getContactPageContent();
 
   return (
     <>
@@ -23,15 +24,16 @@ export default async function ContactPage() {
       <main className="flex-1 bg-[#F8F9F4] pt-24">
         <PageBanner
           pageKey="contact"
-          imageFallback="/images/hero_riyadh.jpg"
+          imageFallback={pageContent?.bannerImage || "/images/hero_riyadh.jpg"}
           imageAlt="Contact Alomar Holding"
-          badgeFallback="قنوات التواصل المباشر"
-          titleFallback="تواصل مع العمر القابضة"
-          descriptionFallback="يسعدنا استقبال استفساراتكم ومناقشة الفرص الاستثمارية والشراكات الاستراتيجية."
+          badgeFallback={pageContent?.badge.ar || "قنوات التواصل المباشر"}
+          titleFallback={pageContent?.title.ar || "تواصل مع العمر القابضة"}
+          descriptionFallback={pageContent?.description.ar || "يسعدنا استقبال استفساراتكم ومناقشة الفرص الاستثمارية والشراكات الاستراتيجية."}
+          contactContent={pageContent}
         />
 
         {/* Full Form & Headquarters Details */}
-        <ContactSection sectors={sectors} />
+        <ContactSection sectors={sectors} pageContent={pageContent} />
       </main>
       <Footer />
     </>

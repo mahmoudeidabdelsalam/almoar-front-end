@@ -1,43 +1,49 @@
 import React from 'react';
 import { Header } from '@/components/navigation/Header';
 import { Footer } from '@/components/navigation/Footer';
-import { SplashIntro } from '@/components/ui/SplashIntro';
 import { HeroSlider } from '@/components/sections/HeroSlider';
-import { StatsSection } from '@/components/sections/StatsSection';
-import { AboutSection } from '@/components/sections/AboutSection';
-import { SectorsSection } from '@/components/sections/SectorsSection';
-import { ProjectsSection } from '@/components/sections/ProjectsSection';
-import { Vision2030Banner } from '@/components/sections/Vision2030Banner';
 import { CompaniesSection } from '@/components/sections/CompaniesSection';
-import { LeadershipSection } from '@/components/sections/LeadershipSection';
 import { NewsSection } from '@/components/sections/NewsSection';
-import { ContactSection } from '@/components/sections/ContactSection';
+import { ApproachSection } from '@/components/sections/ApproachSection';
 import { wpClient } from '@/lib/wordpress/client';
+import { Suspense } from 'react';
 
+function HomeLoading() {
+  return (
+    <div className="min-h-[70vh]" aria-label="Loading homepage content">
+      <div className="mx-auto max-w-[1440px] px-6 py-24">
+        <div className="h-[420px] animate-pulse rounded-[2rem] bg-[#101E39]/5" />
+      </div>
+    </div>
+  );
+}
 
-export default async function HomePage() {
-  const [siteContent, projects, team, news] = await Promise.all([
+async function HomeContent() {
+  const [siteContent, news, projects] = await Promise.all([
     wpClient.getSiteContent(),
-    wpClient.getProjects('all'),
-    wpClient.getTeam(),
     wpClient.getNews(),
+    wpClient.getProjects('all'),
   ]);
 
   return (
     <>
-      <SplashIntro />
+      <HeroSlider slides={siteContent.heroSlides} />
+      <CompaniesSection projects={projects} />
+      <ApproachSection />
+      <NewsSection articles={news} />
+    </>
+  );
+}
+
+
+export default async function HomePage() {
+  return (
+    <>
       <Header />
       <main className="flex-1">
-        <HeroSlider slides={siteContent.heroSlides} />
-        <StatsSection stats={siteContent.settings.statistics} />
-        <AboutSection />
-        <SectorsSection sectors={siteContent.sectors} />
-        <ProjectsSection projects={projects} />
-        <Vision2030Banner />
-        <CompaniesSection companies={siteContent.companies} />
-        <LeadershipSection members={team} />
-        <NewsSection articles={news} />
-        <ContactSection sectors={siteContent.sectors} />
+        <Suspense fallback={<HomeLoading />}>
+          <HomeContent />
+        </Suspense>
       </main>
       <Footer />
     </>

@@ -1,6 +1,6 @@
 import type { ContactFormPayload } from '@/types';
 
-const WP_API_URL = process.env.NEXT_PUBLIC_WORDPRESS_API_URL || process.env.WORDPRESS_API_URL || '';
+const WP_GRAPHQL_URL = process.env.NEXT_PUBLIC_WORDPRESS_GRAPHQL_URL || process.env.WORDPRESS_GRAPHQL_URL || '';
 
 export async function submitContact(payload: ContactFormPayload): Promise<{ success: boolean; message: string; errors?: Record<string, string> }> {
   const errors: Record<string, string> = {};
@@ -22,7 +22,7 @@ export async function submitContact(payload: ContactFormPayload): Promise<{ succ
     };
   }
 
-  if (!WP_API_URL) {
+  if (!WP_GRAPHQL_URL) {
     return {
       success: false,
       message: 'تعذر إرسال الرسالة حالياً. يرجى المحاولة لاحقاً أو التواصل معنا مباشرة.',
@@ -31,26 +31,44 @@ export async function submitContact(payload: ContactFormPayload): Promise<{ succ
 
   try {
     const lang = payload.lang || (typeof document !== 'undefined' && document.documentElement.lang === 'en' ? 'en' : 'ar');
-    const res = await fetch(`${WP_API_URL}/wp-json/alomar/v1/contact`, {
+    const res = await fetch(WP_GRAPHQL_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        ...payload,
-        lang,
-        website: payload.website || '',
+        query: `mutation SubmitAlomarContact($input: SubmitAlomarContactInput!) {
+          submitAlomarContact(input: $input) {
+            success
+            message
+            inquiryId
+          }
+        }`,
+        variables: {
+          input: {
+            fullName: payload.full_name,
+            email: payload.email,
+            phone: payload.phone || '',
+            subject: payload.subject || '',
+            message: payload.message,
+            lang,
+            website: payload.website || '',
+          },
+        },
       }),
     });
-    const data = await res.json();
-    if (!res.ok) {
+    const body = await res.json() as {
+      data?: { submitAlomarContact?: { success?: boolean; message?: string; inquiryId?: number | null } };
+      errors?: Array<{ message?: string }>;
+    };
+    if (!res.ok || body.errors?.length) {
       return {
         success: false,
-        message: data.message || 'حدث خطأ أثناء إرسال الرسالة.',
-        errors: data.errors,
+        message: body.errors?.[0]?.message || 'حدث خطأ أثناء إرسال الرسالة.',
       };
     }
+    const data = body.data?.submitAlomarContact;
     return {
-      success: true,
-      message: data.message || 'تم استلام رسالتكم بنجاح.',
+      success: data?.success === true,
+      message: data?.message || 'تم استلام رسالتكم بنجاح.',
     };
   } catch (error) {
     console.error('[WordPress CMS] Contact submission failed.', error);

@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import { Suspense } from 'react';
 import { Cairo, IBM_Plex_Sans_Arabic, Playfair_Display, Inter } from 'next/font/google';
 import './globals.css';
 import { LanguageProvider } from '@/context/LanguageContext';
@@ -115,9 +116,11 @@ export default async function RootLayout({
   return (
     <html lang="ar" dir="rtl" className={`${ibmPlexArabic.variable} ${cairo.variable} ${playfair.variable} ${inter.variable}`}>
       <body className="antialiased min-h-screen flex flex-col selection:bg-[#B7913D] selection:text-white">
-        <LanguageProvider content={siteContent}>
-          {children}
-        </LanguageProvider>
+        <Suspense fallback={null}>
+          <LanguageProvider content={siteContent}>
+            {children}
+          </LanguageProvider>
+        </Suspense>
       </body>
     </html>
   );

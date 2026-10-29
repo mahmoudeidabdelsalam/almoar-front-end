@@ -7,6 +7,12 @@ import {
   NewsArticle,
   HeroSlide,
   SiteContent,
+  InvestmentArticle,
+  MediaCenterItem,
+  Locale,
+  HeaderContent,
+  FooterContent,
+  ContactPageContent,
 } from '@/types';
 import {
   mockSettings,
@@ -16,14 +22,13 @@ import {
   mockTeam,
   mockNews,
 } from './mock-data';
-import { cacheLife } from 'next/cache';
+import { cache } from 'react';
 
-const WP_API_URL = process.env.WORDPRESS_API_URL || process.env.NEXT_PUBLIC_WORDPRESS_API_URL || '';
 const WP_GRAPHQL_URL =
   process.env.NEXT_PUBLIC_WORDPRESS_GRAPHQL_URL ||
   process.env.WORDPRESS_GRAPHQL_URL ||
-  (WP_API_URL ? `${WP_API_URL.replace(/\/$/, '')}/graphql` : '');
-const PREVIEW_MODE = process.env.NODE_ENV === 'development' && !WP_GRAPHQL_URL && !WP_API_URL;
+  '';
+const PREVIEW_MODE = process.env.NODE_ENV === 'development' && !WP_GRAPHQL_URL;
 if (PREVIEW_MODE) {
   console.warn('[WordPress CMS] No endpoint is configured; development-only mock content is active.');
 }
@@ -36,6 +41,9 @@ type GraphQLNode = {
   title?: string;
   content?: string;
   excerpt?: string;
+  titleAr?: string | null;
+  excerptAr?: string | null;
+  contentAr?: string | null;
   titleEn?: string | null;
   excerptEn?: string | null;
   contentEn?: string | null;
@@ -115,6 +123,13 @@ function pickImage(node?: GraphQLNode | null): string {
 }
 
 async function fetchWithTimeout(url: string, options: RequestInit = {}, timeoutMs = 3000): Promise<Response> {
+  if (
+    process.env.ALLOW_INSECURE_LOCAL_WORDPRESS_TLS === 'true'
+    && /^https:\/\/(?:[^.]+\.)*(?:test|localhost)(?:[:/]|$)/i.test(url)
+  ) {
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+  }
+
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeoutMs);
   try {
@@ -123,33 +138,61 @@ async function fetchWithTimeout(url: string, options: RequestInit = {}, timeoutM
     return res;
   } catch (error) {
     clearTimeout(id);
-    throw error;
+    const cause = error instanceof Error && error.cause instanceof Error
+      ? ` (${error.cause.message})`
+      : '';
+    throw new Error(`CMS request failed for ${url}${cause}`, { cause: error });
   }
 }
 
-async function fetchGraphQL<T>(query: string): Promise<T> {
-  'use cache';
-  cacheLife('minutes');
-
-  if (!WP_GRAPHQL_URL) {
-    throw new Error('GraphQL endpoint is not configured');
-  }
-
-  const res = await fetchWithTimeout(WP_GRAPHQL_URL, {
+const fetchCachedGraphQLResponse = cache(async (graphqlQuery: string) => {
+  const response = await fetchWithTimeout(WP_GRAPHQL_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
     },
-    body: JSON.stringify({ query }),
-    next: { revalidate: 60 },
+    body: JSON.stringify({ query: graphqlQuery }),
+    next: { revalidate: 60, tags: ['wordpress-content'] },
   });
 
-  if (!res.ok) {
-    throw new Error(`GraphQL request failed: ${res.status}`);
+  return {
+    ok: response.ok,
+    status: response.status,
+    statusText: response.statusText,
+    body: await response.text(),
+  };
+});
+
+async function fetchGraphQL<T>(query: string): Promise<T> {
+  if (!WP_GRAPHQL_URL) {
+    throw new Error('GraphQL endpoint is not configured');
   }
 
-  const body = (await res.json()) as GraphQLResponse<T>;
+  const result = typeof window === 'undefined'
+    ? await fetchCachedGraphQLResponse(query)
+    : await (async () => {
+        const response = await fetchWithTimeout(WP_GRAPHQL_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+          body: JSON.stringify({ query }),
+        });
+        return {
+          ok: response.ok,
+          status: response.status,
+          statusText: response.statusText,
+          body: await response.text(),
+        };
+      })();
+
+  if (!result.ok) {
+    throw new Error(`GraphQL request failed: ${result.status} ${result.statusText}`.trim());
+  }
+
+  const body = JSON.parse(result.body) as GraphQLResponse<T>;
 
   if (body.errors?.length) {
     throw new GraphQLResponseError(body.errors[0]?.message || 'GraphQL request returned an error');
@@ -164,9 +207,6 @@ async function fetchGraphQL<T>(query: string): Promise<T> {
 
 export const wpClient = {
   async getSiteContent(): Promise<SiteContent> {
-    'use cache';
-    cacheLife('minutes');
-
     const emptyContent: SiteContent = {
       previewMode: PREVIEW_MODE,
       settings: PREVIEW_MODE ? mockSettings : {
@@ -223,6 +263,15 @@ export const wpClient = {
       footer: {
         companyDescription: { ar: '', en: '' },
         visionBadge: { ar: '', en: '' },
+        logo: '',
+        logoAlt: '',
+        columns: [],
+        newsletterTitle: { ar: '', en: '' },
+        newsletterDescription: { ar: '', en: '' },
+        newsletterPlaceholder: { ar: '', en: '' },
+        newsletterButton: { ar: '', en: '' },
+        copyright: { ar: '', en: '' },
+        socialLinks: [],
       },
     };
 
@@ -384,6 +433,9 @@ export const wpClient = {
       const cms = data.alomarSiteContent;
       if (!cms) {
         reportCMSIssue('getSiteContent', new Error('The alomarSiteContent field returned null'));
+        if (!PREVIEW_MODE) {
+          throw new Error('WordPress CMS returned no alomarSiteContent data');
+        }
         return emptyContent;
       }
       const rawSettings = cms.settings;
@@ -525,10 +577,17 @@ export const wpClient = {
         footer: {
           companyDescription: { ar: cms.footer?.companyDescriptionAr || '', en: cms.footer?.companyDescriptionEn || '' },
           visionBadge: { ar: cms.footer?.visionBadgeAr || '', en: cms.footer?.visionBadgeEn || '' },
+          logo: '', logoAlt: '', columns: [],
+          newsletterTitle: { ar: '', en: '' }, newsletterDescription: { ar: '', en: '' },
+          newsletterPlaceholder: { ar: '', en: '' }, newsletterButton: { ar: '', en: '' },
+          copyright: { ar: '', en: '' }, socialLinks: [],
         },
       };
     } catch (error) {
       reportCMSIssue('getSiteContent', error);
+      if (!PREVIEW_MODE) {
+        throw error;
+      }
       return emptyContent;
     }
   },
@@ -541,8 +600,131 @@ export const wpClient = {
     return (await this.getSiteContent()).settings;
   },
 
+  async getContactPageContent(): Promise<ContactPageContent | null> {
+    if (!WP_GRAPHQL_URL) return null;
+    try {
+      const data = await fetchGraphQL<{ alomarContactPageContent?: {
+        badgeAr?: string | null; badgeEn?: string | null;
+        titleAr?: string | null; titleEn?: string | null;
+        descriptionAr?: string | null; descriptionEn?: string | null;
+        bannerImage?: string | null;
+        headingAr?: string | null; headingEn?: string | null;
+        email?: string | null; phone?: string | null;
+        addressAr?: string | null; addressEn?: string | null;
+        workingHoursAr?: string | null; workingHoursEn?: string | null;
+        mapLat?: number | null; mapLng?: number | null;
+        linkedinUrl?: string | null; twitterUrl?: string | null;
+        formTitleAr?: string | null; formTitleEn?: string | null;
+      } | null }>(`{
+        alomarContactPageContent {
+          badgeAr badgeEn titleAr titleEn descriptionAr descriptionEn bannerImage
+          headingAr headingEn email phone addressAr addressEn
+          workingHoursAr workingHoursEn mapLat mapLng
+          linkedinUrl twitterUrl formTitleAr formTitleEn
+        }
+      }`);
+      const content = data.alomarContactPageContent;
+      if (!content) return null;
+      return {
+        badge: { ar: content.badgeAr || '', en: content.badgeEn || '' },
+        title: { ar: content.titleAr || '', en: content.titleEn || '' },
+        description: { ar: content.descriptionAr || '', en: content.descriptionEn || '' },
+        bannerImage: content.bannerImage || '',
+        heading: { ar: content.headingAr || '', en: content.headingEn || '' },
+        email: content.email || '',
+        phone: content.phone || '',
+        address: { ar: content.addressAr || '', en: content.addressEn || '' },
+        workingHours: { ar: content.workingHoursAr || '', en: content.workingHoursEn || '' },
+        coordinates: { lat: content.mapLat || 0, lng: content.mapLng || 0 },
+        linkedinUrl: content.linkedinUrl || '',
+        twitterUrl: content.twitterUrl || '',
+        formTitle: { ar: content.formTitleAr || '', en: content.formTitleEn || '' },
+      };
+    } catch (error) {
+      reportCMSIssue('getContactPageContent', error);
+      return null;
+    }
+  },
+
+  async getFooter(): Promise<FooterContent | null> {
+    if (!WP_GRAPHQL_URL) return null;
+    try {
+      const data = await fetchGraphQL<{
+        footerSettings?: {
+          footerFields?: {
+            footerLogo?: { node?: { sourceUrl?: string | null } | null } | null;
+            socialLinks?: Array<{
+              platform?: string[] | null;
+              socialLink?: { url?: string | null } | null;
+            }> | null;
+            columns?: Array<{
+              columnTitle?: string | null;
+              columnTitleEn?: string | null;
+              links?: Array<{
+                columnLink?: { url?: string | null; title?: string | null } | null;
+                columnLinkEn?: { url?: string | null; title?: string | null } | null;
+                columnLinkIcon?: { node?: { sourceUrl?: string | null } | null } | null;
+              }> | null;
+            }> | null;
+            copyrightText?: string | null;
+            copyrightTextEn?: string | null;
+          } | null;
+        } | null;
+      }>(`{
+        footerSettings {
+          footerFields {
+            footerLogo { node { sourceUrl } }
+            socialLinks {
+              platform
+              socialLink { url title target }
+            }
+            columns {
+              columnTitle
+              columnTitleEn
+              links {
+                columnLink { url title target }
+                columnLinkEn { url title target }
+                columnLinkIcon { node { sourceUrl } }
+              }
+            }
+            copyrightText
+            copyrightTextEn
+          }
+        }
+      }`);
+      const fields = data.footerSettings?.footerFields;
+      if (!fields) return null;
+      return {
+        companyDescription: { ar: '', en: '' },
+        visionBadge: { ar: '', en: '' },
+        logo: fields.footerLogo?.node?.sourceUrl || '',
+        logoAlt: 'Alomar Holding',
+        columns: (fields.columns ?? []).map((column) => ({
+          title: { ar: column.columnTitle || '', en: column.columnTitleEn || column.columnTitle || '' },
+          links: (column.links ?? []).map((link) => ({
+            label: { ar: link.columnLink?.title || '', en: link.columnLinkEn?.title || link.columnLink?.title || '' },
+            url: link.columnLink?.url || link.columnLinkEn?.url || '',
+            icon: link.columnLinkIcon?.node?.sourceUrl || '',
+          })),
+        })),
+        newsletterTitle: { ar: '', en: '' },
+        newsletterDescription: { ar: '', en: '' },
+        newsletterPlaceholder: { ar: '', en: '' },
+        newsletterButton: { ar: '', en: '' },
+        copyright: { ar: fields.copyrightText || '', en: fields.copyrightTextEn || fields.copyrightText || '' },
+        socialLinks: (fields.socialLinks ?? []).map((item) => ({
+          platform: item.platform?.[0] || '',
+          url: item.socialLink?.url || '',
+        })).filter((item) => Boolean(item.url && item.url !== '/')),
+      };
+    } catch (error) {
+      reportCMSIssue('getFooter', error);
+      return null;
+    }
+  },
+
   async getProjects(category?: string): Promise<Project[]> {
-    if (!WP_GRAPHQL_URL && !WP_API_URL) {
+    if (!WP_GRAPHQL_URL) {
       if (PREVIEW_MODE && (!category || category === 'all')) return mockProjects;
       if (PREVIEW_MODE) return mockProjects.filter((p) => p.category.includes(category || ''));
       return [];
@@ -560,6 +742,9 @@ export const wpClient = {
               title
               excerpt
               content
+              titleAr
+              excerptAr
+              contentAr
               contentEn
               titleEn
               excerptEn
@@ -583,9 +768,9 @@ export const wpClient = {
         }`);
 
         const mapped = (data.projects?.nodes ?? []).map((node) => {
-          const title = stripHtml(node.title || '');
-          const excerpt = stripHtml(node.excerpt || '');
-          const content = stripHtml(node.content || '');
+          const title = stripHtml(node.titleAr || node.title || '');
+          const excerpt = stripHtml(node.excerptAr || node.excerpt || '');
+          const content = stripHtml(node.contentAr || node.content || '');
           const categoryName = node.projectCategories?.nodes?.[0]?.name || '';
           const locationName = node.projectLocations?.nodes?.[0]?.name || '';
           const categoryNameEn = node.projectCategories?.nodes?.[0]?.nameEn || '';
@@ -646,7 +831,7 @@ export const wpClient = {
   },
 
   async getSectors(): Promise<Sector[]> {
-    if (!WP_GRAPHQL_URL && !WP_API_URL) return PREVIEW_MODE ? mockSectors : [];
+    if (!WP_GRAPHQL_URL) return PREVIEW_MODE ? mockSectors : [];
 
     try {
       if (WP_GRAPHQL_URL) {
@@ -691,7 +876,7 @@ export const wpClient = {
   },
 
   async getCompanies(): Promise<SubsidiaryCompany[]> {
-    if (!WP_GRAPHQL_URL && !WP_API_URL) return PREVIEW_MODE ? mockCompanies : [];
+    if (!WP_GRAPHQL_URL) return PREVIEW_MODE ? mockCompanies : [];
 
     try {
       if (WP_GRAPHQL_URL) {
@@ -744,7 +929,7 @@ export const wpClient = {
   },
 
   async getTeam(): Promise<TeamMember[]> {
-    if (!WP_GRAPHQL_URL && !WP_API_URL) return PREVIEW_MODE ? mockTeam : [];
+    if (!WP_GRAPHQL_URL) return PREVIEW_MODE ? mockTeam : [];
 
     try {
       if (WP_GRAPHQL_URL) {
@@ -795,8 +980,133 @@ export const wpClient = {
     }
   },
 
+  async getHeader(): Promise<HeaderContent | null> {
+    if (!WP_GRAPHQL_URL) return null;
+    try {
+      const data = await fetchGraphQL<{
+        headerSettings?: {
+          headerFields?: {
+            logo?: { node?: { sourceUrl?: string | null } | null } | null;
+            menu?: Array<{
+              label?: string | null;
+              labelEn?: string | null;
+              link?: { url?: string | null } | null;
+              image?: { node?: { sourceUrl?: string | null } | null } | null;
+              submenu?: Array<{
+                label?: string | null;
+                labelSmall?: string | null;
+                labelEn?: string | null;
+                labelSmallEn?: string | null;
+                link?: { url?: string | null } | null;
+                image?: { node?: { sourceUrl?: string | null } | null } | null;
+              }> | null;
+            }> | null;
+            labelButtonRight?: string | null;
+            labelButtonRightEn?: string | null;
+            linkButtonRight?: { url?: string | null } | null;
+          } | null;
+        } | null;
+      }>(`{
+        headerSettings {
+          headerFields {
+            logo { node { sourceUrl } }
+            menu {
+              label
+              labelEn
+              link { url }
+              image { node { sourceUrl } }
+              submenu {
+                label
+                labelSmall
+                labelEn
+                labelSmallEn
+                link { url }
+                image { node { sourceUrl } }
+              }
+            }
+            labelButtonRight
+            labelButtonRightEn
+            linkButtonRight { url }
+          }
+        }
+      }`);
+      const fields = data.headerSettings?.headerFields;
+      if (!fields) return null;
+      return {
+        logo: fields.logo?.node?.sourceUrl || '',
+        logo_en: fields.logo?.node?.sourceUrl || '',
+        menu: (fields.menu ?? []).map((item) => ({
+          label: { ar: item.label || '', en: item.labelEn || item.label || '' },
+          url: item.link?.url || '',
+          image: item.image?.node?.sourceUrl || '',
+          children: (item.submenu ?? []).map((child) => ({
+            label: { ar: child.label || child.labelSmall || '', en: child.labelEn || child.labelSmallEn || child.label || child.labelSmall || '' },
+            url: child.link?.url || '',
+            image: child.image?.node?.sourceUrl || '',
+            children: [],
+            category: {
+              ar: child.labelSmall || '',
+              en: child.labelSmallEn || child.labelSmall || '',
+            },
+          })),
+        })),
+        cta_label: { ar: fields.labelButtonRight || '', en: fields.labelButtonRightEn || fields.labelButtonRight || '' },
+        cta_url: fields.linkButtonRight?.url || '',
+      };
+    } catch (error) {
+      reportCMSIssue('getHeader', error);
+      return null;
+    }
+  },
+
+  async getInvestments(lang: Locale = 'ar', page = 1): Promise<InvestmentArticle[]> {
+    if (!WP_GRAPHQL_URL) return [];
+    void lang;
+    void page;
+    try {
+      const data = await fetchGraphQL<{ investments?: { nodes?: Array<{ databaseId?: number; slug?: string; title?: string; excerpt?: string; featuredImage?: { node?: { sourceUrl?: string | null } | null } | null }> | null } | null }>(`{
+        investments(first: 12, after: null) {
+          nodes { databaseId slug title excerpt featuredImage { node { sourceUrl } } }
+        }
+      }`);
+      return (data.investments?.nodes ?? []).map((item) => {
+        const titleText = item.title || '';
+        const summaryText = stripHtml(item.excerpt);
+        const title = { ar: titleText, en: titleText };
+        const summary = { ar: summaryText, en: summaryText };
+        return { id: item.databaseId ?? 0, slug: item.slug ?? '', title, summary, description: summary, image: item.featuredImage?.node?.sourceUrl || '', location: { ar: '', en: '' }, status: { ar: '', en: '' } };
+      });
+    } catch (error) {
+      reportCMSIssue('getInvestments', error);
+      return [];
+    }
+  },
+
+  async getMediaCenter(lang: Locale = 'ar', page = 1): Promise<MediaCenterItem[]> {
+    if (!WP_GRAPHQL_URL) return [];
+    void lang;
+    void page;
+    try {
+      const data = await fetchGraphQL<{ mediaCenters?: { nodes?: Array<{ databaseId?: number; slug?: string; title?: string; excerpt?: string; date?: string; featuredImage?: { node?: { sourceUrl?: string | null } | null } | null }> | null } | null }>(`{
+        mediaCenters(first: 12, after: null) {
+          nodes { databaseId slug title excerpt date featuredImage { node { sourceUrl } } }
+        }
+      }`);
+      return (data.mediaCenters?.nodes ?? []).map((item) => {
+        const titleText = item.title || '';
+        const summaryText = stripHtml(item.excerpt);
+        const title = { ar: titleText, en: titleText };
+        const summary = { ar: summaryText, en: summaryText };
+        return { id: item.databaseId ?? 0, slug: item.slug ?? '', title, summary, content: summary, image: item.featuredImage?.node?.sourceUrl || '', date: item.date || '', mediaType: '' };
+      });
+    } catch (error) {
+      reportCMSIssue('getMediaCenter', error);
+      return [];
+    }
+  },
+
   async getNews(): Promise<NewsArticle[]> {
-    if (!WP_GRAPHQL_URL && !WP_API_URL) return PREVIEW_MODE ? mockNews : [];
+    if (!WP_GRAPHQL_URL) return PREVIEW_MODE ? mockNews : [];
 
     try {
       if (WP_GRAPHQL_URL) {
@@ -849,6 +1159,9 @@ export const wpClient = {
       return [];
     } catch (error) {
       reportCMSIssue('getNews', error);
+      if (!PREVIEW_MODE) {
+        throw error;
+      }
       return [];
     }
   },
