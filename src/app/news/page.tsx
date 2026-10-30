@@ -9,7 +9,7 @@ import type { Metadata } from 'next';
 
 export function generateMetadata(): Promise<Metadata> {
   return getPageMetadata('news', {
-    title: 'المركز الإعلامي | العمر القابضة — الأخبار والبيانات الصحفية',
+    title: 'الأخبار | العمر القابضة — الأخبار والبيانات الصحفية',
     description: 'تابع آخر أخبار شركة العمر القابضة، الإعلانات الرسمية، إطلاق المشاريع، والشراكات الاستثمارية.',
   });
 }
@@ -24,8 +24,8 @@ export default async function NewsPage() {
         <PageBanner
           pageKey="news"
           imageFallback="/images/hero_riyadh.jpg"
-          imageAlt="Media Center"
-          badgeFallback="المركز الإعلامي — أخبار وإعلانات"
+          imageAlt="Alomar Holding News"
+          badgeFallback="الأخبار — أخبار وإعلانات"
           titleFallback="أحدث الأخبار والبيانات الصحفية"
           descriptionFallback="نافذتكم المباشرة للاطلاع على إنجازات المجموعة واتفاقياتها وشراكاتها الاستراتيجية."
         />

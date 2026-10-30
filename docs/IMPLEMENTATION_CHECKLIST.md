@@ -1,32 +1,30 @@
-# Implementation Checklist
+# Implementation checklist
 
-## Frontend
-- [x] Project structure exists and app routes are scaffolded.
-- [x] Home page sections are present.
-- [x] Header and footer are implemented.
-- [x] Language toggle and RTL/LTR logic are implemented.
-- [x] Contact form validation exists.
-- [x] WordPress content client uses development-only mock preview data; production does not fall back to mock records.
-- [x] Production build succeeds.
-- [x] Lint passes aside from pre-existing warnings.
-- [ ] Replace generic/boilerplate copy with deeper Alomar-specific content model where needed.
-- [ ] Align visual details more closely to the supplied Figma and prototype assets once those sources are available to the workspace.
+## Completed
 
-## WordPress / ACF
-- [x] WordPress project is present and includes ACF Pro.
-- [x] WPGraphQL-related plugins are installed.
-- [x] Theme structure for headless ACF registration is in place.
-- [x] Theme loads custom ACF files.
-- [x] Validated the local GraphQL endpoint and activated the Alomar core plugin so custom post types are exposed.
-- [x] Replace the active Erbify field-group loading with Alomar-specific ACF groups for projects, sectors, companies, and leadership.
-- [x] Add an ACF options page and WPGraphQL query for homepage hero slides.
-- [x] Add page/section-specific fields for Alomar landing-page copy, localized page banners and SEO, homepage sections, Vision 2030, and footer content.
-- [x] Expose structured project, sector, company, leadership, and news content through the WPGraphQL contract consumed by the frontend.
+- [x] Audit the local frontend, WordPress theme/plugin ownership, page records, custom types, and ACF data.
+- [x] Move retained CPT/taxonomy registration into the tracked theme and remove Media Center, Investments, Sectors, and Companies registrations without deleting CMS records.
+- [x] Add an About Us WordPress template.
+- [x] Add native-post related-article relationship and GraphQL field.
+- [x] Resolve native-post articles directly by slug.
+- [x] Extend the project ACF group with bilingual content bands and GraphQL exposure.
+- [x] Map project details and render conditional localized detail-page sections.
+- [x] Display the active project's Stats Band in the homepage project carousel.
+- [x] Localize native news article/archive data, links, dates, and metadata.
+- [x] Initialize the existing contact GraphQL mutation class and validate its schema without submitting a form.
+- [x] Validate frontend lint, type-check, and production build in the last frontend pass.
+- [x] Validate PHP syntax and theme whitespace after the latest backend change.
+- [x] Document current ownership, mapping, API, SEO, design, plan, and blockers.
 
-## Quality and validation
-- [x] Production build executed successfully both without a CMS endpoint and against the local CMS (`NODE_OPTIONS=--use-system-ca npm run build`).
-- [x] Lint executed successfully with 6 unused-import warnings and no errors.
-- [x] Local CMS content seeded and verified over WPGraphQL; see [CMS content integration results](./CMS_CONTENT_RESULTS.md).
-- [x] CMS route mapping, query contract, production fallback policy, and verification limits documented in [CMS_INTEGRATION_AUDIT.md](./CMS_INTEGRATION_AUDIT.md), [CONTENT_MAPPING.md](./CONTENT_MAPPING.md), and [GRAPHQL_INTEGRATION.md](./GRAPHQL_INTEGRATION.md).
-- [x] Unhandled React state issues in locale and splash flow fixed.
-- [ ] Browser visual verification against Figma is pending access to the actual design/prototype assets.
+## Open
+
+- [ ] Resolve the missing-article HTTP status: localized 404 UI is currently returned with HTTP 200 due to request-time `notFound()` after PPR streaming starts.
+- [ ] Obtain Figma/prototype source and complete desktop/mobile comparison.
+- [ ] Confirm About/Invest With Us content ownership and define dedicated fields as needed.
+- [ ] Populate approved bilingual CMS content and related-article selections.
+- [ ] Test contact submission in an approved controlled environment.
+- [ ] Populate the new project ACF fields and verify complete/partial content in Arabic and English.
+- [ ] Restore the intended local core-plugin activation before CMS-backed frontend build/browser verification.
+- [ ] Verify production GraphQL, media domains, CORS/write protections, SEO, and content.
+
+See [project status](./PROJECT_STATUS.md) and [project plan](./PROJECT_PLAN.md) for acceptance gates.

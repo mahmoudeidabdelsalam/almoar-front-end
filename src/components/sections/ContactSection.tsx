@@ -4,9 +4,9 @@ import React, { useState } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 import { submitContact } from '@/lib/wordpress/contact';
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle2, AlertCircle } from 'lucide-react';
-import type { ContactPageContent, Sector } from '@/types';
+import type { ContactPageContent } from '@/types';
 
-export const ContactSection: React.FC<{ sectors?: Sector[]; pageContent?: ContactPageContent | null }> = ({ sectors = [], pageContent = null }) => {
+export const ContactSection: React.FC<{ pageContent?: ContactPageContent | null }> = ({ pageContent = null }) => {
   const { locale, t, content } = useLanguage();
   const address = {
     ar: pageContent?.address.ar || '',
@@ -25,8 +25,6 @@ export const ContactSection: React.FC<{ sectors?: Sector[]; pageContent?: Contac
     full_name: '',
     email: '',
     phone: '',
-    subject: '',
-    sector_interest: '',
     message: '',
   });
 
@@ -63,8 +61,6 @@ export const ContactSection: React.FC<{ sectors?: Sector[]; pageContent?: Contac
           full_name: '',
           email: '',
           phone: '',
-          subject: '',
-          sector_interest: '',
           message: '',
         });
       } else {
@@ -281,26 +277,6 @@ export const ContactSection: React.FC<{ sectors?: Sector[]; pageContent?: Contac
                     />
                   </div>
 
-                  {/* Sector / Subject */}
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold text-[#101E39] block">
-                      {t.contact_section.form_sector}
-                    </label>
-                    <select
-                      name="sector_interest"
-                      value={formData.sector_interest}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-xl border border-[#101E39]/15 text-sm text-[#101E39] bg-[#F8F9F4] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#B7913D]/30 focus:border-[#B7913D] transition-all"
-                    >
-                      <option value="">{locale === 'ar' ? 'اختر مجال الاهتمام' : 'Select Sector of Interest'}</option>
-                      {sectors.filter((sector) => sector.title[locale]).map((sector) => (
-                        <option key={sector.id} value={sector.slug}>
-                          {sector.title[locale]}
-                        </option>
-                      ))}
-                      <option value="other">{locale === 'ar' ? 'استفسار عام / علاقات المستثمرين' : 'General / Investor Relations'}</option>
-                    </select>
-                  </div>
                 </div>
 
                 {/* Message */}

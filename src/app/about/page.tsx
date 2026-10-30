@@ -1,11 +1,9 @@
 import React from 'react';
 import { Header } from '@/components/navigation/Header';
 import { Footer } from '@/components/navigation/Footer';
-import { LeadershipSection } from '@/components/sections/LeadershipSection';
 import { Vision2030Banner } from '@/components/sections/Vision2030Banner';
 import { PageBanner } from '@/components/sections/PageBanner';
 import { ChairmanMessage, AboutPrinciples } from '@/components/sections/AboutEditorial';
-import { wpClient } from '@/lib/wordpress/client';
 import { getPageMetadata } from '@/lib/wordpress/page-metadata';
 import type { Metadata } from 'next';
 
@@ -17,8 +15,6 @@ export function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AboutPage() {
-  const team = await wpClient.getTeam();
-
   return (
     <>
       <Header />
@@ -34,9 +30,6 @@ export default async function AboutPage() {
 
         <ChairmanMessage />
         <AboutPrinciples />
-
-        {/* Board of Directors Section */}
-        <LeadershipSection members={team} />
 
         {/* Vision 2030 Banner */}
         <Vision2030Banner />

@@ -1,15 +1,9 @@
 import {
   SiteSettings,
   Project,
-  Sector,
-  SubsidiaryCompany,
-  TeamMember,
   NewsArticle,
   HeroSlide,
   SiteContent,
-  InvestmentArticle,
-  MediaCenterItem,
-  Locale,
   HeaderContent,
   FooterContent,
   ContactPageContent,
@@ -17,9 +11,6 @@ import {
 import {
   mockSettings,
   mockProjects,
-  mockSectors,
-  mockCompanies,
-  mockTeam,
   mockNews,
 } from './mock-data';
 import { cache } from 'react';
@@ -32,6 +23,10 @@ const PREVIEW_MODE = process.env.NODE_ENV === 'development' && !WP_GRAPHQL_URL;
 if (PREVIEW_MODE) {
   console.warn('[WordPress CMS] No endpoint is configured; development-only mock content is active.');
 }
+
+type GraphQLMediaConnection = {
+  node?: { sourceUrl?: string | null; altText?: string | null } | null;
+} | null;
 
 type GraphQLNode = {
   databaseId?: number;
@@ -65,10 +60,6 @@ type GraphQLNode = {
   descriptionEn?: string | null;
   companyWebsite?: string | null;
   companyYear?: string | null;
-  roleAr?: string | null;
-  roleEn?: string | null;
-  bioEn?: string | null;
-  displayOrder?: number | null;
   uri?: string;
   sourceUrl?: string;
   name?: string;
@@ -88,16 +79,81 @@ type GraphQLNode = {
   } | null;
   projectGallery?: string[] | null;
   projectHighlights?: Array<{ ar?: string | null; en?: string | null }> | null;
+  projectDetails?: {
+    titleAr?: string | null;
+    titleEn?: string | null;
+    excerptAr?: string | null;
+    excerptEn?: string | null;
+    contentAr?: string | null;
+    contentEn?: string | null;
+    featured?: boolean | null;
+    projectLogo?: GraphQLMediaConnection;
+    statsTag?: string | null;
+    statsTagEn?: string | null;
+    statsHeadline?: string | null;
+    statsHeadlineEn?: string | null;
+    statsItems?: Array<{
+      statHead?: string | null;
+      statHeadEn?: string | null;
+      statText?: string | null;
+      statTextEn?: string | null;
+    } | null> | null;
+    makeTag?: string | null;
+    makeTagEn?: string | null;
+    makeHeadline?: string | null;
+    makeHeadlineEn?: string | null;
+    makeItems?: Array<{
+      makeHead?: string | null;
+      makeHeadEn?: string | null;
+      makeText?: string | null;
+      makeTextEn?: string | null;
+    } | null> | null;
+    companiesTag?: string | null;
+    companiesTagEn?: string | null;
+    companiesHeadline?: string | null;
+    companiesHeadlineEn?: string | null;
+    companiesItems?: Array<{
+      companyLogo?: GraphQLMediaConnection;
+      companyLink?: string | null;
+    } | null> | null;
+    experienceTag?: string | null;
+    experienceTagEn?: string | null;
+    experienceHeadline?: string | null;
+    experienceHeadlineEn?: string | null;
+    experienceItems?: Array<{
+      experienceHead?: string | null;
+      experienceHeadEn?: string | null;
+      experienceText?: string | null;
+      experienceTextEn?: string | null;
+    } | null> | null;
+    keyProjectsTag?: string | null;
+    keyProjectsTagEn?: string | null;
+    keyProjectsHeadline?: string | null;
+    keyProjectsHeadlineEn?: string | null;
+    keyProjectsItems?: Array<{
+      keyProjectsImg?: GraphQLMediaConnection;
+      keyProjectsHead?: string | null;
+      keyProjectsHeadEn?: string | null;
+      keyProjectsLocation?: string | null;
+      keyProjectsLocationEn?: string | null;
+      keyProjectsText?: string | null;
+      keyProjectsTextEn?: string | null;
+      keyProjectsLink?: { url?: string | null; title?: string | null; target?: string | null } | null;
+    } | null> | null;
+  } | null;
   newsCategoryAr?: string | null;
   newsCategoryEn?: string | null;
   readTimeAr?: string | null;
   readTimeEn?: string | null;
+  relatedArticles?: GraphQLNode[] | null;
 };
 
 type GraphQLResponse<T> = {
   data?: T | null;
   errors?: Array<{ message?: string }>;
 };
+
+type GraphQLVariables = Record<string, string | number | boolean | null>;
 
 class GraphQLResponseError extends Error {}
 
@@ -111,15 +167,67 @@ function stripHtml(value?: string | null): string {
   return (value || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
-function toLocalizedText(value?: string | null, valueEn?: string | null): { ar: string; en: string } {
-  return {
-    ar: stripHtml(value),
-    en: stripHtml(valueEn),
-  };
-}
-
 function pickImage(node?: GraphQLNode | null): string {
   return node?.featuredImage?.node?.sourceUrl || node?.sourceUrl || '';
+}
+
+function mapProjectImage(image?: GraphQLMediaConnection) {
+  const url = image?.node?.sourceUrl || '';
+  return url ? { url, alt: stripHtml(image?.node?.altText || '') } : undefined;
+}
+
+function mapProjectTextBand(
+  tag: string | null | undefined,
+  tagEn: string | null | undefined,
+  headline: string | null | undefined,
+  headlineEn: string | null | undefined,
+  sourceItems: Array<{
+    head?: string | null;
+    headEn?: string | null;
+    text?: string | null;
+    textEn?: string | null;
+  } | null> | null | undefined,
+): Project['statsBand'] {
+  const items = (sourceItems ?? []).filter((item): item is NonNullable<typeof item> => Boolean(item)).map((item) => ({
+    head: {
+      ar: stripHtml(item.head || ''),
+      en: stripHtml(item.headEn || ''),
+    },
+    text: {
+      ar: stripHtml(item.text || ''),
+      en: stripHtml(item.textEn || ''),
+    },
+  }));
+  const band = {
+    tag: { ar: stripHtml(tag || ''), en: stripHtml(tagEn || '') },
+    headline: { ar: stripHtml(headline || ''), en: stripHtml(headlineEn || '') },
+    items: items.filter((item) => item.head.ar || item.head.en || item.text.ar || item.text.en),
+  };
+  return band.tag.ar || band.tag.en || band.headline.ar || band.headline.en || band.items.length ? band : undefined;
+}
+
+function mapNewsArticle(node: GraphQLNode): NewsArticle {
+  return {
+    id: node.databaseId ?? 0,
+    slug: node.slug || node.uri || 'news-item',
+    title: { ar: stripHtml(node.title), en: stripHtml(node.titleEn) },
+    excerpt: { ar: stripHtml(node.excerpt), en: stripHtml(node.excerptEn) },
+    content: { ar: node.content || '', en: node.contentEn || '' },
+    image: pickImage(node),
+    date: node.date ? new Date(node.date).toLocaleDateString('ar-SA', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    }) : '',
+    publishedAt: node.date || '',
+    category: {
+      ar: node.newsCategoryAr || '',
+      en: node.newsCategoryEn || '',
+    },
+    read_time: node.readTimeAr || '',
+    read_time_en: node.readTimeEn || '',
+    relatedNews: (node.relatedArticles ?? []).map(mapNewsArticle),
+  };
 }
 
 async function fetchWithTimeout(url: string, options: RequestInit = {}, timeoutMs = 3000): Promise<Response> {
@@ -145,14 +253,14 @@ async function fetchWithTimeout(url: string, options: RequestInit = {}, timeoutM
   }
 }
 
-const fetchCachedGraphQLResponse = cache(async (graphqlQuery: string) => {
+const fetchCachedGraphQLResponse = cache(async (graphqlQuery: string, variables?: GraphQLVariables) => {
   const response = await fetchWithTimeout(WP_GRAPHQL_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
     },
-    body: JSON.stringify({ query: graphqlQuery }),
+    body: JSON.stringify({ query: graphqlQuery, ...(variables ? { variables } : {}) }),
     next: { revalidate: 60, tags: ['wordpress-content'] },
   });
 
@@ -164,13 +272,13 @@ const fetchCachedGraphQLResponse = cache(async (graphqlQuery: string) => {
   };
 });
 
-async function fetchGraphQL<T>(query: string): Promise<T> {
+async function fetchGraphQL<T>(query: string, variables?: GraphQLVariables): Promise<T> {
   if (!WP_GRAPHQL_URL) {
     throw new Error('GraphQL endpoint is not configured');
   }
 
   const result = typeof window === 'undefined'
-    ? await fetchCachedGraphQLResponse(query)
+    ? await fetchCachedGraphQLResponse(query, variables)
     : await (async () => {
         const response = await fetchWithTimeout(WP_GRAPHQL_URL, {
           method: 'POST',
@@ -178,7 +286,7 @@ async function fetchGraphQL<T>(query: string): Promise<T> {
             'Content-Type': 'application/json',
             Accept: 'application/json',
           },
-          body: JSON.stringify({ query }),
+          body: JSON.stringify({ query, ...(variables ? { variables } : {}) }),
         });
         return {
           ok: response.ok,
@@ -224,8 +332,6 @@ export const wpClient = {
         statistics: [],
         social_links: { x: '', linkedin: '', instagram: '' },
       },
-      sectors: PREVIEW_MODE ? mockSectors : [],
-      companies: PREVIEW_MODE ? mockCompanies : [],
       heroSlides: [],
       pageBanners: {},
       sectionCopy: {},
@@ -387,8 +493,6 @@ export const wpClient = {
           primaryLink?: string | null;
           secondaryLink?: string | null;
         }> | null;
-        sectors?: { nodes?: GraphQLNode[] | null } | null;
-        companies?: { nodes?: GraphQLNode[] | null } | null;
       }>(`{
         alomarSiteContent {
           settings {
@@ -419,15 +523,6 @@ export const wpClient = {
           footer { companyDescriptionAr companyDescriptionEn visionBadgeAr visionBadgeEn }
         }
         homePageContent { image badgeAr badgeEn titleAr titleEn descAr descEn primaryLink secondaryLink }
-        sectors(first: 20) {
-          nodes { databaseId slug title excerpt content contentEn titleEn summaryEn sectorIcon featuredImage { node { sourceUrl } } }
-        }
-        companies(first: 20) {
-          nodes {
-            databaseId slug title excerpt content nameEn taglineAr taglineEn descriptionEn companyWebsite companyYear
-            featuredImage { node { sourceUrl } }
-          }
-        }
       }`);
 
       const cms = data.alomarSiteContent;
@@ -456,31 +551,8 @@ export const wpClient = {
           title: { ar: item.titleAr || '', en: item.titleEn || '' },
           description: { ar: item.descriptionAr || '', en: item.descriptionEn || '' },
         }));
-      const sectors = (data.sectors?.nodes || []).map((node) => ({
-        id: node.databaseId ?? 0,
-        slug: node.slug || node.uri || 'sector',
-        title: { ar: stripHtml(node.title), en: stripHtml(node.titleEn) },
-        summary: { ar: stripHtml(node.excerpt), en: stripHtml(node.summaryEn) },
-        content: toLocalizedText(node.content, node.contentEn),
-        icon: node.sectorIcon || 'building',
-        image: pickImage(node),
-        stats: [],
-      } as Sector));
-      const companies = (data.companies?.nodes || []).map((node) => ({
-        id: node.databaseId ?? 0,
-        slug: node.slug || node.uri || 'company',
-        name: { ar: stripHtml(node.title), en: stripHtml(node.nameEn) },
-        tagline: { ar: stripHtml(node.taglineAr), en: stripHtml(node.taglineEn) },
-        description: { ar: stripHtml(node.content) || stripHtml(node.excerpt), en: stripHtml(node.descriptionEn) },
-        logo: pickImage(node),
-        website: node.companyWebsite || undefined,
-        year: node.companyYear || undefined,
-      } as SubsidiaryCompany));
-
       return {
         previewMode: false,
-        sectors: sectors.length ? sectors : PREVIEW_MODE ? mockSectors : [],
-        companies: companies.length ? companies : PREVIEW_MODE ? mockCompanies : [],
         settings: {
           site_name: {
             ar: rawSettings?.siteNameAr || (PREVIEW_MODE ? mockSettings.site_name.ar : ''),
@@ -520,7 +592,7 @@ export const wpClient = {
           title_en: slide.titleEn || '',
           desc_ar: slide.descAr || '',
           desc_en: slide.descEn || '',
-          primary_link: slide.primaryLink || '/sectors',
+          primary_link: slide.primaryLink || '/projects',
           secondary_link: slide.secondaryLink || '/projects',
         })),
         pageBanners: Object.fromEntries((cms.pageBanners || []).filter((item) => item.pageKey).map((item) => [item.pageKey as string, {
@@ -742,12 +814,7 @@ export const wpClient = {
               title
               excerpt
               content
-              titleAr
-              excerptAr
-              contentAr
-              contentEn
-              titleEn
-              excerptEn
+              featuredImage { node { sourceUrl } }
               statusAr
               statusEn
               locationAr
@@ -757,10 +824,31 @@ export const wpClient = {
               builtArea
               completionYear
               brochureUrl
-              featured
-              featuredImage { node { sourceUrl } }
               projectGallery
               projectHighlights { ar en }
+              projectDetails {
+                titleAr titleEn
+                excerptAr excerptEn
+                contentAr contentEn
+                featured
+                projectLogo { node { sourceUrl altText } }
+                statsTag statsTagEn statsHeadline statsHeadlineEn
+                statsItems { statHead statHeadEn statText statTextEn }
+                makeTag makeTagEn makeHeadline makeHeadlineEn
+                makeItems { makeHead makeHeadEn makeText makeTextEn }
+                companiesTag companiesTagEn companiesHeadline companiesHeadlineEn
+                companiesItems { companyLogo { node { sourceUrl altText } } companyLink }
+                experienceTag experienceTagEn experienceHeadline experienceHeadlineEn
+                experienceItems { experienceHead experienceHeadEn experienceText experienceTextEn }
+                keyProjectsTag keyProjectsTagEn keyProjectsHeadline keyProjectsHeadlineEn
+                keyProjectsItems {
+                  keyProjectsImg { node { sourceUrl altText } }
+                  keyProjectsHead keyProjectsHeadEn
+                  keyProjectsLocation keyProjectsLocationEn
+                  keyProjectsText keyProjectsTextEn
+                  keyProjectsLink { url title target }
+                }
+              }
               projectCategories { nodes { name nameEn } }
               projectLocations { nodes { name nameEn } }
             }
@@ -768,9 +856,10 @@ export const wpClient = {
         }`);
 
         const mapped = (data.projects?.nodes ?? []).map((node) => {
-          const title = stripHtml(node.titleAr || node.title || '');
-          const excerpt = stripHtml(node.excerptAr || node.excerpt || '');
-          const content = stripHtml(node.contentAr || node.content || '');
+          const details = node.projectDetails;
+          const title = stripHtml(details?.titleAr || node.title || '');
+          const excerpt = stripHtml(details?.excerptAr || node.excerpt || '');
+          const content = stripHtml(details?.contentAr || node.content || '');
           const categoryName = node.projectCategories?.nodes?.[0]?.name || '';
           const locationName = node.projectLocations?.nodes?.[0]?.name || '';
           const categoryNameEn = node.projectCategories?.nodes?.[0]?.nameEn || '';
@@ -781,34 +870,110 @@ export const wpClient = {
             slug: node.slug || node.uri || title.toLowerCase().replace(/\s+/g, '-'),
             title: {
               ar: title,
-              en: stripHtml(node.titleEn),
+              en: stripHtml(details?.titleEn || ''),
             },
             excerpt: {
               ar: excerpt,
-              en: stripHtml(node.excerptEn),
+              en: stripHtml(details?.excerptEn || ''),
             },
             content: {
               ar: content,
-              en: stripHtml(node.contentEn),
+              en: stripHtml(details?.contentEn || ''),
             },
             image: pickImage(node),
-            gallery: node.projectGallery || [],
+            gallery: (node.projectGallery || []).filter((image): image is string => Boolean(image)),
             category: categoryName,
             category_en: categoryNameEn,
-            location: stripHtml(node.locationAr) || locationName,
-            location_en: stripHtml(node.locationEn) || locationNameEn,
-            status: stripHtml(node.statusAr),
-            status_en: stripHtml(node.statusEn),
+            location: stripHtml(node.locationAr || '') || locationName,
+            location_en: stripHtml(node.locationEn || '') || locationNameEn,
+            status: stripHtml(node.statusAr || ''),
+            status_en: stripHtml(node.statusEn || ''),
             units_count: node.unitsCount || undefined,
             land_area: node.landArea || undefined,
             built_area: node.builtArea || undefined,
             completion_year: node.completionYear || '',
             brochure_url: node.brochureUrl || undefined,
-            featured: node.featured ?? false,
+            featured: details?.featured ?? false,
             highlights: (node.projectHighlights || []).map((highlight) => ({
-              ar: highlight.ar || '',
-              en: highlight.en || '',
+              ar: highlight?.ar || '',
+              en: highlight?.en || '',
             })),
+            logo: (() => {
+              const logo = mapProjectImage(details?.projectLogo);
+              return logo ? { ...logo, alt: logo.alt || `${title} logo` } : undefined;
+            })(),
+            statsBand: details ? mapProjectTextBand(
+              details.statsTag,
+              details.statsTagEn,
+              details.statsHeadline,
+              details.statsHeadlineEn,
+              details.statsItems?.map((item) => item && ({
+                head: item.statHead, headEn: item.statHeadEn, text: item.statText, textEn: item.statTextEn,
+              })),
+            ) : undefined,
+            makeBand: details ? mapProjectTextBand(
+              details.makeTag,
+              details.makeTagEn,
+              details.makeHeadline,
+              details.makeHeadlineEn,
+              details.makeItems?.map((item) => item && ({
+                head: item.makeHead, headEn: item.makeHeadEn, text: item.makeText, textEn: item.makeTextEn,
+              })),
+            ) : undefined,
+            experienceBand: details ? mapProjectTextBand(
+              details.experienceTag,
+              details.experienceTagEn,
+              details.experienceHeadline,
+              details.experienceHeadlineEn,
+              details.experienceItems?.map((item) => item && ({
+                head: item.experienceHead,
+                headEn: item.experienceHeadEn,
+                text: item.experienceText,
+                textEn: item.experienceTextEn,
+              })),
+            ) : undefined,
+            companiesBand: details ? (() => {
+              const items = (details.companiesItems ?? []).filter((item): item is NonNullable<typeof item> => Boolean(item))
+                .map((item) => ({
+                  logo: (() => {
+                    const logo = mapProjectImage(item.companyLogo);
+                    return logo ? { ...logo, alt: logo.alt || `Company logo for ${title}` } : undefined;
+                  })(),
+                  link: item.companyLink || '',
+                }))
+                .filter((item): item is { logo: { url: string; alt: string }; link: string } => Boolean(item.logo));
+              const band = {
+                tag: { ar: stripHtml(details.companiesTag || ''), en: stripHtml(details.companiesTagEn || '') },
+                headline: { ar: stripHtml(details.companiesHeadline || ''), en: stripHtml(details.companiesHeadlineEn || '') },
+                items,
+              };
+              return band.tag.ar || band.tag.en || band.headline.ar || band.headline.en || items.length ? band : undefined;
+            })() : undefined,
+            keyProjectsBand: details ? (() => {
+              const items = (details.keyProjectsItems ?? []).filter((item): item is NonNullable<typeof item> => Boolean(item))
+                .map((item) => ({
+                  image: mapProjectImage(item.keyProjectsImg),
+                  head: { ar: stripHtml(item.keyProjectsHead || ''), en: stripHtml(item.keyProjectsHeadEn || '') },
+                  location: { ar: stripHtml(item.keyProjectsLocation || ''), en: stripHtml(item.keyProjectsLocationEn || '') },
+                  text: { ar: stripHtml(item.keyProjectsText || ''), en: stripHtml(item.keyProjectsTextEn || '') },
+                  link: {
+                    url: item.keyProjectsLink?.url || '',
+                    title: item.keyProjectsLink?.title || '',
+                    target: item.keyProjectsLink?.target || '',
+                  },
+                }))
+                .map((item) => ({
+                  ...item,
+                  image: item.image ? { ...item.image, alt: item.image.alt || item.head.en || item.head.ar || title } : undefined,
+                }))
+                .filter((item) => item.head.ar || item.head.en || item.text.ar || item.text.en || item.image);
+              const band = {
+                tag: { ar: stripHtml(details.keyProjectsTag || ''), en: stripHtml(details.keyProjectsTagEn || '') },
+                headline: { ar: stripHtml(details.keyProjectsHeadline || ''), en: stripHtml(details.keyProjectsHeadlineEn || '') },
+                items,
+              };
+              return band.tag.ar || band.tag.en || band.headline.ar || band.headline.en || items.length ? band : undefined;
+            })() : undefined,
           } as Project;
         });
 
@@ -828,156 +993,6 @@ export const wpClient = {
   async getProjectBySlug(slug: string): Promise<Project | null> {
     const list = await this.getProjects('all');
     return list.find((p) => p.slug === slug) || null;
-  },
-
-  async getSectors(): Promise<Sector[]> {
-    if (!WP_GRAPHQL_URL) return PREVIEW_MODE ? mockSectors : [];
-
-    try {
-      if (WP_GRAPHQL_URL) {
-        const data = await fetchGraphQL<{
-          sectors?: { nodes?: GraphQLNode[] | null };
-        }>(`{
-          sectors(first: 20) {
-            nodes {
-              databaseId
-              slug
-              title
-              excerpt
-              content
-              contentEn
-              titleEn
-              summaryEn
-              sectorIcon
-              featuredImage { node { sourceUrl } }
-            }
-          }
-        }`);
-
-        const mapped = (data.sectors?.nodes ?? []).map((node) => ({
-          id: node.databaseId ?? 0,
-          slug: node.slug || node.uri || 'sector',
-          title: { ar: stripHtml(node.title), en: stripHtml(node.titleEn) },
-          summary: { ar: stripHtml(node.excerpt), en: stripHtml(node.summaryEn) },
-          content: toLocalizedText(node.content, node.contentEn),
-          icon: node.sectorIcon || 'building',
-          image: pickImage(node),
-          stats: [],
-        } as Sector));
-
-        return mapped;
-      }
-
-      return [];
-    } catch (error) {
-      reportCMSIssue('getSectors', error);
-      return [];
-    }
-  },
-
-  async getCompanies(): Promise<SubsidiaryCompany[]> {
-    if (!WP_GRAPHQL_URL) return PREVIEW_MODE ? mockCompanies : [];
-
-    try {
-      if (WP_GRAPHQL_URL) {
-        const data = await fetchGraphQL<{
-          companies?: { nodes?: GraphQLNode[] | null };
-        }>(`{
-          companies(first: 20) {
-            nodes {
-              databaseId
-              slug
-              title
-              excerpt
-              content
-              nameEn
-              taglineAr
-              taglineEn
-              descriptionEn
-              companyWebsite
-              companyYear
-              featuredImage { node { sourceUrl } }
-            }
-          }
-        }`);
-
-        const mapped = (data.companies?.nodes ?? []).map((node) => ({
-          id: node.databaseId ?? 0,
-          slug: node.slug || node.uri || 'company',
-          name: { ar: stripHtml(node.title), en: stripHtml(node.nameEn) },
-          tagline: {
-            ar: stripHtml(node.taglineAr),
-            en: stripHtml(node.taglineEn),
-          },
-          description: {
-            ar: stripHtml(node.content) || stripHtml(node.excerpt),
-            en: stripHtml(node.descriptionEn),
-          },
-          logo: pickImage(node),
-          website: node.companyWebsite || undefined,
-          year: node.companyYear || undefined,
-        } as SubsidiaryCompany));
-
-        return mapped;
-      }
-
-      return [];
-    } catch (error) {
-      reportCMSIssue('getCompanies', error);
-      return [];
-    }
-  },
-
-  async getTeam(): Promise<TeamMember[]> {
-    if (!WP_GRAPHQL_URL) return PREVIEW_MODE ? mockTeam : [];
-
-    try {
-      if (WP_GRAPHQL_URL) {
-        const data = await fetchGraphQL<{
-          boardMembers?: { nodes?: GraphQLNode[] | null };
-        }>(`{
-          boardMembers(first: 20) {
-            nodes {
-              databaseId
-              slug
-              title
-              content
-              nameEn
-              roleAr
-              roleEn
-              bioEn
-              displayOrder
-              featuredImage { node { sourceUrl } }
-            }
-          }
-        }`);
-
-        const mapped = (data.boardMembers?.nodes ?? []).map((node) => ({
-          id: node.databaseId ?? 0,
-          name: {
-            ar: stripHtml(node.title),
-            en: stripHtml(node.nameEn),
-          },
-          role: {
-            ar: node.roleAr || '',
-            en: node.roleEn || '',
-          },
-          bio: {
-            ar: stripHtml(node.content),
-            en: stripHtml(node.bioEn),
-          },
-          image: pickImage(node),
-          order: node.displayOrder ?? 0,
-        } as TeamMember));
-
-        return mapped;
-      }
-
-      return [];
-    } catch (error) {
-      reportCMSIssue('getTeam', error);
-      return [];
-    }
   },
 
   async getHeader(): Promise<HeaderContent | null> {
@@ -1059,61 +1074,15 @@ export const wpClient = {
     }
   },
 
-  async getInvestments(lang: Locale = 'ar', page = 1): Promise<InvestmentArticle[]> {
-    if (!WP_GRAPHQL_URL) return [];
-    void lang;
-    void page;
-    try {
-      const data = await fetchGraphQL<{ investments?: { nodes?: Array<{ databaseId?: number; slug?: string; title?: string; excerpt?: string; featuredImage?: { node?: { sourceUrl?: string | null } | null } | null }> | null } | null }>(`{
-        investments(first: 12, after: null) {
-          nodes { databaseId slug title excerpt featuredImage { node { sourceUrl } } }
-        }
-      }`);
-      return (data.investments?.nodes ?? []).map((item) => {
-        const titleText = item.title || '';
-        const summaryText = stripHtml(item.excerpt);
-        const title = { ar: titleText, en: titleText };
-        const summary = { ar: summaryText, en: summaryText };
-        return { id: item.databaseId ?? 0, slug: item.slug ?? '', title, summary, description: summary, image: item.featuredImage?.node?.sourceUrl || '', location: { ar: '', en: '' }, status: { ar: '', en: '' } };
-      });
-    } catch (error) {
-      reportCMSIssue('getInvestments', error);
-      return [];
-    }
-  },
-
-  async getMediaCenter(lang: Locale = 'ar', page = 1): Promise<MediaCenterItem[]> {
-    if (!WP_GRAPHQL_URL) return [];
-    void lang;
-    void page;
-    try {
-      const data = await fetchGraphQL<{ mediaCenters?: { nodes?: Array<{ databaseId?: number; slug?: string; title?: string; excerpt?: string; date?: string; featuredImage?: { node?: { sourceUrl?: string | null } | null } | null }> | null } | null }>(`{
-        mediaCenters(first: 12, after: null) {
-          nodes { databaseId slug title excerpt date featuredImage { node { sourceUrl } } }
-        }
-      }`);
-      return (data.mediaCenters?.nodes ?? []).map((item) => {
-        const titleText = item.title || '';
-        const summaryText = stripHtml(item.excerpt);
-        const title = { ar: titleText, en: titleText };
-        const summary = { ar: summaryText, en: summaryText };
-        return { id: item.databaseId ?? 0, slug: item.slug ?? '', title, summary, content: summary, image: item.featuredImage?.node?.sourceUrl || '', date: item.date || '', mediaType: '' };
-      });
-    } catch (error) {
-      reportCMSIssue('getMediaCenter', error);
-      return [];
-    }
-  },
-
   async getNews(): Promise<NewsArticle[]> {
     if (!WP_GRAPHQL_URL) return PREVIEW_MODE ? mockNews : [];
 
     try {
       if (WP_GRAPHQL_URL) {
         const data = await fetchGraphQL<{
-          posts?: { nodes?: GraphQLNode[] | null };
+          newsArticles?: { nodes?: GraphQLNode[] | null };
         }>(`{
-          posts(first: 10) {
+          newsArticles(first: 10) {
             nodes {
               databaseId
               date
@@ -1133,25 +1102,7 @@ export const wpClient = {
           }
         }`);
 
-        const mapped = (data.posts?.nodes ?? []).filter((node) => node.slug !== 'hello-world').map((node) => ({
-          id: node.databaseId ?? 0,
-          slug: node.slug || node.uri || 'news-item',
-          title: { ar: stripHtml(node.title), en: stripHtml(node.titleEn) },
-          excerpt: { ar: stripHtml(node.excerpt), en: stripHtml(node.excerptEn) },
-          content: { ar: node.content || '', en: node.contentEn || '' },
-          image: pickImage(node),
-          date: node.date ? new Date(node.date).toLocaleDateString('ar-SA', {
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric',
-          }) : '',
-          category: {
-            ar: node.newsCategoryAr || '',
-            en: node.newsCategoryEn || '',
-          },
-          read_time: node.readTimeAr || '',
-          read_time_en: node.readTimeEn || '',
-        } as NewsArticle));
+        const mapped = (data.newsArticles?.nodes ?? []).map(mapNewsArticle);
 
         return mapped;
       }
@@ -1166,8 +1117,56 @@ export const wpClient = {
     }
   },
 
-  async getArticleBySlug(slug: string): Promise<NewsArticle | null> {
-    const list = await this.getNews();
-    return list.find((item) => item.slug === slug) || null;
+  async getArticleById(id: number): Promise<NewsArticle | null> {
+    if (!WP_GRAPHQL_URL) {
+      return PREVIEW_MODE ? mockNews.find((article) => article.id === id) || null : null;
+    }
+
+    if (!Number.isSafeInteger(id) || id <= 0) return null;
+
+    try {
+      const data = await fetchGraphQL<{ newsArticle?: GraphQLNode | null }>(`query ArticleById($id: ID!) {
+        newsArticle(id: $id, idType: DATABASE_ID) {
+          databaseId
+          date
+          slug
+          title
+          excerpt
+          content
+          titleEn
+          excerptEn
+          contentEn
+          newsCategoryAr
+          newsCategoryEn
+          readTimeAr
+          readTimeEn
+          featuredImage { node { sourceUrl } }
+          relatedArticles {
+            databaseId
+            date
+            slug
+            title
+            excerpt
+            content
+            titleEn
+            excerptEn
+            contentEn
+            newsCategoryAr
+            newsCategoryEn
+            readTimeAr
+            readTimeEn
+            featuredImage { node { sourceUrl } }
+          }
+        }
+      }`, { id });
+
+      return data.newsArticle ? mapNewsArticle(data.newsArticle) : null;
+    } catch (error) {
+      reportCMSIssue('getArticleById', error);
+      if (!PREVIEW_MODE) {
+        throw error;
+      }
+      return null;
+    }
   },
 };

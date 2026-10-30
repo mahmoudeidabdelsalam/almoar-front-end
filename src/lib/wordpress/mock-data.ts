@@ -1,4 +1,4 @@
-import { SiteSettings, Project, Sector, SubsidiaryCompany, TeamMember, NewsArticle } from '@/types';
+import { SiteSettings, Project, Sector, SubsidiaryCompany, NewsArticle } from '@/types';
 
 export const mockSettings: SiteSettings = {
   site_name: {
@@ -304,77 +304,6 @@ export const mockCompanies: SubsidiaryCompany[] = [
   },
 ];
 
-export const mockTeam: TeamMember[] = [
-  {
-    id: 1,
-    name: {
-      ar: 'عبد العزيز بن محمد العمر',
-      en: 'Abdulaziz M. Alomar',
-    },
-    role: {
-      ar: 'رئيس مجلس الإدارة',
-      en: 'Chairman of the Board',
-    },
-    bio: {
-      ar: 'رائد أعمال وخبير استثماري يتمتع بخبرة تتجاوز 25 عاماً في قيادة المجموعات القابضة وتطوير الاستثمارات الاستراتيجية والمشاريع التنموية الكبرى في المملكة العربية السعودية.',
-      en: 'A prominent Saudi business leader with over 25 years of investment leadership across real estate development, private equity, and national transformation initiatives.',
-    },
-    image: '/images/board_chairman.jpg',
-    order: 1,
-  },
-  {
-    id: 2,
-    name: {
-      ar: 'م. فهد بن عبد العزيز العمر',
-      en: 'Eng. Fahad A. Alomar',
-    },
-    role: {
-      ar: 'نائب رئيس مجلس الإدارة والعضو المنتدب',
-      en: 'Vice Chairman & Managing Director',
-    },
-    bio: {
-      ar: 'مهندس واستراتيجي متخصص في إدارة الأصول العقارية وتطوير الشراكات المؤسسية مع القطاعين العام والخاص، يشرف على التوسع الاستثماري للشركات التابعة.',
-      en: 'Seasoned engineer and corporate strategist leading institutional partnerships, public-private alliances, and multi-asset operational scaling.',
-    },
-    image: '/images/board_chairman.jpg',
-    order: 2,
-  },
-  {
-    id: 3,
-    name: {
-      ar: 'د. سلطان بن عبد الله القحطاني',
-      en: 'Dr. Sultan A. Al-Qahtani',
-    },
-    role: {
-      ar: 'عضو مجلس الإدارة — رئيس لجنة الاستثمار',
-      en: 'Board Member & Investment Committee Chair',
-    },
-    bio: {
-      ar: 'خبير مالي واقتصادي حائز على الدكتوراه في التمويل الدولي، يمتلك سجلاً حافلاً في إدارة الصناديق الاستثمارية وهيكلة عمليات الاندماج والاستحواذ.',
-      en: 'PhD in International Finance with extensive expertise in structuring real estate investment trusts (REITs), private placements, and corporate governance.',
-    },
-    image: '/images/board_chairman.jpg',
-    order: 3,
-  },
-  {
-    id: 4,
-    name: {
-      ar: 'أ. نورة بنت خالد التميمي',
-      en: 'Noura K. Al-Tamimi',
-    },
-    role: {
-      ar: 'الرئيس التنفيذي للمجموعة (CEO)',
-      en: 'Chief Executive Officer (CEO)',
-    },
-    bio: {
-      ar: 'قيادية تنفيذية بارزة تتمتع بخبرة عميقة في الإدارة الاستراتيجية والتحول الرقمي، قادت نمواً قياسياً في عوائد المجموعة وتطوير الحوكمة المؤسسية.',
-      en: 'Distinguished executive driving strategic growth, ESG governance frameworks, and operational excellence across the holding portfolio.',
-    },
-    image: '/images/board_chairman.jpg',
-    order: 4,
-  },
-];
-
 export const mockNews: NewsArticle[] = [
   {
     id: 1,
@@ -413,7 +342,7 @@ export const mockNews: NewsArticle[] = [
     },
     image: '/images/hero_riyadh.jpg',
     date: '12 أكتوبر 2026',
-    category: { ar: 'المركز الإعلامي', en: 'Corporate News' },
+    category: { ar: 'الأخبار', en: 'Corporate News' },
     read_time: '4 دقائق',
   },
   {

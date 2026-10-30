@@ -20,14 +20,25 @@ export const Footer: React.FC = () => {
       title: { ar: 'روابط سريعة', en: 'Quick Links' },
       links: [
         { label: { ar: 'من نحن', en: 'About Us' }, url: '/about' },
-        { label: { ar: 'استثماراتنا', en: 'Our Investments' }, url: '/companies' },
-        { label: { ar: 'المركز الإعلامي', en: 'Media Center' }, url: '/news' },
+        { label: { ar: 'مشاريعنا', en: 'Our Projects' }, url: '/projects' },
+        { label: { ar: 'الأخبار', en: 'News' }, url: '/news' },
         { label: { ar: 'استثمر معنا', en: 'Invest With Us' }, url: '/invest-with-us' },
         { label: { ar: 'تواصل معنا', en: 'Contact Us' }, url: '/contact-us' },
       ],
     },
   ];
-  const columns = footer?.columns?.length ? footer.columns : fallbackColumns;
+  const unavailableRoutes = new Set(['companies', 'investments', 'media-center', 'sectors']);
+  const columns = (footer?.columns?.length ? footer.columns : fallbackColumns)
+    .map((column) => ({
+      ...column,
+      links: column.links.filter((link) => {
+        const path = link.url.replace(/^https?:\/\/[^/]+/i, '').split(/[?#]/, 1)[0];
+        const segments = path.split('/').filter(Boolean);
+        const route = segments[0] === 'ar' || segments[0] === 'en' ? segments[1] : segments[0];
+        return !route || !unavailableRoutes.has(route);
+      }),
+    }))
+    .filter((column) => column.links.length > 0);
 
   const localizedUrl = (url: string) => {
     if (/^(https?:|mailto:|tel:)/i.test(url) || url.startsWith('//')) return url;
@@ -48,16 +59,16 @@ export const Footer: React.FC = () => {
         <span className="mt-1 text-xs">{locale === 'ar' ? 'الأعلى' : 'Top'}</span>
       </button>
 
-      <div className="mx-auto grid min-h-[475px] max-w-[1216px] grid-cols-1 gap-12 px-5 py-20 sm:px-8 md:grid-cols-3 lg:px-0 lg:py-[104px]" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
-        <div className="flex flex-col items-start md:items-end md:order-3">
+      <div className="mx-auto grid min-h-[475px] max-w-[1216px] grid-cols-1 gap-12 px-5 py-20 sm:px-8 md:grid-cols-3 lg:px-0 lg:py-[104px]">
+        <div className="flex flex-col items-start md:items-start">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={footer?.logo || '/branding/alomar_logo_transparent.png'} alt={footer?.logoAlt || 'Alomar Holding'} className="h-[130px] w-auto object-contain" />
         </div>
 
         {columns.slice(0, 2).map((column, columnIndex) => (
-          <div key={`${column.title.ar}-${columnIndex}`} className={columnIndex === 0 ? 'md:order-2' : 'md:order-1'}>
-            <h2 className="text-sm font-bold text-white">{locale === 'ar' ? column.title.ar : column.title.en}</h2>
-            <ul className="mt-8 space-y-4 text-sm text-white/80">
+          <div key={`${column.title.ar}-${columnIndex}`}>
+            <h2 className="text-[12px] font-normal text-[#BF9432]">{locale === 'ar' ? column.title.ar : column.title.en}</h2>
+            <ul className="mt-8 space-y-4 text-[28px] font-normal text-white">
               {column.links.map((link, linkIndex) => {
                 const href = localizedUrl(link.url);
                 const external = /^(https?:|mailto:|tel:)/i.test(href);
@@ -76,7 +87,7 @@ export const Footer: React.FC = () => {
                 return (
                   <li key={`${href}-${linkIndex}`}>
                     {external ? (
-                      <a href={href} className="flex items-center gap-3 transition-colors hover:text-[#C5A265]" dir={href.startsWith('tel:') ? 'ltr' : undefined}>
+                      <a href={href} className="flex items-center gap-3 transition-colors hover:text-[#C5A265]">
                         {content}
                       </a>
                     ) : (
@@ -92,8 +103,8 @@ export const Footer: React.FC = () => {
         ))}
       </div>
 
-      <div className="border-t border-white/10">
-        <div className="mx-auto flex min-h-[84px] max-w-[1216px] flex-col items-center justify-between gap-4 px-5 py-5 text-xs text-white/60 sm:px-8 md:flex-row lg:px-0">
+      <div className="border-t border-white/10 bg-white">
+        <div className="mx-auto flex min-h-[84px] max-w-[1216px] flex-col items-center justify-between gap-4 px-5 py-5 text-xs text-[#2A3B4D] sm:px-8 md:flex-row lg:px-0">
           <p>{locale === 'ar' ? footer?.copyright.ar || '© 2026 العمر القابضة. جميع الحقوق محفوظة' : footer?.copyright.en || '© 2026 Alomar Holding. All rights reserved'}</p>
           <div className="flex items-center gap-4">
             <span>{locale === 'ar' ? 'تابعونا على:' : 'Follow us:'}</span>

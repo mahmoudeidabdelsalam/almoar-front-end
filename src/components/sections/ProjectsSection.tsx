@@ -13,6 +13,10 @@ interface ProjectsSectionProps {
 
 export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects }) => {
   const { locale, dir, t, content } = useLanguage();
+  const localizedValue = (ar?: string, en?: string) =>
+    (locale === 'ar' ? ar?.trim() || en?.trim() : en?.trim() || ar?.trim()) || '';
+  const localized = (value: { ar: string; en: string }) =>
+    localizedValue(value.ar, value.en);
   const copy = content.sectionCopy.projects;
   const [filter, setFilter] = useState('all');
   if (!projects.length && !content.previewMode) return null;
@@ -32,7 +36,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects }) =>
     }
     return true;
   });
-  const localizedProjects = filteredProjects.filter((project) => project.title[locale]);
+  const localizedProjects = filteredProjects.filter((project) => localized(project.title));
 
   return (
     <section className="py-20 lg:py-28 bg-[#F8F9F4] relative">
@@ -113,7 +117,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects }) =>
                 {project.image ? (
                   <Image
                     src={project.image}
-                    alt={locale === 'ar' ? project.title.ar : project.title.en}
+                    alt={localized(project.title)}
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-108"
                   />
@@ -123,19 +127,19 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects }) =>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80" />
 
                 {/* Status Badge */}
-                {project.status && (
+                {localizedValue(project.status, project.status_en) && (
                   <div className="absolute top-4 right-4">
                   <span className="px-3 py-1 rounded-full text-xs font-bold text-white bg-[#101E39]/80 backdrop-blur-md border border-white/20">
-                    {locale === 'ar' ? project.status : project.status_en}
+                    {localizedValue(project.status, project.status_en)}
                   </span>
                   </div>
                 )}
 
                 {/* Location Badge */}
-                {(locale === 'ar' ? project.location : project.location_en) && (
+                {localizedValue(project.location, project.location_en) && (
                   <div className="absolute bottom-4 right-4 flex items-center gap-1.5 text-white/95 text-xs font-semibold drop-shadow-md">
                   <MapPin className="w-3.5 h-3.5 text-[#B7913D]" />
-                    <span>{locale === 'ar' ? project.location : project.location_en}</span>
+                    <span>{localizedValue(project.location, project.location_en)}</span>
                   </div>
                 )}
               </div>
@@ -143,17 +147,17 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects }) =>
               {/* Card Body */}
               <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
                 <div className="space-y-2">
-                  {(locale === 'ar' ? project.category : project.category_en) && (
+                  {localizedValue(project.category, project.category_en) && (
                     <span className="text-[11px] font-bold uppercase tracking-wider text-[#B7913D]">
-                      {locale === 'ar' ? project.category : project.category_en}
+                      {localizedValue(project.category, project.category_en)}
                     </span>
                   )}
                   <h3 className="text-xl font-bold text-[#101E39] group-hover:text-[#B7913D] transition-colors leading-snug">
-                    {locale === 'ar' ? project.title.ar : project.title.en}
+                    {localized(project.title)}
                   </h3>
-                  {(locale === 'ar' ? project.excerpt.ar : project.excerpt.en) && (
+                  {localized(project.excerpt) && (
                     <p className="text-sm text-[#5A677B] leading-relaxed line-clamp-2">
-                      {locale === 'ar' ? project.excerpt.ar : project.excerpt.en}
+                      {localized(project.excerpt)}
                     </p>
                   )}
                 </div>

@@ -41,7 +41,7 @@ const previewSlides: HeroSlide[] = [
     title_en: 'Business infrastructure for tomorrow',
     desc_ar: 'أصول ومجمعات ذكية تدعم نمو القطاعات الوطنية والاستثمارية.',
     desc_en: 'Smart assets and developments supporting national economic growth.',
-    primary_link: '/companies',
+    primary_link: '/projects',
     secondary_link: '/contact',
   },
 ];

@@ -15,7 +15,6 @@ export function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ContactPage() {
-  const { sectors } = await wpClient.getSiteContent();
   const pageContent = await wpClient.getContactPageContent();
 
   return (
@@ -33,7 +32,7 @@ export default async function ContactPage() {
         />
 
         {/* Full Form & Headquarters Details */}
-        <ContactSection sectors={sectors} pageContent={pageContent} />
+        <ContactSection pageContent={pageContent} />
       </main>
       <Footer />
     </>

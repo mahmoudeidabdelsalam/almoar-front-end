@@ -1,33 +1,57 @@
-# WPGraphQL Integration
+# WPGraphQL integration
 
-## Endpoint configuration
+## Configuration and request behavior
 
-Set `WORDPRESS_GRAPHQL_URL` to the absolute public GraphQL endpoint (normally `https://cms.example.com/graphql`). The optional `NEXT_PUBLIC_WORDPRESS_GRAPHQL_URL` is supported for deployments that intentionally expose the endpoint variable to client bundles; content requests themselves run in the server data layer.
+The frontend reads `WORDPRESS_GRAPHQL_URL`, with `NEXT_PUBLIC_WORDPRESS_GRAPHQL_URL` also supported where the browser must submit the contact mutation. Configure these as endpoint URLs, not credentials. The frontend client in `src/lib/wordpress/client.ts` owns read operations and model mapping.
 
-The contact form is a separate write operation and currently posts directly from the browser to the Alomar REST endpoint. Set `NEXT_PUBLIC_WORDPRESS_API_URL` to the public WordPress origin so the browser can call `/wp-json/alomar/v1/contact`. Configure the matching CORS policy in WordPress. These values are public URLs, not credentials. The example environment file contains placeholders only.
+Requests use POST and validate GraphQL/HTTP responses. CMS request failures are logged; production does not silently substitute mock records. Development preview data is available only when no CMS endpoint is configured.
 
-## Read query groups
+## Read operations
 
-`src/lib/wordpress/client.ts` owns the GraphQL client and typed mappings:
+- `alomarSiteContent`: site settings, page banners, section copy, homepage/about/Vision/footer editorial.
+- `homePageContent`: hero slides.
+- `projects(first: 50)`: project details, taxonomy terms, existing ACF fields, and the exposed `projectDetails` group.
+- `newsArticles(first: 10)`: records from the `news` custom post type, including bilingual ACF fields.
+- `newsArticle(id: $id, idType: DATABASE_ID)`: direct lookup by WordPress database ID with `relatedArticles`.
+- `alomarContactPageContent`: Contact page template data.
+- `headerSettings` and `footerSettings`: shared navigation/footer settings.
 
-- `getSiteContent()` fetches one `alomarSiteContent` selection for shared settings, route banners, section copy, homepage about, about-page editorial, Vision 2030, and footer; it also selects `homePageContent`, sectors, and companies.
-- `getProjects()` fetches up to 50 projects and their editorial fields, terms, specs, gallery, highlights, and featured image. Optional category filtering currently occurs after the response is mapped.
-- `getTeam()` selects up to 20 board members and their bilingual display fields.
-- `getNews()` selects up to 10 posts and Alomar news fields; the default `hello-world` post is excluded.
-- Project and article detail lookups currently reuse the corresponding list methods and resolve the slug in the cached results. This avoids extra endpoint calls on current data but means records outside those list limits are not addressable by these helpers.
+The `relatedArticles` resolver returns published News records selected through the `related_articles` ACF field. Local records currently have no related selection.
 
-All selections are fields consumed by the frontend, rather than schema introspection or an unbounded request. The `contentEn` sector selection was specifically exercised against the local endpoint and is accepted by the active schema.
+The `projectDetails` group contains the existing bilingual project fields plus Project Logo and the Stats, Make, Companies, Experience, and Key Projects fields. Project gallery and highlights are legacy fields on the `Project` node (`projectGallery: [String]` and `projectHighlights: [AlomarProjectHighlight]`). ACF image fields resolve as one-to-one media connections and are queried as `fieldName { node { sourceUrl altText } }`; the ACF Link field resolves to `url`, `title`, and `target`. Repeater selections are nullable lists and the frontend treats `null` and empty lists as no section content.
 
-## Caching and failure behavior
+The theme no longer registers the Board Members, Sectors, or Companies content types. Their records are not deleted, but they are not exposed through the current frontend/schema. The full current Projects selection was validated against two local records with no GraphQL errors; legacy repeater values that are not arrays resolve as empty lists.
 
-GraphQL requests use POST, JSON response validation, a three-second request timeout, Next.js cached data with a one-minute revalidation interval, and `cacheLife('minutes')`. GraphQL errors, missing data, HTTP failures, and transport failures are logged with the operation name. In production the affected content method returns an empty normalized result; it does not return mock records or pretend the request succeeded. Components hide optional empty lists or fields.
+Verified against the local endpoint with a query selecting the nested bands and media/link fields:
 
-In development only, when no CMS endpoint is configured, local preview datasets and editorial fallbacks are enabled with a startup warning. This preview mode is disabled in production builds.
+```graphql
+projects(first: 1) {
+  nodes {
+    projectDetails {
+      projectLogo { node { sourceUrl altText } }
+      statsItems { statHead statHeadEn statText statTextEn }
+      companiesItems { companyLogo { node { sourceUrl altText } } companyLink }
+      keyProjectsItems {
+        keyProjectsImg { node { sourceUrl altText } }
+        keyProjectsLink { url title target }
+      }
+    }
+  }
+}
+```
 
-## Schema and data validation
+The query returned the expected `projectDetails` object and nullable empty fields for the existing project. Schema introspection remains disabled; the active selections were validated directly.
 
-WPGraphQL is the read API for the public site. The plugin registers the `alomarSiteContent` root field and its nested types; ACF fields on projects, sectors, companies, board members, and posts are exposed for the selections above. `homePageContent` resolves editable hero-slide options.
+## Contact write operation
 
-The local WordPress endpoint accepted the content queries with HTTP 200 and no GraphQL errors. Public schema introspection is disabled, so no introspection result is claimed. Runtime validation covers the actual fields selected by the frontend and the local records returned by those queries.
+`submitAlomarContact` is a GraphQL mutation implemented by the existing core plugin class and initialized by the theme. The mutation field was confirmed with a validation-only request missing required input; no input-bearing mutation was executed.
 
-Contact submissions remain on REST because they create inquiries and the existing Alomar endpoint validates and records them. This is intentionally separate from the read-only GraphQL content contract.
+The separate `custom/v1/gravity-form` REST route belongs to the Gravity Forms integration and remains independent. Do not remove it as part of the public-content GraphQL integration.
+
+## Limits
+
+The `news` custom post type is exposed as `NewsArticle` / `NewsArticles`. Bilingual title, excerpt, body, category, and reading-time fields are registered on that GraphQL type. Article URLs and direct lookups use the WordPress database ID, not the content slug.
+
+Public schema introspection is disabled on the local endpoint; active selections are verified with executable queries. Project detail still resolves against the first 50 project records. Contact delivery, production endpoint configuration, and production content remain unverified.
+
+See [API migration](./API_MIGRATION.md) for safe write-endpoint validation and [CMS content verification](./CMS_CONTENT_RESULTS.md) for the local results.

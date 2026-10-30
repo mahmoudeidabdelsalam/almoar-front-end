@@ -20,6 +20,19 @@ function withLocalePath(url: string, locale: 'ar' | 'en') {
   return `/${locale}${url === '/' ? '' : url}`;
 }
 
+const unavailableRoutes = new Set(['companies', 'investments', 'media-center', 'sectors']);
+
+function filterUnavailableRoutes(items: HeaderMenuItem[]): HeaderMenuItem[] {
+  return items
+    .filter((item) => {
+      const path = item.url.replace(/^https?:\/\/[^/]+/i, '').split(/[?#]/, 1)[0];
+      const segments = path.split('/').filter(Boolean);
+      const route = segments[0] === 'ar' || segments[0] === 'en' ? segments[1] : segments[0];
+      return !route || !unavailableRoutes.has(route);
+    })
+    .map((item) => ({ ...item, children: filterUnavailableRoutes(item.children) }));
+}
+
 export const Header: React.FC = () => {
   const { locale, toggleLocale } = useLanguage();
   const [header, setHeader] = useState<HeaderContent | null>(null);
@@ -37,8 +50,7 @@ export const Header: React.FC = () => {
   const fallbackMenu: HeaderMenuItem[] = [
     { label: { ar: 'الرئيسية', en: 'Home' }, url: prefix, image: '', children: [] },
     { label: { ar: 'من نحن', en: 'About Us' }, url: `${prefix}/about`, image: '', children: [] },
-    { label: { ar: 'استثماراتنا', en: 'Our Investments' }, url: `${prefix}/investments`, image: '', children: [] },
-    { label: { ar: 'المركز الإعلامي', en: 'Media Center' }, url: `${prefix}/media-center`, image: '', children: [] },
+    { label: { ar: 'مشاريعنا', en: 'Our Projects' }, url: `${prefix}/projects`, image: '', children: [] },
     { label: { ar: 'الأخبار', en: 'News' }, url: `${prefix}/news`, image: '', children: [] },
     { label: { ar: 'تواصل معنا', en: 'Contact Us' }, url: `${prefix}/contact-us`, image: '', children: [] },
   ];
@@ -79,7 +91,8 @@ export const Header: React.FC = () => {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [submenu]);
 
-  const menu = header?.menu?.length ? header.menu : fallbackMenu;
+  const cmsMenu = filterUnavailableRoutes(header?.menu ?? []);
+  const menu = cmsMenu.length ? cmsMenu : fallbackMenu;
   const logo = locale === 'ar' ? (header?.logo || FALLBACK_LOGO) : (header?.logo_en || header?.logo || FALLBACK_LOGO);
 
   const closeOverlays = () => {

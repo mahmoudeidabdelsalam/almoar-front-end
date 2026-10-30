@@ -171,8 +171,6 @@ export interface ContactPageContent {
 export interface SiteContent {
   previewMode: boolean;
   settings: SiteSettings;
-  sectors: Sector[];
-  companies: SubsidiaryCompany[];
   heroSlides: HeroSlide[];
   pageBanners: Record<string, PageBannerContent>;
   sectionCopy: Record<string, SectionCopy>;
@@ -203,6 +201,36 @@ export interface Project {
   brochure_url?: string;
   featured?: boolean;
   highlights?: LocalizedString[];
+  logo?: { url: string; alt: string };
+  statsBand?: ProjectTextBand;
+  makeBand?: ProjectTextBand;
+  companiesBand?: ProjectCompaniesBand;
+  experienceBand?: ProjectTextBand;
+  keyProjectsBand?: ProjectKeyProjectsBand;
+}
+
+export interface ProjectTextBand {
+  tag: LocalizedString;
+  headline: LocalizedString;
+  items: Array<{ head: LocalizedString; text: LocalizedString }>;
+}
+
+export interface ProjectCompaniesBand {
+  tag: LocalizedString;
+  headline: LocalizedString;
+  items: Array<{ logo: { url: string; alt: string }; link: string }>;
+}
+
+export interface ProjectKeyProjectsBand {
+  tag: LocalizedString;
+  headline: LocalizedString;
+  items: Array<{
+    image?: { url: string; alt: string };
+    head: LocalizedString;
+    location: LocalizedString;
+    text: LocalizedString;
+    link: { url: string; title: string; target: string };
+  }>;
 }
 
 export interface Sector {
@@ -228,15 +256,6 @@ export interface SubsidiaryCompany {
   sector_slug?: string;
 }
 
-export interface TeamMember {
-  id: number;
-  name: LocalizedString;
-  role: LocalizedString;
-  bio: LocalizedString;
-  image: string;
-  order: number;
-}
-
 export interface NewsArticle {
   id: number;
   slug: string;
@@ -245,9 +264,11 @@ export interface NewsArticle {
   content: LocalizedString;
   image: string;
   date: string;
+  publishedAt?: string;
   category: LocalizedString;
   read_time: string;
   read_time_en?: string;
+  relatedNews?: NewsArticle[];
 }
 
 export interface InvestmentArticle {
