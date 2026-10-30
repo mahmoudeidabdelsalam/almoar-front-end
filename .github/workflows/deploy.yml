@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+
   workflow_dispatch:
 
 concurrency:
@@ -13,41 +14,101 @@ concurrency:
 
 jobs:
   deploy:
+    name: Deploy to Hostinger VPS
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy to Hostinger VPS
+      # 1. Prepare SSH
+      - name: Setup SSH
         env:
-          SSH_HOST: ${{ secrets.DEPLOY_HOST }}
-          SSH_USER: ${{ secrets.DEPLOY_USER }}
-          SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          SSH_KEY_B64: ${{ secrets.DEPLOY_SSH_KEY_B64 }}
           SSH_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
         run: |
+          set -e
+
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
 
-          printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key
+          if [ -z "$SSH_KEY_B64" ]; then
+            echo "Missing DEPLOY_SSH_KEY_B64 secret"
+            exit 1
+          fi
+
+          if [ -z "$SSH_KNOWN_HOSTS" ]; then
+            echo "Missing DEPLOY_KNOWN_HOSTS secret"
+            exit 1
+          fi
+
+          printf '%s' "$SSH_KEY_B64" | base64 --decode > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
+
+          # Validate private key
+          ssh-keygen -y -f ~/.ssh/deploy_key > /dev/null
 
           printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
 
+          echo "SSH configuration completed."
+
+      # 2. Test SSH connection
+      - name: Test SSH Connection
+        env:
+          SSH_HOST: ${{ secrets.DEPLOY_HOST }}
+          SSH_USER: ${{ secrets.DEPLOY_USER }}
+        run: |
+          set -e
+
           ssh \
             -i ~/.ssh/deploy_key \
+            -o IdentitiesOnly=yes \
             -o BatchMode=yes \
+            -o StrictHostKeyChecking=yes \
+            "$SSH_USER@$SSH_HOST" \
+            'echo "SSH connection successful"'
+
+      # 3. Deploy application
+      - name: Deploy to Hostinger
+        env:
+          SSH_HOST: ${{ secrets.DEPLOY_HOST }}
+          SSH_USER: ${{ secrets.DEPLOY_USER }}
+        run: |
+          set -e
+
+          ssh \
+            -i ~/.ssh/deploy_key \
+            -o IdentitiesOnly=yes \
+            -o BatchMode=yes \
+            -o StrictHostKeyChecking=yes \
             "$SSH_USER@$SSH_HOST" 'bash -se' <<'REMOTE'
+
           set -euo pipefail
 
-          cd /home/alomarfront/public_html
+          PROJECT_DIR="/home/alomarfront/public_html"
 
+          echo "Starting deployment..."
+
+          cd "$PROJECT_DIR"
+
+          # Update source code
+          echo "Fetching latest changes..."
           git fetch origin main
           git reset --hard origin/main
 
-          npm ci
-          npm run build
+          # Install dependencies
+          echo "Installing dependencies..."
+          /opt/cpanel/ea-nodejs22/bin/npm ci
 
-          systemctl restart alomarfront
-          systemctl is-active --quiet alomarfront
+          # Build Next.js
+          echo "Building application..."
+          /opt/cpanel/ea-nodejs22/bin/npm run build
+
+          # Restart application
+          echo "Restarting application..."
+          sudo -n /usr/bin/systemctl restart alomarfront.service
+
+          # Verify service
+          sudo -n /usr/bin/systemctl is-active --quiet alomarfront.service
 
           echo "Deployment completed successfully."
+
           REMOTE
