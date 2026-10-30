@@ -726,7 +726,7 @@ export const wpClient = {
           footerFields?: {
             footerLogo?: { node?: { sourceUrl?: string | null } | null } | null;
             socialLinks?: Array<{
-              platform?: string[] | null;
+              platform?: string | string[] | null;
               socialLink?: { url?: string | null } | null;
             }> | null;
             columns?: Array<{
@@ -785,7 +785,7 @@ export const wpClient = {
         newsletterButton: { ar: '', en: '' },
         copyright: { ar: fields.copyrightText || '', en: fields.copyrightTextEn || fields.copyrightText || '' },
         socialLinks: (fields.socialLinks ?? []).map((item) => ({
-          platform: item.platform?.[0] || '',
+          platform: (Array.isArray(item.platform) ? item.platform[0] : item.platform) || '',
           url: item.socialLink?.url || '',
         })).filter((item) => Boolean(item.url && item.url !== '/')),
       };

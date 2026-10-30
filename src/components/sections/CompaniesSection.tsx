@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
@@ -14,103 +14,245 @@ interface CompaniesProps {
 export const CompaniesSection: React.FC<CompaniesProps> = ({ projects }) => {
   const { locale, dir, content } = useLanguage();
   const otherLocale = locale === 'ar' ? 'en' : 'ar';
-  const localized = (value: LocalizedString) => value[locale]?.trim() || value[otherLocale]?.trim() || '';
+  const localized = (value?: LocalizedString) =>
+    value?.[locale]?.trim() || value?.[otherLocale]?.trim() || '';
   const localizedProjects = projects.filter((project) => localized(project.title));
+  const hasProjectStats = localizedProjects.some((item) => {
+    const band = item.statsBand;
+    return Boolean(
+      localized(band?.tag)
+      || localized(band?.headline)
+      || band?.items.some((stat) => localized(stat.head) || localized(stat.text)),
+    );
+  });
+  const minimumStageHeight = hasProjectStats ? 900 : 720;
   const [active, setActive] = useState(0);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [stageHeight, setStageHeight] = useState(960);
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const updateMotionPreference = () => setReducedMotion(motionPreference.matches);
+    const updateStageHeight = () => setStageHeight(Math.max(window.innerHeight, minimumStageHeight));
+
+    updateMotionPreference();
+    updateStageHeight();
+    motionPreference.addEventListener('change', updateMotionPreference);
+    window.addEventListener('resize', updateStageHeight, { passive: true });
+
+    return () => {
+      motionPreference.removeEventListener('change', updateMotionPreference);
+      window.removeEventListener('resize', updateStageHeight);
+    };
+  }, [minimumStageHeight]);
+
+  useEffect(() => {
+    if (reducedMotion || localizedProjects.length < 2) return;
+
+    let frame = 0;
+    const updateScrollProgress = () => {
+      if (frame) cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        const section = sectionRef.current;
+        const stage = stageRef.current;
+        if (!section || !stage) return;
+
+        const scrollDistance = section.offsetHeight - stage.offsetHeight;
+        const progress = scrollDistance > 0
+          ? Math.min(1, Math.max(0, -section.getBoundingClientRect().top / scrollDistance))
+          : 0;
+        setScrollProgress(progress);
+        setActive(Math.min(
+          localizedProjects.length - 1,
+          Math.floor(progress * localizedProjects.length),
+        ));
+      });
+    };
+
+    window.addEventListener('scroll', updateScrollProgress, { passive: true });
+    window.addEventListener('resize', updateScrollProgress, { passive: true });
+    updateScrollProgress();
+
+    return () => {
+      window.removeEventListener('scroll', updateScrollProgress);
+      window.removeEventListener('resize', updateScrollProgress);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, [localizedProjects.length, reducedMotion, stageHeight]);
+
+  const goToSlide = useCallback((index: number) => {
+    const nextIndex = Math.min(localizedProjects.length - 1, Math.max(0, index));
+    if (reducedMotion || localizedProjects.length < 2) {
+      setActive(nextIndex);
+      return;
+    }
+
+    const section = sectionRef.current;
+    const stage = stageRef.current;
+    if (!section || !stage) return;
+
+    const scrollDistance = section.offsetHeight - stage.offsetHeight;
+    const progress = (nextIndex + 0.5) / localizedProjects.length;
+    const top = window.scrollY + section.getBoundingClientRect().top + scrollDistance * progress;
+    window.scrollTo({ top, behavior: 'smooth' });
+  }, [localizedProjects.length, reducedMotion]);
+
   if (!localizedProjects.length && !content.previewMode) return null;
   if (!localizedProjects.length) return null;
 
-  const project = localizedProjects[active % localizedProjects.length];
+  const activeIndex = Math.min(active, localizedProjects.length - 1);
+  const project = localizedProjects[activeIndex];
   const ArrowIcon = dir === 'rtl' ? ArrowLeft : ArrowRight;
   const projectStats = project.statsBand;
-  const statsTag = projectStats?.tag[locale]?.trim() || projectStats?.tag[locale === 'ar' ? 'en' : 'ar']?.trim() || '';
-  const statsHeadline = projectStats?.headline[locale]?.trim() || projectStats?.headline[locale === 'ar' ? 'en' : 'ar']?.trim() || '';
+  const statsTag = localized(projectStats?.tag);
+  const statsHeadline = localized(projectStats?.headline);
   const statsItems = (projectStats?.items || []).filter((item) =>
-    item.head[locale]?.trim() || item.head[locale === 'ar' ? 'en' : 'ar']?.trim()
-      || item.text[locale]?.trim() || item.text[locale === 'ar' ? 'en' : 'ar']?.trim()
+    localized(item.head) || localized(item.text),
   );
   const showStats = Boolean(statsTag || statsHeadline || statsItems.length);
-  const previous = () => setActive((value) => (value - 1 + localizedProjects.length) % localizedProjects.length);
-  const next = () => setActive((value) => (value + 1) % localizedProjects.length);
+  const visibleProgress = reducedMotion
+    ? (activeIndex + 1) / localizedProjects.length
+    : localizedProjects.length > 1 ? scrollProgress : 0;
+  const sectionHeight = stageHeight * (localizedProjects.length + 1);
+  const scrollEnabled = !reducedMotion && localizedProjects.length > 1;
 
   return (
-    <section className={`relative overflow-hidden bg-[#101E39] text-white ${showStats ? 'min-h-[900px] lg:min-h-[960px]' : 'min-h-[720px] lg:h-[960px]'}`}>
-      {project.image && (
-        <Image src={project.image} alt={project.title[locale]} fill priority={false} className="object-cover object-center" />
-      )}
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,13,26,0.58)_0%,rgba(16,30,57,0.50)_45%,rgba(16,30,57,0.78)_100%)]" />
-      <div className={`relative flex flex-col z-10 mx-auto max-w-[1216px] px-5 py-16 sm:px-8 lg:px-0 lg:py-[120px] ${showStats ? 'min-h-[900px] lg:min-h-[960px]' : 'h-full'}`}>
-        <div className="grid grid-cols-2 border-b border-white/25 md:grid-cols-4">
-          {localizedProjects.slice(0, 4).map((item, index) => (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => setActive(index)}
-              aria-pressed={index === active}
-              className={`border-b border-white/25 px-2 py-3 text-center text-xs font-bold transition-colors md:text-sm ${
-                index === active ? 'text-white' : 'text-white/60 hover:text-white'
-              }`}
-            >
-              {localized(item.title)}
-            </button>
-          ))}
+    <section
+      ref={sectionRef}
+      className={`homepage-projects-track relative bg-[#101E39] text-white ${scrollEnabled ? '' : 'min-h-[720px]'}`}
+      style={scrollEnabled ? { height: `${sectionHeight}px` } : undefined}
+    >
+      <div
+        ref={stageRef}
+        className={`homepage-projects-stage relative isolate overflow-hidden bg-[#101E39] ${scrollEnabled ? 'sticky top-0' : ''}`}
+        style={{
+          height: scrollEnabled ? `${stageHeight}px` : 'auto',
+          minHeight: `${minimumStageHeight}px`,
+        }}
+      >
+        {project.image && (
+          <div className="absolute inset-0">
+            <Image
+              key={project.id}
+              src={project.image}
+              alt={localized(project.title)}
+              fill
+              sizes="100vw"
+              priority={false}
+              className="animate-project-slide object-cover object-center"
+            />
+          </div>
+        )}
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,13,26,0.58)_0%,rgba(16,30,57,0.50)_45%,rgba(16,30,57,0.78)_100%)]" />
+
+        <div
+          className="absolute inset-x-0 top-0 z-20 h-1 bg-white/20"
+          role="progressbar"
+          aria-label={locale === 'ar' ? 'تقدم شرائح المشاريع' : 'Project slider progress'}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={Math.round(visibleProgress * 100)}
+        >
+          <div
+            className="h-full origin-left bg-[#C5A265] transition-transform duration-300 motion-reduce:transition-none"
+            dir={dir}
+            style={{
+              transform: `scaleX(${visibleProgress})`,
+              transformOrigin: dir === 'rtl' ? 'right' : 'left',
+            }}
+          />
         </div>
 
-        <div className="mt-12 flex flex-col items-start justify-between gap-8 lg:mt-[48px]">
-          {(locale === 'ar' ? project.location : project.location_en || project.location) && (
-            <span className="block text-[#C5A265]">{locale === 'ar' ? project.location : project.location_en || project.location}</span>
-          )}
-          <div className="space-y-2 text-right">
-            <h2 className="max-w-[720px] text-5xl lg:text-[88px] lg:leading-[1.15] font-normal leading-[1.15] sm:text-5xl lg:text-6xl">
-              {localized(project.title)}
-            </h2>
-            <p className="text-sm lg:text-[88px] leading-7 lg:leading-[1.15] text-white/75">
-              {project.excerpt[locale] || project.content?.[locale] || ''}
-            </p>
+        <div className="relative z-10 mx-auto flex h-full max-w-[1216px] flex-col px-5 py-10 sm:px-8 sm:py-12 lg:px-0 lg:py-[96px]">
+          <div className="grid grid-cols-2 border-b border-white/25 md:grid-cols-4">
+            {localizedProjects.slice(0, 4).map((item, index) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => goToSlide(index)}
+                aria-pressed={index === activeIndex}
+                className={`border-b border-white/25 px-2 py-3 text-center text-xs font-bold transition-colors md:text-sm ${
+                  index === activeIndex ? 'text-white' : 'text-white/60 hover:text-white'
+                }`}
+              >
+                {localized(item.title)}
+              </button>
+            ))}
           </div>
-          <div className="flex items-center gap-3 mt-20">
-            <span className="text-2xl font-bold text-white">{String(active + 1).padStart(2, '0')}</span>
-            <span className="text-sm text-white/60">/ {String(localizedProjects.length).padStart(2, '0')}</span>
-            <button type="button" onClick={next} className="flex h-11 w-11 items-center justify-center rounded-full border border-white/50 hover:bg-white hover:text-[#101E39]" aria-label={locale === 'ar' ? 'المشروع التالي' : 'Next project'}>
-              <ArrowIcon className="h-4 w-4 rotate-180" />
-            </button>
-            <button type="button" onClick={previous} className="flex h-11 w-11 items-center justify-center rounded-full border border-white/50 hover:bg-white hover:text-[#101E39]" aria-label={locale === 'ar' ? 'المشروع السابق' : 'Previous project'}>
-              <ArrowIcon className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
 
-        <div className="mt-auto rounded-sm border border-white/10 bg-[#101E39]/55 p-6 backdrop-blur-md lg:px-10 lg:py-8">
+          <div key={project.id} className="animate-project-slide mt-8 flex min-h-0 flex-1 flex-col items-start justify-between gap-5 lg:mt-12">
+            {localized({ ar: project.location, en: project.location_en || project.location }) && (
+              <span className="block text-[#C5A265]">
+                {localized({ ar: project.location, en: project.location_en || project.location })}
+              </span>
+            )}
+            <div className={`space-y-3 ${dir === 'rtl' ? 'text-right' : 'text-left'}`}>
+              <h2 className="max-w-[720px] text-4xl font-normal leading-tight sm:text-5xl lg:text-7xl">
+                {localized(project.title)}
+              </h2>
+              <p className="max-w-3xl text-sm leading-7 text-white/75 sm:text-base">
+                {localized(project.excerpt) || localized(project.content)}
+              </p>
+            </div>
+
+            <div className="mt-2 flex items-center gap-3">
+              <span className="text-2xl font-bold text-white">{String(activeIndex + 1).padStart(2, '0')}</span>
+              <span className="text-sm text-white/60">/ {String(localizedProjects.length).padStart(2, '0')}</span>
+              <button
+                type="button"
+                onClick={() => goToSlide(Math.min(activeIndex + 1, localizedProjects.length - 1))}
+                disabled={activeIndex === localizedProjects.length - 1}
+                className="flex h-11 w-11 items-center justify-center rounded-full border border-white/50 transition-colors hover:bg-white hover:text-[#101E39] disabled:cursor-not-allowed disabled:opacity-40"
+                aria-label={locale === 'ar' ? 'المشروع التالي' : 'Next project'}
+              >
+                <ArrowIcon className="h-4 w-4 rotate-180" />
+              </button>
+              <button
+                type="button"
+                onClick={() => goToSlide(Math.max(activeIndex - 1, 0))}
+                disabled={activeIndex === 0}
+                className="flex h-11 w-11 items-center justify-center rounded-full border border-white/50 transition-colors hover:bg-white hover:text-[#101E39] disabled:cursor-not-allowed disabled:opacity-40"
+                aria-label={locale === 'ar' ? 'المشروع السابق' : 'Previous project'}
+              >
+                <ArrowIcon className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+
           <Link
             href={`/${locale}/projects/${project.slug}`}
-            className="w-full"
+            className="mt-6 block rounded-sm border border-white/10 bg-[#101E39]/55 p-5 backdrop-blur-md transition-colors hover:border-white/30 sm:p-6 lg:mt-8 lg:px-10 lg:py-8"
           >
+            <span className="sr-only">
+              {locale === 'ar' ? 'تفاصيل المشروع: ' : 'Project details: '}
+              {localized(project.title)}
+            </span>
             {showStats && (
               <>
-              <div className="mb-4 lg:mb-4">
-                 {(statsTag || statsHeadline) && (
-                  <div className="space-y-1">
+                {(statsTag || statsHeadline) && (
+                  <div className="mb-4 space-y-1">
                     {statsTag && <p className="text-xs font-bold uppercase tracking-wider text-[#C5A265]">{statsTag}</p>}
                     {statsHeadline && <h3 className="text-lg font-bold text-white">{statsHeadline}</h3>}
                   </div>
                 )}
-              </div>
-              <div className="space-y-4">
                 {statsItems.length > 0 && (
-                  <div className="grid grid-cols-2 gap-4 sm:grid-cols-5">
+                  <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
                     {statsItems.map((item, index) => {
-                      const head = item.head[locale]?.trim() || item.head[locale === 'ar' ? 'en' : 'ar']?.trim();
-                      const text = item.text[locale]?.trim() || item.text[locale === 'ar' ? 'en' : 'ar']?.trim();
+                      const head = localized(item.head);
+                      const text = localized(item.text);
                       return (
                         <div key={`${head}-${index}`} className="space-y-1 border-s border-white/20 ps-4 first:border-0 first:ps-0">
                           {head && <p className="text-2xl font-bold text-white">{head}</p>}
-                          {text && <p className="text-xl leading-5 text-white/70">{text}</p>}
+                          {text && <p className="text-base leading-5 text-white/70 sm:text-xl">{text}</p>}
                         </div>
                       );
                     })}
                   </div>
                 )}
-              </div>              
               </>
             )}
           </Link>

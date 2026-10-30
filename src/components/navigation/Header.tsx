@@ -136,7 +136,7 @@ export const Header: React.FC = () => {
         onMouseMove={(event) => { if (event.clientY < 80) setHidden(false); }}
         className={`fixed inset-x-0 top-0 z-[59] bg-white text-[#101E39] border-b border-[#101E39]/8 transition-transform duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] ${hidden ? '-translate-y-full' : 'translate-y-0'}`}
       >
-        <div className="mx-auto flex h-[76px] max-w-[1440px] items-center justify-between px-5 sm:px-8 lg:h-[88px] lg:px-12">
+        <div className="mx-auto flex h-[72px] max-w-[1440px] items-center justify-between px-5 sm:px-8 lg:px-12">
           <button
             type="button"
             onClick={() => { setSearchOpen(false); setMenuOpen((open) => !open); setSubmenu(null); setActiveImage(menu[0]?.image || ''); }}
@@ -173,17 +173,33 @@ export const Header: React.FC = () => {
             </button>
           </div>
         </div>
+        <svg width="420" height="50" viewBox="0 0 420 50" fill="none" xmlns="http://www.w3.org/2000/svg" className="pointer-events-none absolute left-1/2 top-full z-[1] h-[30px] w-[400px] -translate-x-1/2 -mt-[4px]">
+          <g filter="url(#filter0_d_1_3221)">
+          <path d="M10 4C100 4 120 34 210 34C300 34 320 4 410 4H10Z" fill="white"/>
+          </g>
+          <defs>
+          <filter id="filter0_d_1_3221" x="0" y="0" width="420" height="50" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+          <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+          <feOffset dy="6"/>
+          <feGaussianBlur stdDeviation="5"/>
+          <feColorMatrix type="matrix" values="0 0 0 0 0.06 0 0 0 0 0.12 0 0 0 0 0.22 0 0 0 0.08 0"/>
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_1_3221"/>
+          <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_1_3221" result="shape"/>
+          </filter>
+          </defs>
+        </svg>
       </header>
 
       <div
-        className={`fixed inset-0 z-[60] bg-[#0F1F38] transition-all duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] ${menuOpen ? 'visible translate-y-0 opacity-100' : 'invisible -translate-y-4 opacity-0'}`}
+        className={`fixed inset-0 z-[60] bg-[#0F1F38] bg-[url('/bg-menu.png')] bg-no-repeat bg-right-bottom transition-all duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] ${menuOpen ? 'visible translate-y-0 opacity-100' : 'invisible -translate-y-4 opacity-0'}`}
         role="dialog"
         aria-modal="true"
         aria-label={locale === 'ar' ? 'القائمة الرئيسية' : 'Main navigation'}
       >
-        <div className="relative h-full pt-[76px] lg:pt-[88px]" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+        <div className="relative h-full" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
 
-          <div className="mx-auto grid h-full max-w-[1440px] grid-cols-1 px-5 pb-5 pt-24 sm:px-8 lg:grid-cols-[65%_35%] lg:px-12 lg:pb-12 lg:pt-28">
+          <div className="mx-auto grid h-full max-w-[1440px] grid-cols-1 px-5 pb-5 pt-5 sm:px-8 lg:grid-cols-[60%_40%] lg:px-12 lg:pb-12 lg:pt-28">
             <nav className="h-full px-0 lg:px-[7%]" aria-label={submenu ? (locale === 'ar' ? 'القائمة الفرعية' : 'Submenu') : (locale === 'ar' ? 'القائمة الرئيسية' : 'Main menu')}>
               {submenu ? (
                 <div className="w-full h-full flex flex-col">

@@ -7,8 +7,52 @@ import { useLanguage } from '@/context/LanguageContext';
 import { wpClient } from '@/lib/wordpress/client';
 import type { FooterColumn, FooterContent } from '@/types';
 
+interface FooterSocialLinkProps {
+  platform: string;
+  url: string;
+  locale: 'ar' | 'en';
+}
+
+function getSocialPresentation(platform: string): { glyph: string; label: string } | null {
+  const normalizedPlatform = platform.trim().toLowerCase();
+  if (normalizedPlatform === 'linkedin') return { glyph: 'in', label: 'LinkedIn' };
+  if (normalizedPlatform === 'twitter' || normalizedPlatform === 'x') return { glyph: 'X', label: 'X' };
+  if (normalizedPlatform === 'instagram') return { glyph: '◎', label: 'Instagram' };
+  return null;
+}
+
+function getSafeSocialUrl(url: string): string | null {
+  try {
+    const parsedUrl = new URL(url);
+    if (!['http:', 'https:'].includes(parsedUrl.protocol) || !parsedUrl.hostname) return null;
+    return parsedUrl.href;
+  } catch {
+    return null;
+  }
+}
+
+function FooterSocialLink({ platform, url, locale }: FooterSocialLinkProps) {
+  const presentation = getSocialPresentation(platform);
+  const safeUrl = getSafeSocialUrl(url);
+  if (!presentation || !safeUrl) return null;
+
+  return (
+    <a
+      href={safeUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      dir="ltr"
+      aria-label={locale === 'ar' ? `تابعنا على ${presentation.label}` : `Follow us on ${presentation.label}`}
+      title={presentation.label}
+      className="flex h-10 w-10 items-center justify-center rounded-full border border-[#2A3B4D]/20 text-[#2A3B4D] bg-[#F2F0EB] transition-colors hover:border-[#101E39] hover:bg-[#101E39] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B7913D]"
+    >
+      <span className="text-xs font-bold" aria-hidden="true">{presentation.glyph}</span>
+    </a>
+  );
+}
+
 export const Footer: React.FC = () => {
-  const { locale } = useLanguage();
+  const { locale, dir } = useLanguage();
   const [footer, setFooter] = useState<FooterContent | null>(null);
 
   useEffect(() => {
@@ -39,6 +83,10 @@ export const Footer: React.FC = () => {
       }),
     }))
     .filter((column) => column.links.length > 0);
+
+  const socialLinks = (footer?.socialLinks ?? []).filter(
+    (social) => getSocialPresentation(social.platform) && getSafeSocialUrl(social.url),
+  );
 
   const localizedUrl = (url: string) => {
     if (/^(https?:|mailto:|tel:)/i.test(url) || url.startsWith('//')) return url;
@@ -105,15 +153,20 @@ export const Footer: React.FC = () => {
 
       <div className="border-t border-white/10 bg-white">
         <div className="mx-auto flex min-h-[84px] max-w-[1216px] flex-col items-center justify-between gap-4 px-5 py-5 text-xs text-[#2A3B4D] sm:px-8 md:flex-row lg:px-0">
+          {socialLinks.length > 0 && (
+            <div dir={dir} className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+              <span>{locale === 'ar' ? 'تابعونا على:' : 'Follow us:'}</span>
+              {socialLinks.map((social) => (
+                <FooterSocialLink
+                  key={`${social.platform}-${social.url}`}
+                  platform={social.platform}
+                  url={social.url}
+                  locale={locale}
+                />
+              ))}
+            </div>
+          )}
           <p>{locale === 'ar' ? footer?.copyright.ar || '© 2026 العمر القابضة. جميع الحقوق محفوظة' : footer?.copyright.en || '© 2026 Alomar Holding. All rights reserved'}</p>
-          <div className="flex items-center gap-4">
-            <span>{locale === 'ar' ? 'تابعونا على:' : 'Follow us:'}</span>
-            {footer?.socialLinks.map((social) => (
-              <a key={`${social.platform}-${social.url}`} href={social.url} target="_blank" rel="noreferrer" aria-label={social.platform} className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 transition-colors hover:bg-white hover:text-[#101E39]">
-                <span className="text-xs font-bold">{social.platform === 'linkedin' ? 'in' : social.platform === 'x' ? 'X' : social.platform.slice(0, 1).toUpperCase()}</span>
-              </a>
-            ))}
-          </div>
         </div>
       </div>
     </footer>

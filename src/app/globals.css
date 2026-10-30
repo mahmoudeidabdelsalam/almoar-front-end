@@ -99,6 +99,21 @@ img, video { max-inline-size: 100%; }
   -webkit-text-fill-color: transparent;
 }
 
+.animate-project-slide {
+  animation: project-slide-enter 500ms var(--motion-easing) both;
+}
+
+@keyframes project-slide-enter {
+  from {
+    opacity: 0.35;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .gold-gradient-bg {
   background: linear-gradient(135deg, #B7913D 0%, #96742B 100%);
 }
