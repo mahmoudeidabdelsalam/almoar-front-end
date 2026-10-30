@@ -186,14 +186,13 @@ export const Header: React.FC = () => {
       </header>
 
       <div
-        className={`fixed inset-0 z-[60] bg-[#0F1F38] bg-[url('/bg-menu.png')] bg-no-repeat bg-right-bottom transition-all duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] ${menuOpen ? 'visible translate-y-0 opacity-100' : 'invisible -translate-y-4 opacity-0'}`}
+        className={`fixed inset-0 z-[60] px-5 pb-5 pt-5 sm:px-8 lg:px-20 lg:pb-20 lg:pt-20 bg-black/80 ${menuOpen ? 'visible translate-y-0 opacity-100' : 'invisible -translate-y-4 opacity-0'}`}
         role="dialog"
         aria-modal="true"
         aria-label={locale === 'ar' ? 'القائمة الرئيسية' : 'Main navigation'}
       >
         <div className="relative h-full" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
-
-          <div className="mx-auto grid h-full max-w-[1440px] grid-cols-1 px-5 pb-5 pt-5 sm:px-8 lg:grid-cols-[60%_40%] lg:px-12 lg:pb-12 lg:pt-28">
+          <div className="mx-auto grid h-full rounded-lg max-w-[1440px] grid-cols-1 px-5 px-5 py-5 lg:grid-cols-[60%_40%] bg-[#0F1F38] bg-[url('/bg-menu.png')] bg-no-repeat bg-right-bottom transition-all duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)]">
             <nav className="h-full px-0 lg:px-[7%]" aria-label={submenu ? (locale === 'ar' ? 'القائمة الفرعية' : 'Submenu') : (locale === 'ar' ? 'القائمة الرئيسية' : 'Main menu')}>
               {submenu ? (
                 <div className="w-full h-full flex flex-col">
