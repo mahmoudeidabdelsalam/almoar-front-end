@@ -111,13 +111,17 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const siteContent = await wpClient.getSiteContent();
+  const [siteContent, header, footer] = await Promise.all([
+    wpClient.getSiteContent(),
+    wpClient.getHeader(),
+    wpClient.getFooter(),
+  ]);
 
   return (
     <html lang="ar" dir="rtl" className={`${ibmPlexArabic.variable} ${cairo.variable} ${playfair.variable} ${inter.variable}`}>
       <body className="antialiased min-h-screen flex flex-col selection:bg-[#B7913D] selection:text-white">
         <Suspense fallback={null}>
-          <LanguageProvider content={siteContent}>
+          <LanguageProvider content={siteContent} header={header} footer={footer}>
             {children}
           </LanguageProvider>
         </Suspense>

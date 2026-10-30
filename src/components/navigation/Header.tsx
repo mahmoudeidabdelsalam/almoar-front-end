@@ -4,8 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { Menu, TextAlignStart, Search, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
-import { wpClient } from '@/lib/wordpress/client';
-import type { HeaderContent, HeaderMenuItem } from '@/types';
+import type { HeaderMenuItem } from '@/types';
 
 const FALLBACK_LOGO = '/branding/alomar_logo_transparent.png';
 
@@ -34,8 +33,7 @@ function filterUnavailableRoutes(items: HeaderMenuItem[]): HeaderMenuItem[] {
 }
 
 export const Header: React.FC = () => {
-  const { locale, toggleLocale } = useLanguage();
-  const [header, setHeader] = useState<HeaderContent | null>(null);
+  const { locale, toggleLocale, header } = useLanguage();
   const [hidden, setHidden] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -54,10 +52,6 @@ export const Header: React.FC = () => {
     { label: { ar: 'الأخبار', en: 'News' }, url: `${prefix}/news`, image: '', children: [] },
     { label: { ar: 'تواصل معنا', en: 'Contact Us' }, url: `${prefix}/contact-us`, image: '', children: [] },
   ];
-
-  useEffect(() => {
-    wpClient.getHeader().then((data) => setHeader(data));
-  }, []);
 
   useEffect(() => {
     const onScroll = () => {

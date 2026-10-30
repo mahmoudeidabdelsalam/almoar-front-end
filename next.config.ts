@@ -41,6 +41,7 @@ export default function createNextConfig(phase: string): NextConfig {
       remotePatterns: trustedMediaHosts.map((host) => ({
         protocol: host.protocol,
         hostname: host.hostname,
+        pathname: '/wp-content/uploads/**',
       })),
       dangerouslyAllowLocalIP: isDevelopment,
     },

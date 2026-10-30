@@ -81,7 +81,7 @@ export const NewsSection: React.FC<NewsProps> = ({ articles }) => {
               <article key={article.id} className="group">
                 <Link href={`${archivePath}/${article.id}`} className="relative block h-[300px] overflow-hidden rounded-sm bg-[#F1F3EB]">
                   {article.image && (
-                    <Image src={article.image} alt={locale === 'ar' ? article.title.ar : article.title.en} fill className="object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
+                    <Image src={article.image} alt={locale === 'ar' ? article.title.ar : article.title.en} fill sizes="(max-width: 767px) 100vw, (max-width: 1279px) 33vw, 405px" className="object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
                   )}
                 </Link>
                 <p className="mt-3 text-xs font-semibold text-[#B7913D]">

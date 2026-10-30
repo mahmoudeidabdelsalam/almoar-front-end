@@ -1,11 +1,10 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { ArrowUp, Mail, Phone } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
-import { wpClient } from '@/lib/wordpress/client';
-import type { FooterColumn, FooterContent } from '@/types';
+import type { FooterColumn } from '@/types';
 
 interface FooterSocialLinkProps {
   platform: string;
@@ -52,12 +51,7 @@ function FooterSocialLink({ platform, url, locale }: FooterSocialLinkProps) {
 }
 
 export const Footer: React.FC = () => {
-  const { locale, dir } = useLanguage();
-  const [footer, setFooter] = useState<FooterContent | null>(null);
-
-  useEffect(() => {
-    wpClient.getFooter().then(setFooter);
-  }, []);
+  const { locale, dir, footer } = useLanguage();
 
   const fallbackColumns: FooterColumn[] = [
     {

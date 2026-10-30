@@ -70,7 +70,7 @@ export const HeroSlider: React.FC<{ slides?: HeroSlide[] }> = ({ slides: cmsSlid
           className={`absolute inset-0 transition-opacity duration-1000 ${index === current ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
           aria-hidden={index !== current}
         >
-          <Image src={slide.image} alt={locale === 'ar' ? slide.title_ar : slide.title_en} fill priority={index === 0} className="object-cover object-center" />
+          <Image src={slide.image} alt={locale === 'ar' ? slide.title_ar : slide.title_en} fill priority={index === 0} sizes="100vw" className="object-cover object-center" />
           <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(6,13,26,0.78)_0%,rgba(16,30,57,0.18)_58%,rgba(16,30,57,0.08)_100%)]" />
           <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-[#101E39]/85 to-transparent" />
         </div>

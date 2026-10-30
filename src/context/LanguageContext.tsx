@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useSyncExternalStore } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { Locale, SiteContent } from '@/types';
+import { FooterContent, HeaderContent, Locale, SiteContent } from '@/types';
 import { translations } from '@/lib/i18n/translations';
 
 interface LanguageContextType {
@@ -11,6 +11,8 @@ interface LanguageContextType {
   dir: 'rtl' | 'ltr';
   t: (typeof translations)['ar'];
   content: SiteContent;
+  header: HeaderContent | null;
+  footer: FooterContent | null;
   toggleLocale: () => void;
 }
 
@@ -30,7 +32,12 @@ function getLocaleSnapshot(): Locale {
   return saved === 'ar' || saved === 'en' ? saved : 'ar';
 }
 
-export const LanguageProvider: React.FC<{ children: React.ReactNode; content: SiteContent }> = ({ children, content }) => {
+export const LanguageProvider: React.FC<{
+  children: React.ReactNode;
+  content: SiteContent;
+  header: HeaderContent | null;
+  footer: FooterContent | null;
+}> = ({ children, content, header, footer }) => {
   const storedLocale = useSyncExternalStore(subscribeToLocale, getLocaleSnapshot, (): Locale => 'ar');
   const pathname = usePathname();
   const router = useRouter();
@@ -64,7 +71,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode; content: Si
   const t = translations[locale];
 
   return (
-    <LanguageContext.Provider value={{ locale, setLocale, dir, t, content, toggleLocale }}>
+    <LanguageContext.Provider value={{ locale, setLocale, dir, t, content, header, footer, toggleLocale }}>
       {children}
     </LanguageContext.Provider>
   );
