@@ -94,7 +94,7 @@ export const Footer: React.FC = () => {
       <button
         type="button"
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        className="absolute left-12 top-[-42px] hidden h-[84px] w-[84px] flex-col items-center justify-center rounded-full bg-white text-[#101E39] shadow-lg transition-colors hover:bg-[#C5A265] lg:flex"
+        className="absolute left-12 top-[-42px] hidden h-[84px] w-[84px] flex-col items-center cursor-pointer justify-center rounded-full bg-[#C5A265] text-white font-bold shadow-lg transition-colors hover:bg-[#BF9432] lg:flex"
         aria-label={locale === 'ar' ? 'العودة إلى الأعلى' : 'Back to top'}
       >
         <ArrowUp className="h-4 w-4 rotate-45" />
