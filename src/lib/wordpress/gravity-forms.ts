@@ -13,6 +13,9 @@ const GRAPHQL_URL =
 
 function getWordPressApiRoot(): string {
   const configuredRoot = process.env.NEXT_PUBLIC_WORDPRESS_API_URL || process.env.WORDPRESS_API_URL;
+  if (configuredRoot) {
+    return configuredRoot.replace(/\/graphql\/?$/, '').replace(/\/+$/, '');
+  }
   if (configuredRoot) return configuredRoot.replace(/\/+$/, '');
   if (!GRAPHQL_URL) return '';
 
