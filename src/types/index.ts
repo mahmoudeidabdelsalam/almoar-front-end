@@ -377,6 +377,14 @@ export interface NewsArticle {
   category: LocalizedString;
   read_time: string;
   read_time_en?: string;
+  imageAlt?: string;
+  statistics?: Array<{ value: LocalizedString; label: LocalizedString }>;
+  company?: {
+    name: LocalizedString;
+    description: LocalizedString;
+    logo: string;
+    link: string;
+  };
   relatedNews?: NewsArticle[];
 }
 

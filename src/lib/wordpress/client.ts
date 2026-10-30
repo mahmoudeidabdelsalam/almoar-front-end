@@ -67,6 +67,7 @@ type GraphQLNode = {
   featuredImage?: {
     node?: {
       sourceUrl?: string | null;
+      altText?: string | null;
     } | null;
   } | null;
   projectCategories?: {
@@ -146,6 +147,20 @@ type GraphQLNode = {
   newsCategoryEn?: string | null;
   readTimeAr?: string | null;
   readTimeEn?: string | null;
+  newsDetails?: {
+    statistics?: Array<{
+      value?: string | null;
+      valueEn?: string | null;
+      label?: string | null;
+      labelEn?: string | null;
+    } | null> | null;
+    companyName?: string | null;
+    companyNameEn?: string | null;
+    companyDescription?: string | null;
+    companyDescriptionEn?: string | null;
+    companyLogoUrl?: string | null;
+    companyLink?: string | null;
+  } | null;
   relatedArticles?: GraphQLNode[] | null;
 };
 
@@ -208,6 +223,15 @@ function mapProjectTextBand(
 }
 
 function mapNewsArticle(node: GraphQLNode): NewsArticle {
+  const details = node.newsDetails;
+  const statistics = (details?.statistics ?? [])
+    .filter((item): item is NonNullable<typeof item> => Boolean(item))
+    .map((item) => ({
+      value: { ar: item.value || '', en: item.valueEn || '' },
+      label: { ar: item.label || '', en: item.labelEn || '' },
+    }))
+    .filter((item) => item.value.ar || item.value.en || item.label.ar || item.label.en);
+
   return {
     id: node.databaseId ?? 0,
     slug: node.slug || node.uri || 'news-item',
@@ -221,12 +245,24 @@ function mapNewsArticle(node: GraphQLNode): NewsArticle {
       year: 'numeric',
     }) : '',
     publishedAt: node.date || '',
+    imageAlt: stripHtml(node.featuredImage?.node?.altText || ''),
     category: {
       ar: node.newsCategoryAr || '',
       en: node.newsCategoryEn || '',
     },
     read_time: node.readTimeAr || '',
     read_time_en: node.readTimeEn || '',
+    ...(statistics.length ? { statistics } : {}),
+    ...(details?.companyName || details?.companyNameEn || details?.companyDescription || details?.companyDescriptionEn
+      ? {
+          company: {
+            name: { ar: details.companyName || '', en: details.companyNameEn || '' },
+            description: { ar: details.companyDescription || '', en: details.companyDescriptionEn || '' },
+            logo: details.companyLogoUrl || '',
+            link: details.companyLink || '',
+          },
+        }
+      : {}),
     relatedNews: (node.relatedArticles ?? []).map(mapNewsArticle),
   };
 }
@@ -1350,7 +1386,7 @@ export const wpClient = {
         const data = await fetchGraphQL<{
           newsArticles?: { nodes?: GraphQLNode[] | null };
         }>(`{
-          newsArticles(first: 10) {
+          newsArticles(first: 50) {
             nodes {
               databaseId
               date
@@ -1365,7 +1401,7 @@ export const wpClient = {
               newsCategoryEn
               readTimeAr
               readTimeEn
-              featuredImage { node { sourceUrl } }
+              featuredImage { node { sourceUrl altText } }
             }
           }
         }`);
@@ -1408,7 +1444,16 @@ export const wpClient = {
           newsCategoryEn
           readTimeAr
           readTimeEn
-          featuredImage { node { sourceUrl } }
+          featuredImage { node { sourceUrl altText } }
+          newsDetails {
+            statistics { value valueEn label labelEn }
+            companyName
+            companyNameEn
+            companyDescription
+            companyDescriptionEn
+            companyLogoUrl
+            companyLink
+          }
           relatedArticles {
             databaseId
             date
@@ -1423,7 +1468,7 @@ export const wpClient = {
             newsCategoryEn
             readTimeAr
             readTimeEn
-            featuredImage { node { sourceUrl } }
+            featuredImage { node { sourceUrl altText } }
           }
         }
       }`, { id });
