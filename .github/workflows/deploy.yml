@@ -84,31 +84,34 @@ jobs:
           set -euo pipefail
 
           PROJECT_DIR="/home/alomarfront/public_html"
+          NODE_BIN="/opt/cpanel/ea-nodejs22/bin"
 
-          echo "Starting deployment..."
+          # Ensure Node 22 is used by every command
+          export PATH="$NODE_BIN:$PATH"
+
+          echo "Checking Node.js version..."
+          node -v
+          npm -v
 
           cd "$PROJECT_DIR"
 
-          # Update source code
           echo "Fetching latest changes..."
           git fetch origin main
           git reset --hard origin/main
 
-          # Install dependencies
           echo "Installing dependencies..."
-          /opt/cpanel/ea-nodejs22/bin/npm ci
+          "$NODE_BIN/npm" ci
 
-          # Build Next.js
           echo "Building application..."
-          /opt/cpanel/ea-nodejs22/bin/npm run build
+          "$NODE_BIN/node" "$PROJECT_DIR/node_modules/next/dist/bin/next" build
 
-          # Restart application
           echo "Restarting application..."
           sudo -n /usr/bin/systemctl restart alomarfront.service
 
-          # Verify service
+          echo "Checking application service..."
           sudo -n /usr/bin/systemctl is-active --quiet alomarfront.service
 
           echo "Deployment completed successfully."
 
           REMOTE
+
