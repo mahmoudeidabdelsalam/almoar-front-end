@@ -207,12 +207,74 @@ export interface ContactPageContent {
   heading: LocalizedString;
   email: string;
   phone: string;
+  website: string;
   address: LocalizedString;
   workingHours: LocalizedString;
+  location: LocalizedString;
   coordinates: { lat: number; lng: number };
+  mapUrl: string;
   linkedinUrl: string;
   twitterUrl: string;
   formTitle: LocalizedString;
+}
+
+export interface InvestWithUsPageContent {
+  heroBadge: LocalizedString;
+  heroTitle: LocalizedString;
+  heroDescription: LocalizedString;
+  heroImage: string;
+  opportunityHeading: LocalizedString;
+  opportunityDescription: LocalizedString;
+  processHeading: LocalizedString;
+  processItems: Array<{ title: LocalizedString; description: LocalizedString }>;
+  contactHeading: LocalizedString;
+  contactDescription: LocalizedString;
+  formTitle: LocalizedString;
+  formSubmitLabel: LocalizedString;
+  investmentFormId: number | null;
+}
+
+export interface GravityFormInput {
+  id: string;
+  label: string;
+  type: string;
+  isHidden: boolean;
+}
+
+export interface GravityFormChoice {
+  text: string;
+  value: string;
+}
+
+export interface GravityFormCondition {
+  fieldId: string;
+  operator: string;
+  value: string;
+}
+
+export interface GravityFormConditionalLogic {
+  actionType?: 'show' | 'hide';
+  logicType?: 'all' | 'any';
+  rules?: GravityFormCondition[];
+}
+
+export interface GravityFormField {
+  id: string;
+  type: string;
+  label: string;
+  description: string;
+  placeholder: string;
+  isRequired: boolean;
+  inputs: GravityFormInput[];
+  choices: GravityFormChoice[];
+  conditionalLogic: GravityFormConditionalLogic | null;
+}
+
+export interface GravityFormDefinition {
+  id: number;
+  title: string;
+  fields: GravityFormField[];
+  buttonText: string;
 }
 
 export interface SiteContent {

@@ -1,325 +1,151 @@
 'use client';
 
-import React, { useState } from 'react';
+import Link from 'next/link';
+import { ArrowLeft, ArrowRight, Globe2, Mail, MapPin, Phone } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
-import { submitContact } from '@/lib/wordpress/contact';
-import { MapPin, Phone, Mail, Clock, Send, CheckCircle2, AlertCircle } from 'lucide-react';
-import type { ContactPageContent } from '@/types';
+import { GravityForm } from '@/components/sections/GravityForm';
+import type { ContactPageContent, GravityFormDefinition, SiteContent } from '@/types';
 
-export const ContactSection: React.FC<{ pageContent?: ContactPageContent | null }> = ({ pageContent = null }) => {
-  const { locale, t, content } = useLanguage();
-  const address = {
-    ar: pageContent?.address.ar || '',
-    en: pageContent?.address.en || '',
-  };
-  const email = pageContent?.email || '';
-  const phone = pageContent?.phone || '';
-  const workingHours = {
-    ar: pageContent?.workingHours.ar || '',
-    en: pageContent?.workingHours.en || '',
-  };
-  const coordinates = pageContent?.coordinates.lat || pageContent?.coordinates.lng
-    ? pageContent.coordinates
-    : { lat: 0, lng: 0 };
-  const [formData, setFormData] = useState({
-    full_name: '',
-    email: '',
-    phone: '',
-    message: '',
-  });
+interface ContactSectionProps {
+  pageContent: ContactPageContent | null;
+  form: GravityFormDefinition;
+}
 
-  const [loading, setLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-  const [generalError, setGeneralError] = useState<string | null>(null);
+function getWebsiteLink(content: SiteContent, configuredUrl: string): string {
+  if (configuredUrl) return configuredUrl;
+  for (const column of content.footer.columns) {
+    const link = column.links.find((item) =>
+      item.url.startsWith('https://') && /alomar/i.test(`${item.label.ar} ${item.label.en} ${item.url}`),
+    );
+    if (link) return link.url;
+  }
+  return '';
+}
 
-  if (!pageContent?.title[locale] && !content.previewMode && !email && !phone) return null;
+export function ContactSection({ pageContent, form }: ContactSectionProps) {
+  const { locale, dir, t, content } = useLanguage();
+  const prefix = `/${locale}`;
+  const address = pageContent?.address[locale] || content.settings.contact[`address_${locale}`] || '';
+  const phone = pageContent?.phone || content.settings.contact.phone;
+  const email = pageContent?.email || content.settings.contact.email;
+  const website = getWebsiteLink(content, pageContent?.website || '');
+  const location = pageContent?.location[locale] || t.contact_section.hq_title;
+  const mapUrl = pageContent?.mapUrl || (
+    pageContent?.coordinates.lat && pageContent.coordinates.lng
+      ? `https://maps.google.com/?q=${pageContent.coordinates.lat},${pageContent.coordinates.lng}`
+      : ''
+  );
+  const title = pageContent?.title[locale] || t.nav.contact;
+  const heading = pageContent?.heading[locale] || t.contact_section.contact_heading;
+  const formTitle = pageContent?.formTitle[locale] || (locale === 'ar' ? 'أرسل لنا رسالة' : 'Send us a message');
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    if (fieldErrors[name]) {
-      setFieldErrors((prev) => {
-        const next = { ...prev };
-        delete next[name];
-        return next;
-      });
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setGeneralError(null);
-    setFieldErrors({});
-
-    try {
-      const res = await submitContact(formData);
-      if (res.success) {
-        setSuccessMessage(res.message);
-        setFormData({
-          full_name: '',
-          email: '',
-          phone: '',
-          message: '',
-        });
-      } else {
-        if (res.errors) {
-          setFieldErrors(res.errors);
-        }
-        setGeneralError(res.message);
-      }
-    } catch {
-      setGeneralError('تعذر إرسال الرسالة، يرجى المحاولة لاحقاً أو الاتصال بنا مباشرة.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const cards = [
+    { key: 'address', label: t.contact_section.address, value: address, href: mapUrl, icon: MapPin, external: Boolean(mapUrl) },
+    { key: 'website', label: t.contact_section.website, value: website.replace(/^https?:\/\//, '').replace(/\/$/, ''), href: website, icon: Globe2, external: true },
+    { key: 'email', label: t.contact_section.email, value: email, href: `mailto:${email}`, icon: Mail, external: false },
+    { key: 'phone', label: t.contact_section.phone, value: phone, href: `tel:${phone.replace(/[^\d+]/g, '')}`, icon: Phone, external: false },
+  ].filter((card) => card.value);
 
   return (
-    <section className="py-20 lg:py-28 bg-[#F8F9F4] relative" id="contact">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto space-y-4 mb-16">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#101E39]/5 border border-[#101E39]/10 text-xs font-bold text-[#101E39]">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#B7913D]" />
-            <span>{pageContent?.badge[locale] || (content.previewMode ? t.contact_section.badge : '')}</span>
+    <>
+      <section className="relative overflow-hidden bg-[#10213D] text-white]">
+        <div className="mx-auto flex min-h-[600px] max-w-[1440px] flex-col px-5 pb-20 pt-15 sm:px-8 lg:px-14">
+          <nav aria-label={locale === 'ar' ? 'مسار التنقل' : 'Breadcrumb'} className="flex items-center gap-2 text-[12px] text-[#F8F7F2]">
+            <Link href={prefix} className="hover:text-white">{t.nav.home}</Link>
+            <span aria-hidden="true">/</span>
+            <span aria-current="page" className="text-white/75">{title}</span>
+          </nav>
+          <div className="flex flex-1 items-end justify-start pb-12 pt-12">
+            <h1 className="text-[84px] text-[#F8F7F2] font-normal tracking-tight sm:text-5xl lg:text-[56px]">{title}</h1>
           </div>
-
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#101E39] tracking-tight">
-            {pageContent?.title[locale] || (content.previewMode ? t.contact_section.title : '')}
-          </h2>
-
-          <p className="text-base sm:text-lg text-[#5A677B]">
-            {pageContent?.description[locale] || (content.previewMode ? t.contact_section.subtitle : '')}
-          </p>
         </div>
+        <svg width="420" height="50" viewBox="0 0 420 50" fill="none" xmlns="http://www.w3.org/2000/svg" className="pointer-events-none absolute left-1/2 bottom-0 rotate-180 z-[1] h-[30px] w-[400px] -translate-x-1/2 -mb-[4px]">
+          <g filter="url(#filter0_d_1_3221)">
+          <path d="M10 4C100 4 120 34 210 34C300 34 320 4 410 4H10Z" fill="white"/>
+          </g>
+          <defs>
+          <filter id="filter0_d_1_3221" x="0" y="0" width="420" height="50" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+          <feFlood floodOpacity="0" result="BackgroundImageFix"/>
+          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+          <feOffset dy="6"/>
+          <feGaussianBlur stdDeviation="5"/>
+          <feColorMatrix type="matrix" values="0 0 0 0 0.06 0 0 0 0 0.12 0 0 0 0 0.22 0 0 0 0.08 0"/>
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_1_3221"/>
+          <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_1_3221" result="shape"/>
+          </filter>
+          </defs>
+        </svg>
+      </section>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-          {/* Contact Details Card */}
-          <div className="lg:col-span-5 bg-[#101E39] text-white rounded-3xl p-8 sm:p-10 shadow-2xl relative overflow-hidden space-y-8">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-[#B7913D]/10 rounded-full blur-3xl pointer-events-none" />
+      <section id="contact" className="bg-[#F8F7F2] px-5 pb-14 pt-16 sm:px-8 lg:px-14 lg:pb-20 lg:pt-20">
+        <div className="mx-auto max-w-[1280px]">
+          <header className="mb-5 text-sm text-[#7D8490] sm:mb-8">
+            <p className="mb-2 text-[10px] font-medium text-[#B28B35]">{pageContent?.badge[locale] || t.contact_section.badge}</p>
+            <h2 className="text-[56px] font-normal leading-tight text-[#0F1F38]">{heading}</h2>
+          </header>
 
-            <div className="space-y-3 relative z-10">
-              <span className="text-xs font-bold uppercase tracking-widest text-[#B7913D]">
-                {t.contact_section.hq_title}
-              </span>
-              <h3 className="text-2xl font-bold">
-                {pageContent?.heading[locale] || (locale === 'ar'
-                  ? `${content.settings.site_name.ar} — المركز الرئيسي`
-                  : `${content.settings.site_name.en} HQ`)}
-              </h3>
-              {content.previewMode && <p className="text-white/70 text-sm leading-relaxed">
-                {locale === 'ar'
-                  ? 'يسرنا استقبال المستثمرين والشركاء في مقرنا الرئيسي بالرياض لمناقشة فرص التعاون والتطوير.'
-                  : 'We welcome investors and institutional partners at our Riyadh headquarters to discuss transformative opportunities.'}
-              </p>}
+          {cards.length > 0 && (
+            <div className="mb-8 grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
+              {cards.map(({ key, label, value, href, icon: Icon, external }) => {
+                const contentNode = (
+                  <>
+                    <span className="flex h-[52px] w-[52px] items-center justify-center rounded-full border border-[#D8DCE2] text-[#12233F] group-hover:border-[#C3942E] group-hover:bg-[#BF9432] transition">
+                      <Icon aria-hidden="true" size={16} strokeWidth={1.5} />
+                    </span>
+                    <span className="mt-2 text-[12px] text-[#8C8984]">{label}</span>
+                    <span className="mt-1 max-w-full break-words text-end text-[22px] font-normal text-[#0F1F38]" dir={key === 'email' || key === 'phone' || key === 'website' ? 'ltr' : dir}>
+                      {value}
+                    </span>
+                  </>
+                );
+                const className = 'group flex min-h-[98px] flex-col gap-[14px] items-start justify-center rounded-lg border border-[#D7DAE0] bg-white p-[14px] transition hover:border-[#C3942E] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C3942E]';
+                return href ? (
+                  <a  key={key} href={href} className={`${className} min-h-[188px]`} {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
+                    {contentNode}
+                  </a>
+                ) : <div key={key} className={`${className} min-h-[188px]`} >{contentNode}</div>;
+              })}
             </div>
+          )}
 
-            <div className="space-y-5 text-sm relative z-10">
-              {(address.ar || address.en) && (
-                <div className="flex items-start gap-4">
-                  <div className="p-2.5 rounded-xl bg-white/10 text-[#B7913D] flex-shrink-0 mt-1">
-                    <MapPin className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <span className="text-xs text-white/50 block font-semibold">
-                      {locale === 'ar' ? 'العنوان' : 'Address'}
-                    </span>
-                    <span className="text-white font-medium leading-relaxed block mt-0.5">
-                      {locale === 'ar' ? address.ar : address.en}
-                    </span>
-                  </div>
-                </div>
-              )}
-              {phone && (
-                <div className="flex items-start gap-4">
-                  <div className="p-2.5 rounded-xl bg-white/10 text-[#B7913D] flex-shrink-0 mt-1">
-                    <Phone className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <span className="text-xs text-white/50 block font-semibold">{t.contact_section.phone}</span>
-                    <a href={`tel:${phone.replace(/[^\d+]/g, '')}`} dir="ltr" className="text-white font-medium hover:text-[#B7913D] transition-colors block mt-0.5">
-                      {phone}
-                    </a>
-                  </div>
-                </div>
-              )}
-              {email && (
-                <div className="flex items-start gap-4">
-                  <div className="p-2.5 rounded-xl bg-white/10 text-[#B7913D] flex-shrink-0 mt-1">
-                    <Mail className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <span className="text-xs text-white/50 block font-semibold">{t.contact_section.email}</span>
-                    <a href={`mailto:${email}`} className="text-white font-medium hover:text-[#B7913D] transition-colors block mt-0.5">
-                      {email}
-                    </a>
-                  </div>
-                </div>
-              )}
-              {(workingHours.ar || workingHours.en) && (
-                <div className="flex items-start gap-4">
-                  <div className="p-2.5 rounded-xl bg-white/10 text-[#B7913D] flex-shrink-0 mt-1">
-                    <Clock className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <span className="text-xs text-white/50 block font-semibold">{t.contact_section.hours}</span>
-                    <span className="text-white font-medium block mt-0.5">
-                      {locale === 'ar' ? workingHours.ar : workingHours.en}
-                    </span>
-                  </div>
-                </div>
-              )}
+          <div className="grid gap-4 md:grid-cols-12 md:gap-5">
+            <div className="md:col-span-8">
+              <GravityForm form={form} title={formTitle} submitLabel={locale === 'ar' ? 'إرسال الرسالة' : 'Send Message'} />
             </div>
-
-            {/* Quick Map Coordinates Box */}
-            {coordinates.lat !== 0 && coordinates.lng !== 0 && <div className="p-4 rounded-2xl bg-white/5 border border-white/10 text-xs text-white/70">
-              <span className="text-[#B7913D] font-bold block mb-1">
-                {locale === 'ar' ? 'إحداثيات الموقع الجغرافي:' : 'GPS Coordinates:'}
-              </span>
-              <span>{coordinates.lat}° N, {coordinates.lng}° E — {address.ar}</span>
-            </div>}
-          </div>
-
-          {/* Interactive Form Card */}
-          <div className="lg:col-span-7 bg-white rounded-3xl p-8 sm:p-10 shadow-xl border border-[#101E39]/10">
-            {successMessage ? (
-              <div className="p-8 text-center space-y-4">
-                <div className="w-16 h-16 bg-[#1B4332]/10 text-[#1B4332] rounded-full flex items-center justify-center mx-auto">
-                  <CheckCircle2 className="w-8 h-8" />
-                </div>
-                <h3 className="text-2xl font-bold text-[#101E39]">{t.contact_section.success_title}</h3>
-                <p className="text-sm text-[#5A677B] max-w-md mx-auto leading-relaxed">
-                  {successMessage}
-                </p>
-                <button
-                  type="button"
-                  onClick={() => setSuccessMessage(null)}
-                  className="px-6 py-2.5 rounded-full text-xs font-bold text-[#101E39] bg-[#F8F9F4] hover:bg-[#101E39] hover:text-white transition-all"
-                >
-                  {locale === 'ar' ? 'إرسال رسالة أخرى' : 'Send Another Inquiry'}
-                </button>
+            <aside className="contact-map-pattern relative flex min-h-[260px] flex-col justify-between overflow-hidden rounded-xl bg-[#10213D] p-5 text-white md:col-span-4 md:min-h-[350px] md:p-6">
+              <div className="relative z-10">
+                <p className="text-[10px] font-medium text-[#C3942E]">{pageContent?.badge[locale] || t.contact_section.badge}</p>
+                <h3 className="mt-2 text-xl font-medium">{location}</h3>
               </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {pageContent?.formTitle[locale] && (
-                  <h3 className="text-xl font-bold text-[#101E39]">{pageContent.formTitle[locale]}</h3>
-                )}
-                {generalError && (
-                  <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm flex items-center gap-3">
-                    <AlertCircle className="w-5 h-5 flex-shrink-0" />
-                    <span>{generalError}</span>
-                  </div>
-                )}
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  {/* Full Name */}
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold text-[#101E39] block">
-                      {t.contact_section.form_name} <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      name="full_name"
-                      value={formData.full_name}
-                      onChange={handleChange}
-                      required
-                      placeholder={locale === 'ar' ? 'مثال: عبد الله محمد' : 'e.g. Abdullah Mohammed'}
-                      className={`w-full px-4 py-3 rounded-xl border text-sm text-[#101E39] bg-[#F8F9F4] focus:bg-white focus:outline-none focus:ring-2 transition-all ${
-                        fieldErrors.full_name
-                          ? 'border-red-400 focus:ring-red-200'
-                          : 'border-[#101E39]/15 focus:ring-[#B7913D]/30 focus:border-[#B7913D]'
-                      }`}
-                    />
-                    {fieldErrors.full_name && (
-                      <p className="text-xs text-red-500 font-medium">{fieldErrors.full_name}</p>
-                    )}
-                  </div>
-
-                  {/* Email */}
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold text-[#101E39] block">
-                      {t.contact_section.form_email} <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      required
-                      placeholder="name@domain.com"
-                      className={`w-full px-4 py-3 rounded-xl border text-sm text-[#101E39] bg-[#F8F9F4] focus:bg-white focus:outline-none focus:ring-2 transition-all ${
-                        fieldErrors.email
-                          ? 'border-red-400 focus:ring-red-200'
-                          : 'border-[#101E39]/15 focus:ring-[#B7913D]/30 focus:border-[#B7913D]'
-                      }`}
-                    />
-                    {fieldErrors.email && (
-                      <p className="text-xs text-red-500 font-medium">{fieldErrors.email}</p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  {/* Phone */}
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold text-[#101E39] block">
-                      {t.contact_section.form_phone}
-                    </label>
-                    <input
-                      type="tel"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleChange}
-                      placeholder="+966 5X XXX XXXX"
-                      dir="ltr"
-                      className="w-full px-4 py-3 rounded-xl border border-[#101E39]/15 text-sm text-[#101E39] bg-[#F8F9F4] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#B7913D]/30 focus:border-[#B7913D] transition-all text-right"
-                    />
-                  </div>
-
-                </div>
-
-                {/* Message */}
-                <div className="space-y-2">
-                  <label className="text-xs font-bold text-[#101E39] block">
-                    {t.contact_section.form_message} <span className="text-red-500">*</span>
-                  </label>
-                  <textarea
-                    name="message"
-                    value={formData.message}
-                    onChange={handleChange}
-                    rows={4}
-                    required
-                    placeholder={
-                      locale === 'ar'
-                        ? 'يرجى كتابة استفساركم أو تفاصيل فرصة التعاون الاستثمارية...'
-                        : 'Please write your inquiry or strategic collaboration details...'
-                    }
-                    className={`w-full px-4 py-3 rounded-xl border text-sm text-[#101E39] bg-[#F8F9F4] focus:bg-white focus:outline-none focus:ring-2 transition-all ${
-                      fieldErrors.message
-                        ? 'border-red-400 focus:ring-red-200'
-                        : 'border-[#101E39]/15 focus:ring-[#B7913D]/30 focus:border-[#B7913D]'
-                    }`}
-                  />
-                  {fieldErrors.message && (
-                    <p className="text-xs text-red-500 font-medium">{fieldErrors.message}</p>
-                  )}
-                </div>
-
-                {/* Submit Button */}
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full inline-flex items-center justify-center gap-2 py-4 px-6 rounded-xl font-bold text-sm md:text-base text-[#101E39] gold-gradient-bg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <Send className="w-4 h-4" />
-                  <span>{loading ? t.contact_section.form_submitting : t.contact_section.form_submit}</span>
-                </button>
-              </form>
-            )}
+              <div aria-hidden="true" className="absolute inset-0 opacity-30">
+                <div className="absolute -left-8 top-8 h-64 w-64 rotate-45 border-[18px] border-[#344866]" />
+                <div className="absolute -right-12 bottom-5 h-52 w-52 rotate-45 border-[16px] border-[#344866]" />
+                <div className="absolute left-1/2 top-1/2 h-[140%] w-[18px] -translate-x-1/2 -translate-y-1/2 rotate-45 bg-[#344866]" />
+              </div>
+              {address && <p className="relative z-10 max-w-[85%] text-sm leading-6 text-white/85">{address}</p>}
+              <div className="relative z-10 flex items-end justify-between gap-3">
+                {mapUrl && <a href={mapUrl} target="_blank" rel="noopener noreferrer" aria-label={t.contact_section.map} className="flex h-11 w-11 items-center justify-center rounded-full bg-[#C3942E] text-[#10213D] transition hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
+                  <MapPin aria-hidden="true" size={18} />
+                </a>}
+                <span className="text-[10px] text-white/55">{locale === 'ar' ? 'المملكة العربية السعودية' : 'Kingdom of Saudi Arabia'}</span>
+              </div>
+            </aside>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      <nav aria-label={locale === 'ar' ? 'صفحات ذات صلة' : 'Related pages'} className="bg-[#F8F7F2] px-5 pb-14 pt-2 sm:px-8 lg:px-14">
+        <div className="mx-auto grid max-w-[1280px] gap-3 sm:grid-cols-2">
+          <Link href={`${prefix}/invest-with-us`} className="flex min-h-[78px] items-center justify-between rounded-lg border border-[#D7DAE0] bg-white px-5 py-4 text-sm transition hover:border-[#C3942E] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C3942E]">
+            <ArrowLeft aria-hidden="true" size={17} className={dir === 'rtl' ? 'rotate-180' : ''} />
+            <span className="text-end"><span className="block text-[9px] text-[#818896]">{locale === 'ar' ? 'الاستثمار والشراكات' : 'Investment & Partnerships'}</span><span className="mt-1 block font-medium text-[#12233F]">{locale === 'ar' ? 'الذهاب إلى استثماراتنا' : 'Invest with us'}</span></span>
+          </Link>
+          <Link href={`${prefix}/about`} className="flex min-h-[78px] items-center justify-between rounded-lg border border-[#C3942E] bg-white px-5 py-4 text-sm transition hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C3942E]">
+            <span className="text-end"><span className="block text-[9px] text-[#818896]">{locale === 'ar' ? 'اكتشف مسيرتنا' : 'Discover our story'}</span><span className="mt-1 block font-medium text-[#12233F]">{t.nav.about}</span></span>
+            <ArrowRight aria-hidden="true" size={17} className={dir === 'rtl' ? 'rotate-180' : ''} />
+          </Link>
+        </div>
+      </nav>
+    </>
   );
-};
+}

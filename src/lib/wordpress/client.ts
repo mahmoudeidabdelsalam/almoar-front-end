@@ -7,6 +7,7 @@ import {
   HeaderContent,
   FooterContent,
   ContactPageContent,
+  InvestWithUsPageContent,
 } from '@/types';
 import {
   mockSettings,
@@ -875,17 +876,18 @@ export const wpClient = {
         descriptionAr?: string | null; descriptionEn?: string | null;
         bannerImage?: string | null;
         headingAr?: string | null; headingEn?: string | null;
-        email?: string | null; phone?: string | null;
+        email?: string | null; phone?: string | null; website?: string | null;
         addressAr?: string | null; addressEn?: string | null;
         workingHoursAr?: string | null; workingHoursEn?: string | null;
-        mapLat?: number | null; mapLng?: number | null;
+        locationAr?: string | null; locationEn?: string | null;
+        mapLat?: number | null; mapLng?: number | null; mapUrl?: string | null;
         linkedinUrl?: string | null; twitterUrl?: string | null;
         formTitleAr?: string | null; formTitleEn?: string | null;
       } | null }>(`{
         alomarContactPageContent {
           badgeAr badgeEn titleAr titleEn descriptionAr descriptionEn bannerImage
-          headingAr headingEn email phone addressAr addressEn
-          workingHoursAr workingHoursEn mapLat mapLng
+          headingAr headingEn email phone website addressAr addressEn
+          workingHoursAr workingHoursEn locationAr locationEn mapLat mapLng mapUrl
           linkedinUrl twitterUrl formTitleAr formTitleEn
         }
       }`);
@@ -899,9 +901,12 @@ export const wpClient = {
         heading: { ar: content.headingAr || '', en: content.headingEn || '' },
         email: content.email || '',
         phone: content.phone || '',
+        website: content.website || '',
         address: { ar: content.addressAr || '', en: content.addressEn || '' },
         workingHours: { ar: content.workingHoursAr || '', en: content.workingHoursEn || '' },
+        location: { ar: content.locationAr || '', en: content.locationEn || '' },
         coordinates: { lat: content.mapLat || 0, lng: content.mapLng || 0 },
+        mapUrl: content.mapUrl || '',
         linkedinUrl: content.linkedinUrl || '',
         twitterUrl: content.twitterUrl || '',
         formTitle: { ar: content.formTitleAr || '', en: content.formTitleEn || '' },
@@ -910,6 +915,75 @@ export const wpClient = {
       reportCMSIssue('getContactPageContent', error);
       return null;
     }
+  },
+
+  async getInvestWithUsPageContent(): Promise<InvestWithUsPageContent | null> {
+    if (!WP_GRAPHQL_URL) return null;
+    const data = await fetchGraphQL<{
+      alomarInvestWithUsPageContent?: {
+        heroBadgeAr?: string | null;
+        heroBadgeEn?: string | null;
+        heroTitleAr?: string | null;
+        heroTitleEn?: string | null;
+        heroDescriptionAr?: string | null;
+        heroDescriptionEn?: string | null;
+        heroImage?: string | null;
+        opportunityHeadingAr?: string | null;
+        opportunityHeadingEn?: string | null;
+        opportunityDescriptionAr?: string | null;
+        opportunityDescriptionEn?: string | null;
+        processHeadingAr?: string | null;
+        processHeadingEn?: string | null;
+        processItems?: Array<{
+          titleAr?: string | null;
+          titleEn?: string | null;
+          descriptionAr?: string | null;
+          descriptionEn?: string | null;
+        }> | null;
+        contactHeadingAr?: string | null;
+        contactHeadingEn?: string | null;
+        contactDescriptionAr?: string | null;
+        contactDescriptionEn?: string | null;
+        inquiryFormTitleAr?: string | null;
+        inquiryFormTitleEn?: string | null;
+        inquiryFormSubmitLabelAr?: string | null;
+        inquiryFormSubmitLabelEn?: string | null;
+        investmentFormId?: string | null;
+      } | null;
+    }>(`{
+      alomarInvestWithUsPageContent {
+        heroBadgeAr heroBadgeEn heroTitleAr heroTitleEn heroDescriptionAr heroDescriptionEn heroImage
+        opportunityHeadingAr opportunityHeadingEn opportunityDescriptionAr opportunityDescriptionEn
+        processHeadingAr processHeadingEn processItems { titleAr titleEn descriptionAr descriptionEn }
+        contactHeadingAr contactHeadingEn contactDescriptionAr contactDescriptionEn
+        inquiryFormTitleAr inquiryFormTitleEn inquiryFormSubmitLabelAr inquiryFormSubmitLabelEn
+        investmentFormId
+      }
+    }`);
+    const content = data.alomarInvestWithUsPageContent;
+    if (!content) return null;
+
+    const formId = content.investmentFormId && /^\d+$/.test(content.investmentFormId)
+      ? Number(content.investmentFormId)
+      : null;
+    return {
+      heroBadge: { ar: content.heroBadgeAr || '', en: content.heroBadgeEn || '' },
+      heroTitle: { ar: content.heroTitleAr || '', en: content.heroTitleEn || '' },
+      heroDescription: { ar: content.heroDescriptionAr || '', en: content.heroDescriptionEn || '' },
+      heroImage: content.heroImage || '',
+      opportunityHeading: { ar: content.opportunityHeadingAr || '', en: content.opportunityHeadingEn || '' },
+      opportunityDescription: { ar: content.opportunityDescriptionAr || '', en: content.opportunityDescriptionEn || '' },
+      processHeading: { ar: content.processHeadingAr || '', en: content.processHeadingEn || '' },
+      processItems: (content.processItems || []).map((item) => ({
+        title: { ar: item.titleAr || '', en: item.titleEn || '' },
+        description: { ar: item.descriptionAr || '', en: item.descriptionEn || '' },
+      })),
+      contactHeading: { ar: content.contactHeadingAr || '', en: content.contactHeadingEn || '' },
+      contactDescription: { ar: content.contactDescriptionAr || '', en: content.contactDescriptionEn || '' },
+      formTitle: { ar: content.inquiryFormTitleAr || '', en: content.inquiryFormTitleEn || '' },
+      formSubmitLabel: { ar: content.inquiryFormSubmitLabelAr || '', en: content.inquiryFormSubmitLabelEn || '' },
+      investmentFormId: formId && Number.isSafeInteger(formId) && formId > 0 ? formId : null,
+    };
   },
 
   async getFooter(): Promise<FooterContent | null> {

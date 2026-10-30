@@ -1,12 +1,36 @@
+import { Suspense } from 'react';
 import { Header } from '@/components/navigation/Header';
 import { Footer } from '@/components/navigation/Footer';
-import { PageBanner } from '@/components/sections/PageBanner';
-import { ContactSection } from '@/components/sections/ContactSection';
+import { InvestWithUsSection } from '@/components/sections/InvestWithUsSection';
+import { getGravityFormDefinition } from '@/lib/wordpress/gravity-forms';
+import { wpClient } from '@/lib/wordpress/client';
 import { notFound } from 'next/navigation';
 
-export default async function InvestWithUs({ params }: { params: Promise<{ lang: string }> }) {
+type Props = { params: Promise<{ lang: string }> };
+
+async function InvestWithUsContent({ params }: Props) {
   const { lang } = await params;
   if (lang !== 'ar' && lang !== 'en') notFound();
-  const ar = lang === 'ar';
-  return <><Header /><main className="flex-1 bg-[#F8F9F4] pt-24"><PageBanner pageKey="invest-with-us" imageFallback="/images/hero_riyadh.jpg" imageAlt={ar ? 'استثمر معنا' : 'Invest with us'} badgeFallback={ar ? 'فرص الاستثمار والشراكات' : 'Investment opportunities'} titleFallback={ar ? 'استثمر معنا وننمو معًا' : 'Invest with us and grow together'} descriptionFallback={ar ? 'اكتشف فرص الشراكة والاستثمار عبر محفظة مجموعة العمر القابضة المتنوعة.' : 'Explore partnership and investment opportunities across Alomar Holding’s diversified portfolio.'} /><ContactSection /></main><Footer /></>;
+  const [pageContent, contactContent] = await Promise.all([
+    wpClient.getInvestWithUsPageContent(),
+    wpClient.getContactPageContent(),
+  ]);
+  const form = await getGravityFormDefinition(pageContent?.investmentFormId ?? null);
+  return (
+    <>
+      <Header />
+      <main className="flex-1 bg-[#F8F7F2] pt-[72px]">
+        <InvestWithUsSection form={form} pageContent={pageContent} contactContent={contactContent} />
+      </main>
+      <Footer />
+    </>
+  );
+}
+
+export default function InvestWithUs({ params }: Props) {
+  return (
+    <Suspense fallback={<div className="min-h-screen animate-pulse bg-[#F8F7F3]" aria-label="Loading Invest With Us page" />}>
+      <InvestWithUsContent params={params} />
+    </Suspense>
+  );
 }

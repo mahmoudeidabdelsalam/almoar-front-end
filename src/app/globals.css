@@ -126,6 +126,24 @@ img, video { max-inline-size: 100%; }
   background: linear-gradient(180deg, #101E39 0%, #0A1426 100%);
 }
 
+.contact-map-pattern,
+.invest-contact-pattern {
+  isolation: isolate;
+}
+
+.contact-map-pattern::before,
+.invest-contact-pattern::before {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  content: "";
+  opacity: 0.22;
+  background-image:
+    repeating-linear-gradient(45deg, transparent 0 22px, rgba(102, 127, 163, 0.38) 23px 30px, transparent 31px 54px),
+    repeating-linear-gradient(-45deg, transparent 0 32px, rgba(102, 127, 163, 0.22) 33px 40px, transparent 41px 66px);
+  pointer-events: none;
+}
+
 .emerald-pattern-bg {
   background-color: #1B4332;
   background-image: radial-gradient(rgba(183, 145, 61, 0.15) 1.5px, transparent 1.5px), radial-gradient(rgba(255, 255, 255, 0.05) 1.5px, #1B4332 1.5px);

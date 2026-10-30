@@ -2,9 +2,9 @@ import React from 'react';
 import { Header } from '@/components/navigation/Header';
 import { Footer } from '@/components/navigation/Footer';
 import { ContactSection } from '@/components/sections/ContactSection';
-import { PageBanner } from '@/components/sections/PageBanner';
 import { wpClient } from '@/lib/wordpress/client';
 import { getPageMetadata } from '@/lib/wordpress/page-metadata';
+import { getGravityFormDefinition } from '@/lib/wordpress/gravity-forms';
 import type { Metadata } from 'next';
 
 export function generateMetadata(): Promise<Metadata> {
@@ -15,24 +15,19 @@ export function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ContactPage() {
-  const pageContent = await wpClient.getContactPageContent();
+  const [pageContent, form] = await Promise.all([
+    wpClient.getContactPageContent(),
+    getGravityFormDefinition(1),
+  ]);
+  if (!form) {
+    throw new Error('The configured Contact Us Gravity Form is unavailable.');
+  }
 
   return (
     <>
       <Header />
-      <main className="flex-1 bg-[#F8F9F4] pt-24">
-        <PageBanner
-          pageKey="contact"
-          imageFallback={pageContent?.bannerImage || "/images/hero_riyadh.jpg"}
-          imageAlt="Contact Alomar Holding"
-          badgeFallback={pageContent?.badge.ar || "قنوات التواصل المباشر"}
-          titleFallback={pageContent?.title.ar || "تواصل مع العمر القابضة"}
-          descriptionFallback={pageContent?.description.ar || "يسعدنا استقبال استفساراتكم ومناقشة الفرص الاستثمارية والشراكات الاستراتيجية."}
-          contactContent={pageContent}
-        />
-
-        {/* Full Form & Headquarters Details */}
-        <ContactSection pageContent={pageContent} />
+      <main className="flex-1 bg-[#F8F7F2] pt-[72px]">
+        <ContactSection pageContent={pageContent} form={form} />
       </main>
       <Footer />
     </>

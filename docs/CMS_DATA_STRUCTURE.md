@@ -2,7 +2,7 @@
 
 ## Source of truth and ownership
 
-The local WordPress installation at `/Users/mahmoud.eid/Sites/almoar-wp` is the CMS. The active theme is `theme-headless`; `alomar-holding-core` is installed but currently inactive in the local WordPress environment. This implementation moved custom post type and taxonomy registration into the theme without changing the existing public names, GraphQL names, or rewrite slugs. Its contact mutation class is loaded by the theme where available.
+The local WordPress installation at `/Users/mahmoud.eid/Sites/almoar-wp` is the CMS. The active theme is `theme-headless`. The `alomar-holding-core` plugin source is absent from this local installation; the theme provides the `alomarSiteContent` and `homePageContent` GraphQL fields from its registered ACF groups when the plugin resolver is unavailable. Theme-owned custom post type and taxonomy registrations retain their public names and rewrite slugs.
 
 Homepage and shared editorial copy is held in ACF options. About page content is stored on the WordPress page assigned the `page-about-us.php` template.
 
@@ -13,12 +13,24 @@ Homepage and shared editorial copy is held in ACF options. About page content is
 | `group_alomar_homepage` / `alomar-homepage-content` | Localized hero slides: image, badge, title, description, and links | Drives the frontend hero. |
 | `group_alomar_editorial_content` / `alomar-homepage-content` | `home_about`, `vision_section`, `footer_content` and legacy hidden fields | Shared editorial options. Page Banners, Homepage Section Headings and CTAs, the Homepage About Section image, and Investment Pillars are hidden from the editor; their stored values and GraphQL output are retained for existing frontend behavior. |
 | `group_alomar_about_page_content` / `page-about-us.php` | `about_page` | About Us page-specific content. Existing option values are copied to the page once without deleting the original option data. |
-| `group_wp_contact_page` / page template `page-contact-us.php` | Localized contact badge/title/description, banner image, heading, contact details, hours, map coordinates, social links, form title | Contact page-specific fields; the page template is assigned to the existing Contact page. |
+| `group_wp_contact_page` / page template `page-contact-us.php` | Localized contact badge/title/description, banner image, heading, contact details, website, hours, map coordinates/link, social links, form title | Contact page-specific fields; the page template is assigned to the existing Contact page. |
 | `group_wp_home` / front page | Legacy generic fields such as hero, benefits, about, and pricing sections | Boilerplate group; not the source of the current Alomar homepage data. |
 
 The hidden legacy `page_banners` field carries a page key, localized badge/title/description and SEO title/description; `section_copy` carries a section key, localized badge/title/description and CTA fields. `home_about`, `vision_section`, and `footer_content` hold their corresponding localized editorial groups and repeaters.
 
-The About Us page has a `page-about-us.php` template; its Next.js route reads the existing `aboutPage` GraphQL object, now resolved from that page. Invest With Us has no dedicated page field group and reuses contact-form content. The former Investments alias was removed; projects are served through the Projects routes.
+The About Us page has a `page-about-us.php` template; its Next.js route reads the existing `aboutPage` GraphQL object, now resolved from that page. The existing Invest With Us page uses the `group_alomar_invest_with_us` field group, matched by its page slug or title. Its localized content is queried through `alomarInvestWithUsPageContent`, and `investment_form_id` selects the Gravity Form. The former Investments alias was removed; projects are served through the Projects routes.
+
+### Contact page fields and forms
+
+The existing Contact ACF group is organized into **Page Header**, **Contact Information**, and **Contact Form** tabs. Two fields were added: `contact_website` (URL) and `contact_map_url` (URL). Existing field names and values are retained. The theme exposes these fields via `alomarContactPageContent` in WPGraphQL; the query resolves the page assigned `page-contact-us.php`.
+
+Gravity Forms 1 (`contact us`) and 2 (`Invest with us`) are unchanged. Both currently have the same ten configured fields, including required name, email, and comments; phone and best-time fields are conditional on choosing Phone. Form 1 is rendered on Contact Us. The Invest With Us page selects its form in WordPress through `investment_form_id`; the ACF choices are populated from Gravity Forms at edit time and display the form title and ID. Active and inactive forms are listed, and an unavailable saved ID is retained in the selector rather than silently cleared. The frontend fetches only the selected form’s public display schema; a missing/invalid selection shows a localized fallback instead of another form. The public schema endpoint omits notifications and administrative settings. Existing `custom/v1/gravity-form` submissions continue through `GFAPI::submit_form`, so Gravity Forms performs server-side validation and runs its configured confirmations and notifications. Honeypot protection is currently disabled on both forms.
+
+The Invest With Us ACF group has **Page Header**, **Partnership Opportunity**, and **Investment Inquiry** tabs:
+
+- Page Header: `hero_badge` / `hero_badge_en`, `hero_title` / `hero_title_en`, `hero_description` / `hero_description_en`, and `hero_image`.
+- Partnership Opportunity: `opportunity_heading` / `_en`, `opportunity_description` / `_en`, `process_heading` / `_en`, and the `process_items` repeater (`process_title` / `_en`, `process_description` / `_en`).
+- Investment Inquiry: `contact_heading` / `_en`, `contact_description` / `_en`, `inquiry_form_title` / `_en`, `inquiry_form_submit_label` / `_en`, and `investment_form_id`.
 
 ### About page field group
 
