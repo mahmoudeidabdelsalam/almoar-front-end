@@ -299,6 +299,7 @@ export interface Project {
   gallery?: string[];
   category: string;
   category_en?: string;
+  categoryTerms?: Array<{ slug: string; name: LocalizedString }>;
   location: string;
   location_en?: string;
   status: string;
@@ -316,6 +317,33 @@ export interface Project {
   companiesBand?: ProjectCompaniesBand;
   experienceBand?: ProjectTextBand;
   keyProjectsBand?: ProjectKeyProjectsBand;
+}
+
+export interface InvestmentsPageContent {
+  heroBadge: LocalizedString;
+  heroTitle: LocalizedString;
+  heroDescription: LocalizedString;
+  seoTitle: LocalizedString;
+  seoDescription: LocalizedString;
+  introEyebrow: LocalizedString;
+  introHeading: LocalizedString;
+  introDescription: LocalizedString;
+  introImage: string;
+  statistics: Array<{ value: string; label: LocalizedString }>;
+  portfolioEyebrow: LocalizedString;
+  portfolioHeading: LocalizedString;
+  portfolioDescription: LocalizedString;
+  ctaEyebrow: LocalizedString;
+  ctaHeading: LocalizedString;
+  ctaDescription: LocalizedString;
+  ctaButtonLabel: LocalizedString;
+  ctaUrl: string;
+  navigationLinks: Array<{
+    label: LocalizedString;
+    description: LocalizedString;
+    image: string;
+    url: string;
+  }>;
 }
 
 export interface ProjectTextBand {

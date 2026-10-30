@@ -71,7 +71,7 @@ export const Footer: React.FC = () => {
       ],
     },
   ];
-  const unavailableRoutes = new Set(['companies', 'investments', 'media-center', 'sectors']);
+  const unavailableRoutes = new Set(['companies', 'media-center', 'sectors']);
   const columns = (footer?.columns?.length ? footer.columns : fallbackColumns)
     .map((column) => ({
       ...column,

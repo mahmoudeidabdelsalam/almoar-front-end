@@ -20,7 +20,7 @@ function withLocalePath(url: string, locale: 'ar' | 'en') {
   return `/${locale}${url === '/' ? '' : url}`;
 }
 
-const unavailableRoutes = new Set(['companies', 'investments', 'media-center', 'sectors']);
+const unavailableRoutes = new Set(['companies', 'media-center', 'sectors']);
 
 function filterUnavailableRoutes(items: HeaderMenuItem[]): HeaderMenuItem[] {
   return items

@@ -52,6 +52,7 @@ export default function createNextConfig(phase: string): NextConfig {
         { source: '/about', destination: '/ar/about', permanent: false },
         { source: '/news', destination: '/ar/news', permanent: false },
         { source: '/news/:slug', destination: '/ar/news/:slug', permanent: false },
+        { source: '/investments', destination: '/ar/investments', permanent: false },
         { source: '/projects', destination: '/ar/investments', permanent: false },
         { source: '/projects/:slug', destination: '/ar/investments/:slug', permanent: false },
         { source: '/contact', destination: '/ar/contact-us', permanent: false },

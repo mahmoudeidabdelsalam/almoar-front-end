@@ -7,6 +7,7 @@ import {
   HeaderContent,
   FooterContent,
   ContactPageContent,
+  InvestmentsPageContent,
   InvestWithUsPageContent,
 } from '@/types';
 import {
@@ -43,15 +44,6 @@ type GraphQLNode = {
   titleEn?: string | null;
   excerptEn?: string | null;
   contentEn?: string | null;
-  statusAr?: string | null;
-  statusEn?: string | null;
-  locationAr?: string | null;
-  locationEn?: string | null;
-  unitsCount?: string | null;
-  landArea?: string | null;
-  builtArea?: string | null;
-  completionYear?: string | null;
-  brochureUrl?: string | null;
   featured?: boolean | null;
   summaryEn?: string | null;
   sectorIcon?: string | null;
@@ -71,16 +63,14 @@ type GraphQLNode = {
     } | null;
   } | null;
   projectCategories?: {
-    nodes?: Array<{ name?: string | null; nameEn?: string | null }> | null;
+    nodes?: Array<{ name?: string | null; nameEn?: string | null; slug?: string | null }> | null;
   } | null;
   projectLocations?: {
-    nodes?: Array<{ name?: string | null; nameEn?: string | null }> | null;
+    nodes?: Array<{ name?: string | null; nameEn?: string | null; slug?: string | null }> | null;
   } | null;
   categories?: {
     nodes?: Array<{ name?: string | null }> | null;
   } | null;
-  projectGallery?: string[] | null;
-  projectHighlights?: Array<{ ar?: string | null; en?: string | null }> | null;
   projectDetails?: {
     titleAr?: string | null;
     titleEn?: string | null;
@@ -1022,6 +1012,86 @@ export const wpClient = {
     };
   },
 
+  async getInvestmentsPageContent(): Promise<InvestmentsPageContent | null> {
+    if (!WP_GRAPHQL_URL) return null;
+    try {
+      const data = await fetchGraphQL<{
+        alomarInvestmentsPageContent?: {
+          heroBadgeAr?: string | null; heroBadgeEn?: string | null;
+          heroTitleAr?: string | null; heroTitleEn?: string | null;
+          heroDescriptionAr?: string | null; heroDescriptionEn?: string | null;
+          seoTitleAr?: string | null; seoTitleEn?: string | null;
+          seoDescriptionAr?: string | null; seoDescriptionEn?: string | null;
+          introEyebrowAr?: string | null; introEyebrowEn?: string | null;
+          introHeadingAr?: string | null; introHeadingEn?: string | null;
+          introDescriptionAr?: string | null; introDescriptionEn?: string | null;
+          introImage?: string | null;
+          statistics?: Array<{ value?: string | null; labelAr?: string | null; labelEn?: string | null } | null> | null;
+          portfolioEyebrowAr?: string | null; portfolioEyebrowEn?: string | null;
+          portfolioHeadingAr?: string | null; portfolioHeadingEn?: string | null;
+          portfolioDescriptionAr?: string | null; portfolioDescriptionEn?: string | null;
+          ctaEyebrowAr?: string | null; ctaEyebrowEn?: string | null;
+          ctaHeadingAr?: string | null; ctaHeadingEn?: string | null;
+          ctaDescriptionAr?: string | null; ctaDescriptionEn?: string | null;
+          ctaButtonLabelAr?: string | null; ctaButtonLabelEn?: string | null;
+          ctaUrl?: string | null;
+          navigationLinks?: Array<{
+            labelAr?: string | null; labelEn?: string | null;
+            descriptionAr?: string | null; descriptionEn?: string | null;
+            imageUrl?: string | null; url?: string | null;
+          } | null> | null;
+        } | null;
+      }>(`{
+        alomarInvestmentsPageContent {
+          heroBadgeAr heroBadgeEn heroTitleAr heroTitleEn heroDescriptionAr heroDescriptionEn
+          seoTitleAr seoTitleEn seoDescriptionAr seoDescriptionEn
+          introEyebrowAr introEyebrowEn introHeadingAr introHeadingEn
+          introDescriptionAr introDescriptionEn introImage
+          statistics { value labelAr labelEn }
+          portfolioEyebrowAr portfolioEyebrowEn portfolioHeadingAr portfolioHeadingEn
+          portfolioDescriptionAr portfolioDescriptionEn
+          ctaEyebrowAr ctaEyebrowEn ctaHeadingAr ctaHeadingEn
+          ctaDescriptionAr ctaDescriptionEn ctaButtonLabelAr ctaButtonLabelEn ctaUrl
+          navigationLinks { labelAr labelEn descriptionAr descriptionEn imageUrl url }
+        }
+      }`);
+      const content = data.alomarInvestmentsPageContent;
+      if (!content) return null;
+      return {
+        heroBadge: { ar: content.heroBadgeAr || '', en: content.heroBadgeEn || '' },
+        heroTitle: { ar: content.heroTitleAr || '', en: content.heroTitleEn || '' },
+        heroDescription: { ar: content.heroDescriptionAr || '', en: content.heroDescriptionEn || '' },
+        seoTitle: { ar: content.seoTitleAr || '', en: content.seoTitleEn || '' },
+        seoDescription: { ar: content.seoDescriptionAr || '', en: content.seoDescriptionEn || '' },
+        introEyebrow: { ar: content.introEyebrowAr || '', en: content.introEyebrowEn || '' },
+        introHeading: { ar: content.introHeadingAr || '', en: content.introHeadingEn || '' },
+        introDescription: { ar: content.introDescriptionAr || '', en: content.introDescriptionEn || '' },
+        introImage: content.introImage || '',
+        statistics: (content.statistics || []).filter((item) => item?.value).map((item) => ({
+          value: item?.value || '',
+          label: { ar: item?.labelAr || '', en: item?.labelEn || '' },
+        })),
+        portfolioEyebrow: { ar: content.portfolioEyebrowAr || '', en: content.portfolioEyebrowEn || '' },
+        portfolioHeading: { ar: content.portfolioHeadingAr || '', en: content.portfolioHeadingEn || '' },
+        portfolioDescription: { ar: content.portfolioDescriptionAr || '', en: content.portfolioDescriptionEn || '' },
+        ctaEyebrow: { ar: content.ctaEyebrowAr || '', en: content.ctaEyebrowEn || '' },
+        ctaHeading: { ar: content.ctaHeadingAr || '', en: content.ctaHeadingEn || '' },
+        ctaDescription: { ar: content.ctaDescriptionAr || '', en: content.ctaDescriptionEn || '' },
+        ctaButtonLabel: { ar: content.ctaButtonLabelAr || '', en: content.ctaButtonLabelEn || '' },
+        ctaUrl: content.ctaUrl || '',
+        navigationLinks: (content.navigationLinks || []).filter((item) => item?.url && (item.labelAr || item.labelEn)).map((item) => ({
+          label: { ar: item?.labelAr || '', en: item?.labelEn || '' },
+          description: { ar: item?.descriptionAr || '', en: item?.descriptionEn || '' },
+          image: item?.imageUrl || '',
+          url: item?.url || '',
+        })),
+      };
+    } catch (error) {
+      reportCMSIssue('getInvestmentsPageContent', error);
+      throw error;
+    }
+  },
+
   async getFooter(): Promise<FooterContent | null> {
     if (!WP_GRAPHQL_URL) return null;
     try {
@@ -1099,10 +1169,13 @@ export const wpClient = {
     }
   },
 
-  async getProjects(category?: string): Promise<Project[]> {
+  async getProjects(
+    category?: string,
+    { usePreviewData = true }: { usePreviewData?: boolean } = {},
+  ): Promise<Project[]> {
     if (!WP_GRAPHQL_URL) {
-      if (PREVIEW_MODE && (!category || category === 'all')) return mockProjects;
-      if (PREVIEW_MODE) return mockProjects.filter((p) => p.category.includes(category || ''));
+      if (PREVIEW_MODE && usePreviewData && (!category || category === 'all')) return mockProjects;
+      if (PREVIEW_MODE && usePreviewData) return mockProjects.filter((p) => p.category.includes(category || ''));
       return [];
     }
 
@@ -1119,17 +1192,6 @@ export const wpClient = {
               excerpt
               content
               featuredImage { node { sourceUrl } }
-              statusAr
-              statusEn
-              locationAr
-              locationEn
-              unitsCount
-              landArea
-              builtArea
-              completionYear
-              brochureUrl
-              projectGallery
-              projectHighlights { ar en }
               projectDetails {
                 titleAr titleEn
                 excerptAr excerptEn
@@ -1153,8 +1215,8 @@ export const wpClient = {
                   keyProjectsLink { url title target }
                 }
               }
-              projectCategories { nodes { name nameEn } }
-              projectLocations { nodes { name nameEn } }
+              projectCategories { nodes { name nameEn slug } }
+              projectLocations { nodes { name nameEn slug } }
             }
           }
         }`);
@@ -1168,6 +1230,13 @@ export const wpClient = {
           const locationName = node.projectLocations?.nodes?.[0]?.name || '';
           const categoryNameEn = node.projectCategories?.nodes?.[0]?.nameEn || '';
           const locationNameEn = node.projectLocations?.nodes?.[0]?.nameEn || '';
+          const categoryTerms = (node.projectCategories?.nodes || []).map((term) => ({
+            slug: term.slug || term.name || '',
+            name: {
+              ar: stripHtml(term.name || ''),
+              en: stripHtml(term.nameEn || term.name || ''),
+            },
+          }));
 
           return {
             id: node.databaseId ?? 0,
@@ -1185,23 +1254,17 @@ export const wpClient = {
               en: stripHtml(details?.contentEn || ''),
             },
             image: pickImage(node),
-            gallery: (node.projectGallery || []).filter((image): image is string => Boolean(image)),
+            gallery: [],
             category: categoryName,
             category_en: categoryNameEn,
-            location: stripHtml(node.locationAr || '') || locationName,
-            location_en: stripHtml(node.locationEn || '') || locationNameEn,
-            status: stripHtml(node.statusAr || ''),
-            status_en: stripHtml(node.statusEn || ''),
-            units_count: node.unitsCount || undefined,
-            land_area: node.landArea || undefined,
-            built_area: node.builtArea || undefined,
-            completion_year: node.completionYear || '',
-            brochure_url: node.brochureUrl || undefined,
+            categoryTerms,
+            location: locationName,
+            location_en: locationNameEn || locationName,
+            status: '',
+            status_en: '',
+            completion_year: '',
             featured: details?.featured ?? false,
-            highlights: (node.projectHighlights || []).map((highlight) => ({
-              ar: highlight?.ar || '',
-              en: highlight?.en || '',
-            })),
+            highlights: [],
             logo: (() => {
               const logo = mapProjectImage(details?.projectLogo);
               return logo ? { ...logo, alt: logo.alt || `${title} logo` } : undefined;
@@ -1290,7 +1353,7 @@ export const wpClient = {
       return [];
     } catch (error) {
       reportCMSIssue('getProjects', error);
-      return [];
+      throw error;
     }
   },
 

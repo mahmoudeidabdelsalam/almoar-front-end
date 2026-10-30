@@ -14,11 +14,12 @@ Homepage and shared editorial copy is held in ACF options. About page content is
 | `group_alomar_editorial_content` / `alomar-homepage-content` | `home_about`, `vision_section`, `footer_content` and legacy hidden fields | Shared editorial options. Page Banners, Homepage Section Headings and CTAs, the Homepage About Section image, and Investment Pillars are hidden from the editor; their stored values and GraphQL output are retained for existing frontend behavior. |
 | `group_alomar_about_page_content` / `page-about-us.php` | `about_page` | About Us page-specific content. Existing option values are copied to the page once without deleting the original option data. |
 | `group_wp_contact_page` / page template `page-contact-us.php` | Localized contact badge/title/description, banner image, heading, contact details, website, hours, map coordinates/link, social links, form title | Contact page-specific fields; the page template is assigned to the existing Contact page. |
+| `group_alomar_investments_page` / page slug `our-investments` | Localized page header, SEO, introduction, portfolio, and CTA copy; intro image; statistics and related-page repeaters | Drives the localized Investments page; the portfolio itself is queried from published `projects`. |
 | `group_wp_home` / front page | Legacy generic fields such as hero, benefits, about, and pricing sections | Boilerplate group; not the source of the current Alomar homepage data. |
 
 The hidden legacy `page_banners` field carries a page key, localized badge/title/description and SEO title/description; `section_copy` carries a section key, localized badge/title/description and CTA fields. `home_about`, `vision_section`, and `footer_content` hold their corresponding localized editorial groups and repeaters.
 
-The About Us page has a `page-about-us.php` template; its Next.js route reads the existing `aboutPage` GraphQL object, now resolved from that page. The existing Invest With Us page uses the `group_alomar_invest_with_us` field group, matched by its page slug or title. Its localized content is queried through `alomarInvestWithUsPageContent`, and `investment_form_id` selects the Gravity Form. The former Investments alias was removed; projects are served through the Projects routes.
+The About Us page has a `page-about-us.php` template; its Next.js route reads the existing `aboutPage` GraphQL object, now resolved from that page. The existing Invest With Us page uses the `group_alomar_invest_with_us` field group, matched by its page slug or title. Its localized content is queried through `alomarInvestWithUsPageContent`, and `investment_form_id` selects the Gravity Form. The existing `our-investments` page has a separate localized Next.js route and an ACF field group registered by page slug. Its copy, SEO, statistics, image, CTA, and related links are queried through `alomarInvestmentsPageContent`; its portfolio cards and filters use published `projects` and their project-category terms.
 
 ### Contact page fields and forms
 
@@ -31,6 +32,17 @@ The Invest With Us ACF group has **Page Header**, **Partnership Opportunity**, a
 - Page Header: `hero_badge` / `hero_badge_en`, `hero_title` / `hero_title_en`, `hero_description` / `hero_description_en`, and `hero_image`.
 - Partnership Opportunity: `opportunity_heading` / `_en`, `opportunity_description` / `_en`, `process_heading` / `_en`, and the `process_items` repeater (`process_title` / `_en`, `process_description` / `_en`).
 - Investment Inquiry: `contact_heading` / `_en`, `contact_description` / `_en`, `inquiry_form_title` / `_en`, `inquiry_form_submit_label` / `_en`, and `investment_form_id`.
+
+The Our Investments ACF group is matched to the published page with slug `our-investments` and has these tabs:
+
+- Page Header: localized `hero_badge`, `hero_title`, `hero_description`, `seo_title`, and `seo_description`.
+- Investment Introduction: localized `intro_eyebrow`, `intro_heading`, and `intro_description`; `intro_image`.
+- Investment Portfolio: localized `portfolio_eyebrow`, `portfolio_heading`, and `portfolio_description`.
+- Investment Call to Action: localized `cta_eyebrow`, `cta_heading`, `cta_description`, and `cta_button_label`; `cta_url`.
+- Related Pages: `navigation_links` repeater with localized labels/descriptions, `link_url`, and `link_image`.
+- Investment Statistics: `investment_statistics` repeater with `stat_value`, `stat_label`, and `stat_label_en`.
+
+The page fields are exposed by `alomarInvestmentsPageContent`. Portfolio membership is currently all published `projects`; the page uses their existing category terms and preserves WPGraphQL order.
 
 ### About page field group
 
@@ -52,7 +64,7 @@ For these new fields Arabic uses the base name and English uses `_en`. Existing 
 
 | WordPress type | ACF / taxonomy data used by the frontend | Local record snapshot |
 |---|---|---:|
-| `projects` | Localized title, excerpt, body, status and location; specs, completion year, brochure URL, featured flag, gallery, highlights, featured image; project category/location terms | 2 |
+| `projects` | Localized title, excerpt, body, featured flag and project details; featured image; project category/location terms | 2 |
 | `news` | Native title/excerpt/body, bilingual ACF fields, category and reading time, publication date, featured image, `related_articles` relationship | 1 |
 | Native `post` | Standard WordPress posts; not used by the frontend News listing | 2 |
 | `sectors`, `companies`, `investments`, `media-center` | Removed from theme CPT registration and frontend queries/routes; existing CMS records, if any, are not deleted | — |
@@ -62,13 +74,11 @@ The frontend News archive queries the `news` custom post type and resolves detai
 
 ### Project details field group
 
-The theme-owned `Alomar Project Details` group is exposed through WPGraphQL for ACF as the `projectDetails` object on `Project`. Existing project fields and stored names remain unchanged; existing project gallery/highlight fields were kept in the same group so their content remains queryable.
+The theme-owned `Alomar Project Details` group is exposed through WPGraphQL for ACF as the `projectDetails` object on `Project`. Existing project fields and stored names remain unchanged. The local WPGraphQL schema does not expose project status/specification, gallery, or highlight fields from the former query shape, so the frontend now selects schema-verified project data rather than failing the entire project query.
 
 | ACF field name | Type / nested fields |
 |---|---|
 | `project_logo` | Image, Image Array return |
-| `project_gallery` | Existing Gallery field |
-| `project_highlights` | Existing repeater: `highlight_ar`, `highlight_en` |
 | `stats_tag`, `stats_tag_en`, `stats_headline`, `stats_headline_en` | Text |
 | `stats_items` | Repeater: `stat_head`, `stat_head_en`, `stat_text`, `stat_text_en` |
 | `make_tag`, `make_tag_en`, `make_headline`, `make_headline_en` | Text |
@@ -86,10 +96,9 @@ Arabic is stored in the base field name and English in the `_en` field. The loca
 
 News records expose the ACF `related_articles` relationship as the GraphQL field `relatedArticles`. The resolver returns only published related News records. The frontend detail page uses those relationships and does not infer related articles from arbitrary list positions. Existing records currently have no populated related-article selection.
 
-### Content ownership decisions still needed
+### Content ownership decision still needed
 
 - Decide whether About editorial should move from the global options page onto the About page.
-- Define page-specific content for Invest With Us instead of reusing Contact content.
 
 ## GraphQL entry points
 
@@ -98,6 +107,7 @@ News records expose the ACF `related_articles` relationship as the GraphQL field
 - `projects`: project records and exposed ACF fields.
 - `newsArticles` and `newsArticle(id:, idType: DATABASE_ID)`: News CPT entries and ID-based article lookup.
 - `alomarContactPageContent`: Contact page template fields.
+- `alomarInvestmentsPageContent`: Our Investments page ACF fields and repeaters.
 - `submitAlomarContact`: contact write mutation from the existing core plugin class, now initialized by the theme.
 
 Public schema introspection is disabled on the local endpoint. The full project selection (including nested ACF repeaters, images, and links) and the absence of the removed `boardMembers` field were validated by executable GraphQL requests.
