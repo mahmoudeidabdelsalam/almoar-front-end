@@ -356,6 +356,47 @@ export const wpClient = {
         missionTitle: { ar: '', en: '' },
         missionDescription: { ar: '', en: '' },
         values: [],
+        overview: {
+          heading: { ar: '', en: '' },
+          descriptionOne: { ar: '', en: '' },
+          descriptionTwo: { ar: '', en: '' },
+          imageOne: { url: '', alt: { ar: '', en: '' } },
+          imageTwo: { url: '', alt: { ar: '', en: '' } },
+        },
+        statistics: [],
+        strategy: {
+          eyebrow: { ar: '', en: '' },
+          title: { ar: '', en: '' },
+          description: { ar: '', en: '' },
+          ctaLabel: { ar: '', en: '' },
+          ctaUrl: '',
+          focusTitle: { ar: '', en: '' },
+          focusDescription: { ar: '', en: '' },
+          principles: [],
+        },
+        portfolio: {
+          eyebrow: { ar: '', en: '' },
+          title: { ar: '', en: '' },
+          ctaLabel: { ar: '', en: '' },
+          ctaUrl: '',
+          items: [],
+        },
+        companies: {
+          eyebrow: { ar: '', en: '' },
+          title: { ar: '', en: '' },
+          items: [],
+        },
+        responsibility: {
+          eyebrow: { ar: '', en: '' },
+          title: { ar: '', en: '' },
+          items: [],
+        },
+        board: {
+          eyebrow: { ar: '', en: '' },
+          title: { ar: '', en: '' },
+          members: [],
+        },
+        navigationLinks: [],
       },
       visionSection: {
         badge: { ar: '', en: '' },
@@ -465,6 +506,57 @@ export const wpClient = {
             missionDescriptionAr?: string | null;
             missionDescriptionEn?: string | null;
             values?: Array<{ titleAr?: string | null; titleEn?: string | null; descriptionAr?: string | null; descriptionEn?: string | null }> | null;
+            overviewTitle?: string | null;
+            overviewTitleEn?: string | null;
+            overviewDescriptionOne?: string | null;
+            overviewDescriptionOneEn?: string | null;
+            overviewDescriptionTwo?: string | null;
+            overviewDescriptionTwoEn?: string | null;
+            overviewImageOneUrl?: string | null;
+            overviewImageOneAlt?: string | null;
+            overviewImageOneAltEn?: string | null;
+            overviewImageTwoUrl?: string | null;
+            overviewImageTwoAlt?: string | null;
+            overviewImageTwoAltEn?: string | null;
+            statistics?: Array<{ value?: string | null; label?: string | null; labelEn?: string | null }> | null;
+            strategyEyebrow?: string | null;
+            strategyEyebrowEn?: string | null;
+            strategyTitle?: string | null;
+            strategyTitleEn?: string | null;
+            strategyDescription?: string | null;
+            strategyDescriptionEn?: string | null;
+            strategyCtaLabel?: string | null;
+            strategyCtaLabelEn?: string | null;
+            strategyCtaUrl?: string | null;
+            strategyFocusTitle?: string | null;
+            strategyFocusTitleEn?: string | null;
+            strategyFocusDescription?: string | null;
+            strategyFocusDescriptionEn?: string | null;
+            strategyPrinciples?: Array<{ title?: string | null; titleEn?: string | null; description?: string | null; descriptionEn?: string | null }> | null;
+            portfolioEyebrow?: string | null;
+            portfolioEyebrowEn?: string | null;
+            portfolioTitle?: string | null;
+            portfolioTitleEn?: string | null;
+            portfolioCtaLabel?: string | null;
+            portfolioCtaLabelEn?: string | null;
+            portfolioCtaUrl?: string | null;
+            portfolioItems?: Array<{ title?: string | null; titleEn?: string | null; description?: string | null; descriptionEn?: string | null; metric?: string | null }> | null;
+            companiesEyebrow?: string | null;
+            companiesEyebrowEn?: string | null;
+            companiesTitle?: string | null;
+            companiesTitleEn?: string | null;
+            companies?: Array<{ name?: string | null; nameEn?: string | null; description?: string | null; descriptionEn?: string | null; logoUrl?: string | null; imageUrl?: string | null; link?: string | null }> | null;
+            responsibilityEyebrow?: string | null;
+            responsibilityEyebrowEn?: string | null;
+            responsibilityTitle?: string | null;
+            responsibilityTitleEn?: string | null;
+            responsibilityItems?: Array<{ title?: string | null; titleEn?: string | null; description?: string | null; descriptionEn?: string | null; imageUrl?: string | null }> | null;
+            boardEyebrow?: string | null;
+            boardEyebrowEn?: string | null;
+            boardTitle?: string | null;
+            boardTitleEn?: string | null;
+            boardMembers?: Array<{ name?: string | null; nameEn?: string | null; role?: string | null; roleEn?: string | null; imageUrl?: string | null }> | null;
+            navigationLinks?: Array<{ label?: string | null; labelEn?: string | null; imageUrl?: string | null; url?: string | null }> | null;
           } | null;
           visionSection?: {
             badgeAr?: string | null;
@@ -514,6 +606,24 @@ export const wpClient = {
             quoteAr quoteEn messageOneAr messageOneEn messageTwoAr messageTwoEn visionTitleAr visionTitleEn
             visionDescriptionAr visionDescriptionEn missionTitleAr missionTitleEn missionDescriptionAr missionDescriptionEn
             values { titleAr titleEn descriptionAr descriptionEn }
+            overviewTitle overviewTitleEn overviewDescriptionOne overviewDescriptionOneEn overviewDescriptionTwo overviewDescriptionTwoEn
+            overviewImageOneUrl overviewImageOneAlt overviewImageOneAltEn
+            overviewImageTwoUrl overviewImageTwoAlt overviewImageTwoAltEn
+            statistics { value label labelEn }
+            strategyEyebrow strategyEyebrowEn strategyTitle strategyTitleEn strategyDescription strategyDescriptionEn
+            strategyCtaLabel strategyCtaLabelEn strategyCtaUrl strategyFocusTitle strategyFocusTitleEn
+            strategyFocusDescription strategyFocusDescriptionEn
+            strategyPrinciples { title titleEn description descriptionEn }
+            portfolioEyebrow portfolioEyebrowEn portfolioTitle portfolioTitleEn portfolioCtaLabel
+            portfolioCtaLabelEn portfolioCtaUrl
+            portfolioItems { title titleEn description descriptionEn metric }
+            companiesEyebrow companiesEyebrowEn companiesTitle companiesTitleEn
+            companies { name nameEn description descriptionEn logoUrl imageUrl link }
+            responsibilityEyebrow responsibilityEyebrowEn responsibilityTitle responsibilityTitleEn
+            responsibilityItems { title titleEn description descriptionEn imageUrl }
+            boardEyebrow boardEyebrowEn boardTitle boardTitleEn
+            boardMembers { name nameEn role roleEn imageUrl }
+            navigationLinks { label labelEn imageUrl url }
           }
           visionSection {
             badgeAr badgeEn titleAr titleEn descriptionAr descriptionEn
@@ -635,6 +745,90 @@ export const wpClient = {
           values: (cms.aboutPage?.values || []).map((value) => ({
             title: { ar: value.titleAr || '', en: value.titleEn || '' },
             description: { ar: value.descriptionAr || '', en: value.descriptionEn || '' },
+          })),
+          overview: {
+            heading: {
+              ar: cms.aboutPage?.overviewTitle || '',
+              en: cms.aboutPage?.overviewTitleEn || '',
+            },
+            descriptionOne: {
+              ar: cms.aboutPage?.overviewDescriptionOne || '',
+              en: cms.aboutPage?.overviewDescriptionOneEn || '',
+            },
+            descriptionTwo: {
+              ar: cms.aboutPage?.overviewDescriptionTwo || '',
+              en: cms.aboutPage?.overviewDescriptionTwoEn || '',
+            },
+            imageOne: {
+              url: cms.aboutPage?.overviewImageOneUrl || '',
+              alt: { ar: cms.aboutPage?.overviewImageOneAlt || '', en: cms.aboutPage?.overviewImageOneAltEn || '' },
+            },
+            imageTwo: {
+              url: cms.aboutPage?.overviewImageTwoUrl || '',
+              alt: { ar: cms.aboutPage?.overviewImageTwoAlt || '', en: cms.aboutPage?.overviewImageTwoAltEn || '' },
+            },
+          },
+          statistics: (cms.aboutPage?.statistics || []).filter((item) => item?.value && (item.label || item.labelEn)).map((item) => ({
+            value: item.value || '',
+            label: { ar: item.label || '', en: item.labelEn || '' },
+          })),
+          strategy: {
+            eyebrow: { ar: cms.aboutPage?.strategyEyebrow || '', en: cms.aboutPage?.strategyEyebrowEn || '' },
+            title: { ar: cms.aboutPage?.strategyTitle || '', en: cms.aboutPage?.strategyTitleEn || '' },
+            description: { ar: cms.aboutPage?.strategyDescription || '', en: cms.aboutPage?.strategyDescriptionEn || '' },
+            ctaLabel: { ar: cms.aboutPage?.strategyCtaLabel || '', en: cms.aboutPage?.strategyCtaLabelEn || '' },
+            ctaUrl: cms.aboutPage?.strategyCtaUrl || '',
+            focusTitle: { ar: cms.aboutPage?.strategyFocusTitle || '', en: cms.aboutPage?.strategyFocusTitleEn || '' },
+            focusDescription: { ar: cms.aboutPage?.strategyFocusDescription || '', en: cms.aboutPage?.strategyFocusDescriptionEn || '' },
+            principles: (cms.aboutPage?.strategyPrinciples || []).filter((item) => item && (item.title || item.titleEn)).map((item) => ({
+              title: { ar: item.title || '', en: item.titleEn || '' },
+              description: { ar: item.description || '', en: item.descriptionEn || '' },
+            })),
+          },
+          portfolio: {
+            eyebrow: { ar: cms.aboutPage?.portfolioEyebrow || '', en: cms.aboutPage?.portfolioEyebrowEn || '' },
+            title: { ar: cms.aboutPage?.portfolioTitle || '', en: cms.aboutPage?.portfolioTitleEn || '' },
+            ctaLabel: { ar: cms.aboutPage?.portfolioCtaLabel || '', en: cms.aboutPage?.portfolioCtaLabelEn || '' },
+            ctaUrl: cms.aboutPage?.portfolioCtaUrl || '',
+            items: (cms.aboutPage?.portfolioItems || []).filter((item) => item && (item.title || item.titleEn || item.description || item.descriptionEn || item.metric)).map((item) => ({
+              title: { ar: item.title || '', en: item.titleEn || '' },
+              description: { ar: item.description || '', en: item.descriptionEn || '' },
+              metric: item.metric || '',
+            })),
+          },
+          companies: {
+            eyebrow: { ar: cms.aboutPage?.companiesEyebrow || '', en: cms.aboutPage?.companiesEyebrowEn || '' },
+            title: { ar: cms.aboutPage?.companiesTitle || '', en: cms.aboutPage?.companiesTitleEn || '' },
+            items: (cms.aboutPage?.companies || []).filter((item) => item && (item.name || item.nameEn || item.logoUrl || item.imageUrl)).map((item) => ({
+              name: { ar: item.name || '', en: item.nameEn || '' },
+              description: { ar: item.description || '', en: item.descriptionEn || '' },
+              logo: item.logoUrl || '',
+              image: item.imageUrl || '',
+              link: item.link || '',
+            })),
+          },
+          responsibility: {
+            eyebrow: { ar: cms.aboutPage?.responsibilityEyebrow || '', en: cms.aboutPage?.responsibilityEyebrowEn || '' },
+            title: { ar: cms.aboutPage?.responsibilityTitle || '', en: cms.aboutPage?.responsibilityTitleEn || '' },
+            items: (cms.aboutPage?.responsibilityItems || []).filter((item) => item && (item.title || item.titleEn || item.description || item.descriptionEn || item.imageUrl)).map((item) => ({
+              title: { ar: item.title || '', en: item.titleEn || '' },
+              description: { ar: item.description || '', en: item.descriptionEn || '' },
+              image: item.imageUrl || '',
+            })),
+          },
+          board: {
+            eyebrow: { ar: cms.aboutPage?.boardEyebrow || '', en: cms.aboutPage?.boardEyebrowEn || '' },
+            title: { ar: cms.aboutPage?.boardTitle || '', en: cms.aboutPage?.boardTitleEn || '' },
+            members: (cms.aboutPage?.boardMembers || []).filter((member) => member && (member.name || member.nameEn || member.imageUrl)).map((member) => ({
+              name: { ar: member.name || '', en: member.nameEn || '' },
+              role: { ar: member.role || '', en: member.roleEn || '' },
+              image: member.imageUrl || '',
+            })),
+          },
+          navigationLinks: (cms.aboutPage?.navigationLinks || []).filter((item) => item && (item.label || item.labelEn) && item.url).map((item) => ({
+            label: { ar: item.label || '', en: item.labelEn || '' },
+            image: item.imageUrl || '',
+            url: item.url || '',
           })),
         },
         visionSection: {

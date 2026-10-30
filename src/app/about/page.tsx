@@ -1,9 +1,17 @@
 import React from 'react';
 import { Header } from '@/components/navigation/Header';
 import { Footer } from '@/components/navigation/Footer';
-import { Vision2030Banner } from '@/components/sections/Vision2030Banner';
-import { PageBanner } from '@/components/sections/PageBanner';
-import { ChairmanMessage, AboutPrinciples } from '@/components/sections/AboutEditorial';
+import {
+  AboutBoard,
+  AboutCompanies,
+  AboutHero,
+  AboutNavigationLinks,
+  AboutOverview,
+  AboutPortfolio,
+  AboutResponsibility,
+  AboutStatistics,
+  AboutStrategy,
+} from '@/components/sections/AboutPageSections';
 import { getPageMetadata } from '@/lib/wordpress/page-metadata';
 import type { Metadata } from 'next';
 
@@ -18,21 +26,16 @@ export default async function AboutPage() {
   return (
     <>
       <Header />
-      <main className="flex-1 bg-[#F8F9F4] pt-24">
-        <PageBanner
-          pageKey="about"
-          imageFallback="/images/hero_riyadh.jpg"
-          imageAlt="Alomar Holding Headquarters"
-          badgeFallback="من نحن — مسيرة الريادة والنمو"
-          titleFallback="نبني الأثر ونستثمر برؤية أوسع"
-          descriptionFallback="تاريخ عريق من الإنجازات الاستثمارية والتطويرية يسهم في ازدهار الاقتصاد الوطني ومواكبة تطلعات المستقبل."
-        />
-
-        <ChairmanMessage />
-        <AboutPrinciples />
-
-        {/* Vision 2030 Banner */}
-        <Vision2030Banner />
+      <main className="flex-1 bg-[#F8F9F4]">
+        <AboutHero />
+        <AboutOverview />
+        <AboutStatistics />
+        <AboutStrategy />
+        <AboutPortfolio />
+        <AboutCompanies />
+        <AboutResponsibility />
+        <AboutBoard />
+        <AboutNavigationLinks />
       </main>
       <Footer />
     </>

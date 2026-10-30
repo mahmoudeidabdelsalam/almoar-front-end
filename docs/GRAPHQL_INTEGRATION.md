@@ -8,7 +8,7 @@ Requests use POST and validate GraphQL/HTTP responses. CMS request failures are 
 
 ## Read operations
 
-- `alomarSiteContent`: site settings, page banners, section copy, homepage/about/Vision/footer editorial.
+- `alomarSiteContent`: site settings, retained page-banner/section-copy data, homepage/Vision/footer editorial, and About Us page content. `aboutPage` keeps its existing response shape and resolves from the page assigned the `page-about-us.php` template; it includes the chairman/vision/mission/value fields and the About overview, statistics, strategy, portfolio distribution, company, responsibility, board, and related-page-link fields.
 - `homePageContent`: hero slides.
 - `projects(first: 50)`: project details, taxonomy terms, existing ACF fields, and the exposed `projectDetails` group.
 - `newsArticles(first: 10)`: records from the `news` custom post type, including bilingual ACF fields.
@@ -53,5 +53,31 @@ The separate `custom/v1/gravity-form` REST route belongs to the Gravity Forms in
 The `news` custom post type is exposed as `NewsArticle` / `NewsArticles`. Bilingual title, excerpt, body, category, and reading-time fields are registered on that GraphQL type. Article URLs and direct lookups use the WordPress database ID, not the content slug.
 
 Public schema introspection is disabled on the local endpoint; active selections are verified with executable queries. Project detail still resolves against the first 50 project records. Contact delivery, production endpoint configuration, and production content remain unverified.
+
+The About page extends the existing `AlomarAboutPage` GraphQL object. New image fields resolve to URL strings, and nested ACF repeaters resolve to nullable lists of scalar objects (not ACF image/link connections). The frontend maps missing values to empty strings/lists and conditionally renders the corresponding sections. The exact new response fields were verified with a local `do_graphql_request` selection; all newly registered fields were present, and currently unpopulated repeaters returned `[]`.
+
+Representative About selection:
+
+```graphql
+alomarSiteContent {
+  aboutPage {
+    overviewTitle overviewTitleEn
+    overviewDescriptionOne overviewDescriptionOneEn
+    overviewDescriptionTwo overviewDescriptionTwoEn
+    overviewImageOneUrl overviewImageOneAlt overviewImageOneAltEn
+    overviewImageTwoUrl overviewImageTwoAlt overviewImageTwoAltEn
+    statistics { value label labelEn }
+    strategyTitle strategyTitleEn strategyDescription strategyDescriptionEn
+    strategyFocusTitle strategyFocusTitleEn strategyFocusDescription strategyFocusDescriptionEn
+    strategyPrinciples { title titleEn description descriptionEn }
+    portfolioTitle portfolioTitleEn
+    portfolioItems { title titleEn description descriptionEn metric }
+    companies { name nameEn description descriptionEn logoUrl imageUrl link }
+    responsibilityItems { title titleEn description descriptionEn imageUrl }
+    boardMembers { name nameEn role roleEn imageUrl }
+    navigationLinks { label labelEn imageUrl url }
+  }
+}
+```
 
 See [API migration](./API_MIGRATION.md) for safe write-endpoint validation and [CMS content verification](./CMS_CONTENT_RESULTS.md) for the local results.

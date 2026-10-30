@@ -99,6 +99,53 @@ export interface AboutPageContent {
   missionTitle: LocalizedString;
   missionDescription: LocalizedString;
   values: Array<{ title: LocalizedString; description: LocalizedString }>;
+  overview: {
+    heading: LocalizedString;
+    descriptionOne: LocalizedString;
+    descriptionTwo: LocalizedString;
+    imageOne: { url: string; alt: LocalizedString };
+    imageTwo: { url: string; alt: LocalizedString };
+  };
+  statistics: Array<{ value: string; label: LocalizedString }>;
+  strategy: {
+    eyebrow: LocalizedString;
+    title: LocalizedString;
+    description: LocalizedString;
+    ctaLabel: LocalizedString;
+    ctaUrl: string;
+    focusTitle: LocalizedString;
+    focusDescription: LocalizedString;
+    principles: Array<{ title: LocalizedString; description: LocalizedString }>;
+  };
+  portfolio: {
+    eyebrow: LocalizedString;
+    title: LocalizedString;
+    ctaLabel: LocalizedString;
+    ctaUrl: string;
+    items: Array<{ title: LocalizedString; description: LocalizedString; metric: string }>;
+  };
+  companies: {
+    eyebrow: LocalizedString;
+    title: LocalizedString;
+    items: Array<{
+      name: LocalizedString;
+      description: LocalizedString;
+      logo: string;
+      image: string;
+      link: string;
+    }>;
+  };
+  responsibility: {
+    eyebrow: LocalizedString;
+    title: LocalizedString;
+    items: Array<{ title: LocalizedString; description: LocalizedString; image: string }>;
+  };
+  board: {
+    eyebrow: LocalizedString;
+    title: LocalizedString;
+    members: Array<{ name: LocalizedString; role: LocalizedString; image: string }>;
+  };
+  navigationLinks: Array<{ label: LocalizedString; image: string; url: string }>;
 }
 
 export interface VisionSectionContent {

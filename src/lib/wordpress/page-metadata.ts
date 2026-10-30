@@ -7,7 +7,7 @@ export async function getPageMetadata(pageKey: string, fallback: Metadata, local
   const banner = content.pageBanners[pageKey];
   return {
     ...fallback,
-    title: banner?.seoTitle[locale] || (content.previewMode ? fallback.title : undefined),
-    description: banner?.seoDescription[locale] || (content.previewMode ? fallback.description : undefined),
+    title: banner?.seoTitle[locale] || fallback.title,
+    description: banner?.seoDescription[locale] || fallback.description,
   };
 }

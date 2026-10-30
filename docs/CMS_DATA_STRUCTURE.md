@@ -4,20 +4,37 @@
 
 The local WordPress installation at `/Users/mahmoud.eid/Sites/almoar-wp` is the CMS. The active theme is `theme-headless`; `alomar-holding-core` is installed but currently inactive in the local WordPress environment. This implementation moved custom post type and taxonomy registration into the theme without changing the existing public names, GraphQL names, or rewrite slugs. Its contact mutation class is loaded by the theme where available.
 
-Editorial page and homepage copy is currently held in ACF options, not in dedicated page records. Do not treat the field group names below as proof that content is page-owned.
+Homepage and shared editorial copy is held in ACF options. About page content is stored on the WordPress page assigned the `page-about-us.php` template.
 
 ## Options and page field groups
 
 | ACF group / source | Main fields | Current use and limitation |
 |---|---|---|
 | `group_alomar_homepage` / `alomar-homepage-content` | Localized hero slides: image, badge, title, description, and links | Drives the frontend hero. |
-| `group_alomar_editorial_content` / `alomar-homepage-content` | `page_banners`, `section_copy`, `home_about`, `about_page`, `vision_section`, `footer_content` | Shared editorial options, including About page content. The About content is not stored on the About page itself. |
+| `group_alomar_editorial_content` / `alomar-homepage-content` | `home_about`, `vision_section`, `footer_content` and legacy hidden fields | Shared editorial options. Page Banners, Homepage Section Headings and CTAs, the Homepage About Section image, and Investment Pillars are hidden from the editor; their stored values and GraphQL output are retained for existing frontend behavior. |
+| `group_alomar_about_page_content` / `page-about-us.php` | `about_page` | About Us page-specific content. Existing option values are copied to the page once without deleting the original option data. |
 | `group_wp_contact_page` / page template `page-contact-us.php` | Localized contact badge/title/description, banner image, heading, contact details, hours, map coordinates, social links, form title | Contact page-specific fields; the page template is assigned to the existing Contact page. |
 | `group_wp_home` / front page | Legacy generic fields such as hero, benefits, about, and pricing sections | Boilerplate group; not the source of the current Alomar homepage data. |
 
-`page_banners` carries a page key, localized badge/title/description and SEO title/description, and an image URL. `section_copy` carries a section key, localized badge/title/description and CTA fields. `home_about`, `about_page`, `vision_section`, and `footer_content` hold their corresponding localized editorial groups and repeaters.
+The hidden legacy `page_banners` field carries a page key, localized badge/title/description and SEO title/description; `section_copy` carries a section key, localized badge/title/description and CTA fields. `home_about`, `vision_section`, and `footer_content` hold their corresponding localized editorial groups and repeaters.
 
-The About Us page has a `page-about-us.php` template, but the frontend About route currently reads the global editorial options. Invest With Us has no dedicated page field group and reuses contact-form content. The former Investments alias was removed; projects are served through the Projects routes.
+The About Us page has a `page-about-us.php` template; its Next.js route reads the existing `aboutPage` GraphQL object, now resolved from that page. Invest With Us has no dedicated page field group and reuses contact-form content. The former Investments alias was removed; projects are served through the Projects routes.
+
+### About page field group
+
+The existing `about_page` field group is shown on pages assigned the About Us template. A one-time, non-destructive copy preserves the current About/vision/mission/value content on that page while retaining the original options data.
+
+| ACF tab | Fields |
+|---|---|
+| Overview and Statistics | `overview_title`, `overview_title_en`, `overview_description_one`, `overview_description_one_en`, `overview_description_two`, `overview_description_two_en`; `overview_image_one`, `overview_image_one_alt`, `overview_image_one_alt_en`, `overview_image_two`, `overview_image_two_alt`, `overview_image_two_alt_en`; `statistics` repeater (`value`, `label`, `label_en`) |
+| Clarity and Strategy | Localized `strategy_eyebrow`, `strategy_title`, `strategy_description`, `strategy_cta_label`, `strategy_focus_title`, and `strategy_focus_description`; `strategy_cta_url`; `strategy_principles` repeater (`title`, `title_en`, `description`, `description_en`) |
+| Portfolio Distribution | Localized `portfolio_eyebrow`, `portfolio_title`, and `portfolio_cta_label`; `portfolio_cta_url`; `portfolio_items` repeater (`title`, `title_en`, `description`, `description_en`, `metric`) |
+| Portfolio Companies | Localized `companies_eyebrow` and `companies_title`; `companies` repeater (`name`, `name_en`, `description`, `description_en`, `logo`, `image`, `link`) |
+| Social Responsibility | Localized `responsibility_eyebrow` and `responsibility_title`; `responsibility_items` repeater (`title`, `title_en`, `description`, `description_en`, `image`) |
+| Board of Directors | Localized `board_eyebrow` and `board_title`; `board_members` repeater (`name`, `name_en`, `role`, `role_en`, `image`) |
+| Related Page Links | `navigation_links` repeater (`label`, `label_en`, `image`, `url`) |
+
+For these new fields Arabic uses the base name and English uses `_en`. Existing fields keep their original names. New image fields return URLs; separate bilingual alt-text fields are provided for the two overview images. Empty repeaters are returned as empty GraphQL lists and corresponding frontend sections remain hidden until meaningful data is entered. Existing About options were copied to the About Us page without deleting the options. Board Members CPT records were not migrated or deleted.
 
 ## Content types and observed fields
 
