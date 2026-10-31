@@ -2,6 +2,7 @@
 
 import { useState, type ChangeEvent, type FormEvent } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
+import { sanitizeNewsContent } from '@/lib/sanitize-news-content';
 import type { GravityFormDefinition, GravityFormField } from '@/types';
 
 interface GravityFormProps {
@@ -195,7 +196,7 @@ export function GravityForm({ form, title, submitLabel, className = '' }: Gravit
     return (
       <div className={`rounded-lg border border-[#D6D9DE] bg-white p-8 text-center ${className}`} role="status" aria-live="polite">
         <h3 className="text-xl font-semibold text-[#12233F]">{locale === 'ar' ? 'شكرًا لتواصلكم' : 'Thank you for contacting us'}</h3>
-        <p className="mt-3 whitespace-pre-line text-sm leading-7 text-[#596273]">{confirmation}</p>
+        <div className="mt-3 text-sm leading-7 text-[#596273]" dangerouslySetInnerHTML={{ __html: sanitizeNewsContent(confirmation) }} />
         <button type="button" onClick={() => setConfirmation('')} className="mt-6 rounded-sm bg-[#C3942E] px-5 py-3 text-sm font-medium text-white hover:bg-[#A77C22] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#12233F]">
           {locale === 'ar' ? 'إرسال طلب آخر' : 'Send another inquiry'}
         </button>
