@@ -186,7 +186,7 @@ export const Header: React.FC = () => {
       </header>
 
       <div
-        className={`fixed inset-0 z-[60] px-5 pb-5 pt-5 sm:px-8 lg:px-20 lg:pb-20 lg:pt-20 bg-black/80 ${menuOpen ? 'visible translate-y-0 opacity-100' : 'invisible -translate-y-4 opacity-0'}`}
+        className={`fixed inset-0 z-[60] px-5 pb-5 pt-5 sm:px-8 lg:px-20 lg:pb-20 lg:pt-20 bg-black/90 ${menuOpen ? 'visible translate-y-0 opacity-100' : 'invisible -translate-y-4 opacity-0'}`}
         role="dialog"
         aria-modal="true"
         aria-label={locale === 'ar' ? 'القائمة الرئيسية' : 'Main navigation'}

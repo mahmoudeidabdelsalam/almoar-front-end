@@ -1,4 +1,3 @@
-
 name: Deploy Almoar Frontend
 
 on:
@@ -9,12 +8,12 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: almoar-production-deploy
+  group: artlanguage-production-deploy
   cancel-in-progress: false
 
 jobs:
   deploy:
-    name: Deploy to Hostinger VPS
+    name: Deploy to Artlanguage Hostinger VPS
     runs-on: ubuntu-latest
 
     steps:
@@ -42,7 +41,6 @@ jobs:
           printf '%s' "$SSH_KEY_B64" | base64 --decode > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
 
-          # Validate private key
           ssh-keygen -y -f ~/.ssh/deploy_key > /dev/null
 
           printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
@@ -67,7 +65,7 @@ jobs:
             'echo "SSH connection successful"'
 
       # 3. Deploy application
-      - name: Deploy to Hostinger
+      - name: Deploy to Artlanguage
         env:
           SSH_HOST: ${{ secrets.DEPLOY_HOST }}
           SSH_USER: ${{ secrets.DEPLOY_USER }}
@@ -83,10 +81,10 @@ jobs:
 
           set -euo pipefail
 
-          PROJECT_DIR="/home/alomarfront/public_html"
+          PROJECT_DIR="/home/art/apps/artlanguage-frontend"
           NODE_BIN="/opt/cpanel/ea-nodejs22/bin"
+          SERVICE_NAME="artlanguage-frontend.service"
 
-          # Ensure Node 22 is used by every command
           export PATH="$NODE_BIN:$PATH"
 
           echo "Checking Node.js version..."
@@ -100,18 +98,33 @@ jobs:
           git reset --hard origin/main
 
           echo "Installing dependencies..."
-          "$NODE_BIN/npm" ci
+          npm ci
 
           echo "Building application..."
-          "$NODE_BIN/node" "$PROJECT_DIR/node_modules/next/dist/bin/next" build
+          npm run build
 
-          echo "Restarting application..."
-          sudo -n /usr/bin/systemctl restart alomarfront.service
+          echo "Restarting Artlanguage application..."
+          sudo -n /usr/bin/systemctl restart "$SERVICE_NAME"
 
           echo "Checking application service..."
-          sudo -n /usr/bin/systemctl is-active --quiet alomarfront.service
+          sudo -n /usr/bin/systemctl is-active --quiet "$SERVICE_NAME"
+
+          echo "Checking local application response..."
+          for i in {1..15}; do
+            if curl -fsS http://127.0.0.1:3001/ar > /dev/null; then
+              echo "Application is responding successfully."
+              break
+            fi
+
+            if [ "$i" -eq 15 ]; then
+              echo "Application health check failed."
+              sudo -n /usr/bin/systemctl status "$SERVICE_NAME" --no-pager -l
+              exit 1
+            fi
+
+            sleep 2
+          done
 
           echo "Deployment completed successfully."
 
           REMOTE
-
