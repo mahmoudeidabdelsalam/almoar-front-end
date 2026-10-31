@@ -14,14 +14,20 @@ export function generateMetadata(): Promise<Metadata> {
   });
 }
 
+async function loadContactForm() {
+  try {
+    return await getGravityFormDefinition(1);
+  } catch (error) {
+    console.error('[WordPress Gravity Forms] Contact form could not be loaded.', error);
+    return null;
+  }
+}
+
 export default async function ContactPage() {
   const [pageContent, form] = await Promise.all([
     wpClient.getContactPageContent(),
-    getGravityFormDefinition(1),
+    loadContactForm(),
   ]);
-  if (!form) {
-    throw new Error('The configured Contact Us Gravity Form is unavailable.');
-  }
 
   return (
     <>

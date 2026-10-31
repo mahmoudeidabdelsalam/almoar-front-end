@@ -8,7 +8,7 @@ import type { ContactPageContent, GravityFormDefinition, SiteContent } from '@/t
 
 interface ContactSectionProps {
   pageContent: ContactPageContent | null;
-  form: GravityFormDefinition;
+  form: GravityFormDefinition | null;
 }
 
 function getWebsiteLink(content: SiteContent, configuredUrl: string): string {
@@ -110,7 +110,15 @@ export function ContactSection({ pageContent, form }: ContactSectionProps) {
 
           <div className="grid gap-4 md:grid-cols-12 md:gap-5">
             <div className="md:col-span-8">
-              <GravityForm form={form} title={formTitle} submitLabel={locale === 'ar' ? 'إرسال الرسالة' : 'Send Message'} />
+              {form ? (
+                <GravityForm form={form} title={formTitle} submitLabel={locale === 'ar' ? 'إرسال الرسالة' : 'Send Message'} />
+              ) : (
+                <div className="rounded-lg border border-[#D6D9DE] bg-white p-6 text-sm leading-7 text-[#596273]" role="status">
+                  {locale === 'ar'
+                    ? 'نموذج التواصل غير متاح حاليًا. يرجى التواصل معنا مباشرة عبر البريد الإلكتروني أو الهاتف.'
+                    : 'The contact form is currently unavailable. Please reach us directly by email or phone.'}
+                </div>
+              )}
             </div>
             <aside className="contact-map-pattern relative flex min-h-[260px] flex-col justify-between overflow-hidden rounded-xl bg-[#10213D] p-5 text-white md:col-span-4 md:min-h-[350px] md:p-6">
               <div className="relative z-10">
