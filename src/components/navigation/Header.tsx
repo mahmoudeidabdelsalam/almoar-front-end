@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Menu, TextAlignStart, Search, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import type { HeaderMenuItem } from '@/types';
+import { sameOriginImage } from '@/lib/media';
 
 const FALLBACK_LOGO = '/branding/alomar_logo_transparent.png';
 
@@ -145,7 +146,7 @@ export const Header: React.FC = () => {
           </button>
           <Link href={prefix} aria-label="Alomar Holding" onClick={closeOverlays} className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={logo} alt={locale === 'ar' ? 'شعار العمر القابضة' : 'Alomar Holding logo'} className="max-h-[58px] w-auto object-contain lg:max-h-[68px]" />
+            <img src={sameOriginImage(logo)} alt={locale === 'ar' ? 'شعار العمر القابضة' : 'Alomar Holding logo'} className="max-h-[58px] w-auto object-contain lg:max-h-[68px]" />
           </Link>
           <div className={`flex items-center gap-1 sm:gap-2 ${locale === 'ar' ? 'order-2' : 'order-1'}`}>
             <button
@@ -303,11 +304,11 @@ export const Header: React.FC = () => {
             <div className="relative hidden overflow-hidden rounded-[24px] lg:block">
               {activeImage ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img key={activeImage} src={activeImage} alt="" className="h-full w-full object-cover animate-[menuImageIn_.45s_cubic-bezier(.2,.8,.2,1)_both]" />
+                <img key={activeImage} src={sameOriginImage(activeImage, 1080)} alt="" className="h-full w-full object-cover animate-[menuImageIn_.45s_cubic-bezier(.2,.8,.2,1)_both]" />
               ) : (
                 <div className="flex h-full items-center justify-center bg-[#1A2B49]">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={logo} alt="" className="max-h-32 max-w-[220px] object-contain brightness-0 invert" />
+                  <img src={sameOriginImage(logo)} alt="" className="max-h-32 max-w-[220px] object-contain brightness-0 invert" />
                 </div>
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-[#101E39]/55 via-transparent to-transparent" />

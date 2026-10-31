@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowUp, Mail, Phone } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import type { FooterColumn } from '@/types';
+import { sameOriginImage } from '@/lib/media';
 
 interface FooterSocialLinkProps {
   platform: string;
@@ -104,7 +105,7 @@ export const Footer: React.FC = () => {
       <div className="mx-auto grid min-h-[475px] max-w-[1216px] grid-cols-1 gap-12 px-5 py-20 sm:px-8 md:grid-cols-3 lg:px-0 lg:py-[104px]">
         <div className="flex flex-col items-start md:items-start">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={footer?.logo || '/branding/alomar_logo_transparent.png'} alt={footer?.logoAlt || 'Alomar Holding'} className="h-[130px] w-auto object-contain" />
+          <img src={sameOriginImage(footer?.logo) || '/branding/alomar_logo_transparent.png'} alt={footer?.logoAlt || 'Alomar Holding'} className="h-[130px] w-auto object-contain" />
         </div>
 
         {columns.slice(0, 2).map((column, columnIndex) => (
@@ -119,7 +120,7 @@ export const Footer: React.FC = () => {
                   <>
                     {link.icon && (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={link.icon} alt="" className="h-4 w-4 object-contain" />
+                      <img src={sameOriginImage(link.icon)} alt="" className="h-4 w-4 object-contain" />
                     )}
                     {!link.icon && href.startsWith('tel:') && <Phone className="h-4 w-4" />}
                     {!link.icon && href.startsWith('mailto:') && <Mail className="h-4 w-4" />}
