@@ -4,6 +4,7 @@ import React, { createContext, useContext, useEffect, useSyncExternalStore } fro
 import { usePathname, useRouter } from 'next/navigation';
 import { FooterContent, HeaderContent, Locale, SiteContent } from '@/types';
 import { translations } from '@/lib/i18n/translations';
+import { safeGetItem, safeSetItem } from '@/lib/safe-storage';
 
 interface LanguageContextType {
   locale: Locale;
@@ -28,7 +29,7 @@ function subscribeToLocale(onStoreChange: () => void): () => void {
 }
 
 function getLocaleSnapshot(): Locale {
-  const saved = window.localStorage.getItem('alomar_locale');
+  const saved = safeGetItem('local', 'alomar_locale');
   return saved === 'ar' || saved === 'en' ? saved : 'ar';
 }
 
@@ -48,11 +49,11 @@ export const LanguageProvider: React.FC<{
     const dir = locale === 'ar' ? 'rtl' : 'ltr';
     document.documentElement.lang = locale;
     document.documentElement.dir = dir;
-    localStorage.setItem('alomar_locale', locale);
+    safeSetItem('local', 'alomar_locale', locale);
   }, [locale]);
 
   const setLocale = (newLoc: Locale) => {
-    localStorage.setItem('alomar_locale', newLoc);
+    safeSetItem('local', 'alomar_locale', newLoc);
     window.dispatchEvent(new Event('alomar-locale-change'));
     const segments = pathname.split('/').filter(Boolean);
     if (segments[0] === 'ar' || segments[0] === 'en') {

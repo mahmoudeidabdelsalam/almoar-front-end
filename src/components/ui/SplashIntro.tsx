@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useSyncExternalStore } from 'react';
 import Image from 'next/image';
 import { useLanguage } from '@/context/LanguageContext';
+import { safeGetItem, safeSetItem } from '@/lib/safe-storage';
 
 function subscribeToSplash(onStoreChange: () => void): () => void {
   window.addEventListener('storage', onStoreChange);
@@ -14,7 +15,7 @@ function subscribeToSplash(onStoreChange: () => void): () => void {
 }
 
 function getSplashSnapshot(): boolean {
-  return !window.sessionStorage.getItem('alomar_splash_seen');
+  return !safeGetItem('session', 'alomar_splash_seen');
 }
 
 export const SplashIntro: React.FC = () => {
@@ -26,7 +27,7 @@ export const SplashIntro: React.FC = () => {
   const handleDismiss = React.useCallback(() => {
     setFading(true);
     setTimeout(() => {
-      sessionStorage.setItem('alomar_splash_seen', 'true');
+      safeSetItem('session', 'alomar_splash_seen', 'true');
       window.dispatchEvent(new Event('alomar-splash-change'));
     }, 600);
   }, []);
