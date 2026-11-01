@@ -46,15 +46,15 @@ export const NewsSection: React.FC<NewsProps> = ({ articles }) => {
 
           <Link
             href={localizedLink(copy?.ctaUrl || archivePath, locale)}
-            className="inline-flex h-[54px] w-fit items-center justify-center gap-3 rounded-sm bg-[#101E39] px-7 text-sm font-bold text-white transition-colors hover:bg-[#B7913D]"
+            className="group inline-flex h-[54px] w-fit items-center justify-center gap-3 rounded-sm bg-[#101E39] px-7 text-sm font-bold text-white transition-colors hover:bg-[#B7913D]"
           >
             <span>{copy?.ctaLabel[locale] || (content.previewMode ? t.news_section.view_all_news : '')}</span>
-            <DirectionalArrow direction="next" dir={dir} className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+            <DirectionalArrow direction="next" dir={dir} className={`h-4 w-4 transition-transform ${dir === 'rtl' ? 'group-hover:-translate-x-1' : 'group-hover:translate-x-1'}`} />
           </Link>
         </div>
 
         <div className="mt-12 grid gap-8 lg:grid-cols-[1fr_120px]">
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-2">
             {visibleArticles.map((article) => (
               <article key={article.id} className="group">
                 <Link href={`${archivePath}/${article.id}`} className="relative block h-[300px] overflow-hidden rounded-sm bg-[#F1F3EB]">
