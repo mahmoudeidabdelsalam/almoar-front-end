@@ -114,12 +114,12 @@ export const AboutOverview: React.FC = () => {
         <div className="order-2 w-full min-w-0 md:order-1 md:flex-1" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
           {firstDescription && <p className="mt-6 text-navy-900 text-[64px]">{firstDescription}</p>}
           <div className="relative aspect-square w-full max-w-[470px] overflow-hidden rounded-xl md:mt-20">
-            <Image src={firstImage} alt={firstAlt} fill priority  className="object-cover" />
+            <Image src={firstImage} alt={firstAlt} fill sizes={overviewImageSizes} className="object-cover" />
           </div>
         </div>
         <div className="order-1 w-full min-w-0 md:order-2 md:flex-1" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
           <div className="relative aspect-square w-full max-w-[470px] overflow-hidden rounded-xl md:ms-auto">
-            <Image src={secondImage} alt={secondAlt} fill sizes={overviewImageSizes} className="object-cover" />
+            <Image src={secondImage} alt={secondAlt} fill sizes={overviewImageSizes} loading="eager" className="object-cover" />
           </div>
           {secondDescription && <p className="mt-6 max-w-[360px] text-[18px] leading-7 text-slate-700">{secondDescription}</p>}
         </div>
