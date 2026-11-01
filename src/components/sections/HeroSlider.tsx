@@ -56,7 +56,6 @@ export const HeroSlider: React.FC<{ slides?: HeroSlide[] }> = ({ slides: cmsSlid
   const slides = cmsSlides?.length ? cmsSlides : content.previewMode ? previewSlides : [];
   const [current, setCurrent] = useState(0);
   const [transition, setTransition] = useState<SlideTransition | null>(null);
-  const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
   const [pageVisible, setPageVisible] = useState(false);
   const [heroReady, setHeroReady] = useState(false);
@@ -119,22 +118,20 @@ export const HeroSlider: React.FC<{ slides?: HeroSlide[] }> = ({ slides: cmsSlid
   }, []);
 
   useEffect(() => {
-    if (slides.length < 2 || hovered || focused || reducedMotion || !pageVisible || !heroReady) return;
+    if (slides.length < 2 || focused || reducedMotion || !pageVisible || !heroReady) return;
     const timer = window.setInterval(() => navigateToSlide((current + 1) % slides.length, 'next'), 5000);
     return () => window.clearInterval(timer);
-  }, [current, focused, heroReady, hovered, navigateToSlide, pageVisible, reducedMotion, slides.length]);
+  }, [current, focused, heroReady, navigateToSlide, pageVisible, reducedMotion, slides.length]);
 
   if (!slides.length) return null;
 
   const ArrowIcon = dir === 'rtl' ? ArrowLeft : ArrowRight;
-  const isPaused = hovered || focused || reducedMotion || !pageVisible || !heroReady;
+  const isPaused = focused || reducedMotion || !pageVisible || !heroReady;
 
   return (
     <section
       className={`hero-slider relative h-[720px] overflow-hidden bg-navy-900 text-white lg:h-[900px] ${heroReady ? 'is-ready' : ''} ${isPaused ? 'is-paused' : ''}`}
       aria-label="Homepage hero"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
       onFocusCapture={() => setFocused(true)}
       onBlurCapture={(event) => {
         if (!(event.relatedTarget instanceof Node) || !event.currentTarget.contains(event.relatedTarget)) setFocused(false);
