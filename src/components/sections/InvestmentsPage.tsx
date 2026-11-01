@@ -54,7 +54,7 @@ export function InvestmentsPage({ locale, content, projects }: InvestmentsPagePr
 
   return (
     <div dir={direction} className="bg-ivory-50 pt-[72px]">
-      <section className="relative overflow-hidden bg-navy-900 text-white">
+      <section className="pattern relative overflow-hidden bg-navy-900 text-white">
         <div className="relative mx-auto flex min-h-[600px] max-w-[1216px] flex-col  px-5 pb-16 pt-12 sm:px-8 lg:px-0">
           <nav aria-label={isArabic ? 'مسار التنقل' : 'Breadcrumb'} className="mb-10 flex items-center gap-2 text-xs text-white/65 mb-auto">
             <Link href={`/${locale}`} className="transition-colors hover:text-white">{isArabic ? 'الرئيسية' : 'Home'}</Link>

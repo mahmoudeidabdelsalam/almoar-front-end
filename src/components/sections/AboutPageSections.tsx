@@ -67,7 +67,7 @@ export const AboutHero: React.FC = () => {
   const breadcrumbAbout = locale === 'ar' ? 'من نحن' : 'About Us';
 
   return (
-    <section className="relative min-h-[390px] overflow-hidden bg-navy-900 pt-[118px] text-white sm:min-h-[450px] lg:min-h-[520px] lg:pt-[150px]" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+    <section className="pattern relative min-h-[390px] overflow-hidden bg-navy-900 pt-[118px] text-white sm:min-h-[450px] lg:min-h-[520px] lg:pt-[150px]" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
       <div className="mx-auto flex min-h-[250px] max-w-[1216px] flex-col justify-between px-5 pb-16 sm:px-8 lg:min-h-[300px] lg:px-0 lg:pb-20">
         <nav className="text-xs text-white/55" aria-label={locale === 'ar' ? 'مسار التنقل' : 'Breadcrumb'}>
           <Link href={`/${locale}`} className="transition-colors hover:text-gold-200">{breadcrumbHome}</Link>
@@ -282,8 +282,7 @@ export const AboutCompanies: React.FC = () => {
   return (
     <section
       data-scroll-reveal
-      className="relative overflow-hidden bg-[#1B382D] py-16 text-white sm:py-20 lg:py-24"
-      style={{ backgroundImage: "linear-gradient(rgba(27,56,45,.92), rgba(27,56,45,.92)), url('/bg-menu.png')", backgroundPosition: 'center', backgroundSize: 'auto, 420px' }}
+      className="pattern relative overflow-hidden bg-[#1B382D] py-16 text-white sm:py-20 lg:py-24"
       dir={locale === 'ar' ? 'rtl' : 'ltr'}
     >
       <div className="relative z-10 mx-auto max-w-[1216px] px-5 sm:px-8 lg:px-0">

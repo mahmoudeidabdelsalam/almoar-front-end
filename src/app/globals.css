@@ -358,7 +358,7 @@ img, video { max-inline-size: 100%; }
   }
 
   .pattern {
-    background-image: url("/bg-menu.png");
+    background-image: url("/brand-pattern.svg");
     background-repeat: repeat;
     background-size: 300px 300px;
   }

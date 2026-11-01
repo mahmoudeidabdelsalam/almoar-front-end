@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
+  <defs>
+    <g id="brand-mark">
+      <rect x="531.87" y="336.53" width="17.18" height="216.41" />
+      <rect x="481.58" y="344.49" width="17.18" height="133.35" transform="translate(-146.88 470.17) rotate(-45.28)" />
+      <rect x="524.18" y="374.58" width="113.18" height="17.18" transform="translate(-101.87 517.75) rotate(-44.57)" />
+      <rect x="437.26" y="427.23" width="77.03" height="17.18" />
+      <rect x="520.17" y="439.14" width="136.32" height="17.18" transform="translate(-145.75 535.64) rotate(-44.1)" />
+      <rect x="565.32" y="472.28" width="17.18" height="88.01" transform="translate(-186.99 646.5) rotate(-51.69)" />
+      <rect x="437.26" y="485.37" width="100.29" height="17.18" />
+    </g>
+  </defs>
+  <use href="#brand-mark" fill="#ffffff" fill-opacity="0.045" transform="translate(150 150) scale(1.15) translate(-548 -445)" />
+  <use href="#brand-mark" fill="#ffffff" fill-opacity="0.03" transform="scale(1.15) translate(-548 -445)" />
+  <use href="#brand-mark" fill="#ffffff" fill-opacity="0.03" transform="translate(0 300) scale(1.15) translate(-548 -445)" />
+  <use href="#brand-mark" fill="#ffffff" fill-opacity="0.03" transform="translate(300 0) scale(1.15) translate(-548 -445)" />
+  <use href="#brand-mark" fill="#ffffff" fill-opacity="0.03" transform="translate(300 300) scale(1.15) translate(-548 -445)" />
+</svg>
