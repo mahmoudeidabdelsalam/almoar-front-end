@@ -27,11 +27,35 @@ export const CompaniesSection: React.FC<CompaniesProps> = ({ projects }) => {
   });
   const minimumStageHeight = hasProjectStats ? 900 : 720;
   const [active, setActive] = useState(0);
-  const [scrollProgress, setScrollProgress] = useState(0);
+  const [outgoingProjectIndex, setOutgoingProjectIndex] = useState<number | null>(null);
   const [stageHeight, setStageHeight] = useState(960);
   const [reducedMotion, setReducedMotion] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
+  const progressElementRef = useRef<HTMLDivElement>(null);
+  const progressFillRef = useRef<HTMLDivElement>(null);
+  const progressValueRef = useRef(0);
+  const activeProjectRef = useRef(0);
+  const outgoingTimerRef = useRef<number | null>(null);
+
+  const setActiveProject = useCallback((nextIndex: number) => {
+    if (activeProjectRef.current === nextIndex) return;
+
+    const previousIndex = activeProjectRef.current;
+    activeProjectRef.current = nextIndex;
+    setOutgoingProjectIndex(previousIndex);
+    setActive(nextIndex);
+
+    if (outgoingTimerRef.current !== null) window.clearTimeout(outgoingTimerRef.current);
+    outgoingTimerRef.current = window.setTimeout(() => {
+      setOutgoingProjectIndex(null);
+      outgoingTimerRef.current = null;
+    }, 700);
+  }, []);
+
+  useEffect(() => () => {
+    if (outgoingTimerRef.current !== null) window.clearTimeout(outgoingTimerRef.current);
+  }, []);
 
   useEffect(() => {
     const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -65,8 +89,11 @@ export const CompaniesSection: React.FC<CompaniesProps> = ({ projects }) => {
         const progress = scrollDistance > 0
           ? Math.min(1, Math.max(0, -section.getBoundingClientRect().top / scrollDistance))
           : 0;
-        setScrollProgress(progress);
-        setActive(Math.min(
+        if (progress === progressValueRef.current) return;
+        progressValueRef.current = progress;
+        progressFillRef.current?.style.setProperty('--scroll-progress', String(progress));
+        progressElementRef.current?.setAttribute('aria-valuenow', String(Math.round(progress * 100)));
+        setActiveProject(Math.min(
           localizedProjects.length - 1,
           Math.floor(progress * localizedProjects.length),
         ));
@@ -82,12 +109,12 @@ export const CompaniesSection: React.FC<CompaniesProps> = ({ projects }) => {
       window.removeEventListener('resize', updateScrollProgress);
       if (frame) cancelAnimationFrame(frame);
     };
-  }, [localizedProjects.length, reducedMotion, stageHeight]);
+  }, [localizedProjects.length, reducedMotion, setActiveProject, stageHeight]);
 
   const goToSlide = useCallback((index: number) => {
     const nextIndex = Math.min(localizedProjects.length - 1, Math.max(0, index));
     if (reducedMotion || localizedProjects.length < 2) {
-      setActive(nextIndex);
+      setActiveProject(nextIndex);
       return;
     }
 
@@ -99,13 +126,16 @@ export const CompaniesSection: React.FC<CompaniesProps> = ({ projects }) => {
     const progress = (nextIndex + 0.5) / localizedProjects.length;
     const top = window.scrollY + section.getBoundingClientRect().top + scrollDistance * progress;
     window.scrollTo({ top, behavior: 'smooth' });
-  }, [localizedProjects.length, reducedMotion]);
+  }, [localizedProjects.length, reducedMotion, setActiveProject]);
 
   if (!localizedProjects.length && !content.previewMode) return null;
   if (!localizedProjects.length) return null;
 
   const activeIndex = Math.min(active, localizedProjects.length - 1);
   const project = localizedProjects[activeIndex];
+  const outgoingProject = outgoingProjectIndex === null
+    ? null
+    : localizedProjects[outgoingProjectIndex];
   const projectStats = project.statsBand;
   const statsTag = localized(projectStats?.tag);
   const statsHeadline = localized(projectStats?.headline);
@@ -115,7 +145,7 @@ export const CompaniesSection: React.FC<CompaniesProps> = ({ projects }) => {
   const showStats = Boolean(statsTag || statsHeadline || statsItems.length);
   const visibleProgress = reducedMotion
     ? (activeIndex + 1) / localizedProjects.length
-    : localizedProjects.length > 1 ? scrollProgress : 0;
+    : localizedProjects.length > 1 ? activeIndex / localizedProjects.length : 0;
   const sectionHeight = stageHeight * (localizedProjects.length + 1);
   const scrollEnabled = !reducedMotion && localizedProjects.length > 1;
 
@@ -133,22 +163,32 @@ export const CompaniesSection: React.FC<CompaniesProps> = ({ projects }) => {
           minHeight: `${minimumStageHeight}px`,
         }}
       >
+        {outgoingProject?.image && (
+          <Image
+            key={`outgoing-${outgoingProject.id}`}
+            src={outgoingProject.image}
+            alt=""
+            fill
+            sizes="100vw"
+            aria-hidden="true"
+            className="project-image-fade-out object-cover object-center"
+          />
+        )}
         {project.image && (
-          <div className="absolute inset-0">
-            <Image
-              key={project.id}
-              src={project.image}
-              alt={localized(project.title)}
-              fill
-              sizes="100vw"
-              priority={false}
-              className="animate-project-slide object-cover object-center"
-            />
-          </div>
+          <Image
+            key={project.id}
+            src={project.image}
+            alt={localized(project.title)}
+            fill
+            sizes="100vw"
+            priority={false}
+            className={`${outgoingProject ? 'project-image-fade-in' : 'animate-project-slide'} object-cover object-center`}
+          />
         )}
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,13,26,0.58)_0%,rgba(16,30,57,0.50)_45%,rgba(16,30,57,0.78)_100%)]" />
 
         <div
+          ref={progressElementRef}
           className="absolute inset-x-0 top-0 z-20 h-1 bg-white/20"
           role="progressbar"
           aria-label={locale === 'ar' ? 'تقدم شرائح المشاريع' : 'Project slider progress'}
@@ -157,18 +197,18 @@ export const CompaniesSection: React.FC<CompaniesProps> = ({ projects }) => {
           aria-valuenow={Math.round(visibleProgress * 100)}
         >
           <div
-            className="h-full origin-left bg-[#C5A265] transition-transform duration-300 motion-reduce:transition-none"
-            dir={dir}
+            ref={progressFillRef}
+            className="project-scroll-progress h-full bg-[#C5A265] transition-transform duration-300 motion-reduce:transition-none"
             style={{
-              transform: `scaleX(${visibleProgress})`,
               transformOrigin: dir === 'rtl' ? 'right' : 'left',
+              ...(reducedMotion ? { transform: `scaleX(${visibleProgress})` } : {}),
             }}
           />
         </div>
 
         <div className="relative z-10 mx-auto flex h-full max-w-[1216px] flex-col px-5 py-10 sm:px-8 sm:py-12 lg:px-0 lg:py-[96px]">
           <div className="grid grid-cols-2 border-b border-white/25 md:grid-cols-4">
-            {localizedProjects.slice(0, 4).map((item, index) => (
+            {localizedProjects.map((item, index) => (
               <button
                 key={item.id}
                 type="button"
