@@ -101,7 +101,7 @@ export const Footer: React.FC = () => {
         <span className="mt-1 text-xs">{locale === 'ar' ? 'الأعلى' : 'Top'}</span>
       </button>
 
-      <div className="mx-auto grid min-h-[475px] max-w-[1216px] grid-cols-1 gap-12 px-5 py-20 sm:px-8 md:grid-cols-3 lg:px-0 lg:py-[104px]">
+      <div className="mx-auto grid min-h-[475px] max-w-[1216px] grid-cols-1 gap-12 px-5 py-20 sm:px-8 lg:grid-cols-3 lg:px-0 lg:py-[104px]">
         <div className="flex flex-col items-start md:items-start">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={footer?.logo || '/branding/alomar_logo_transparent.png'} alt={footer?.logoAlt || 'Alomar Holding'} className="h-[130px] w-auto object-contain" />
