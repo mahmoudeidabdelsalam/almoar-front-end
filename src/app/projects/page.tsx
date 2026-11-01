@@ -20,7 +20,7 @@ export default async function ProjectsPage() {
   return (
     <>
       <Header />
-      <main className="flex-1 bg-[#F8F9F4] pt-24">
+      <main className="flex-1 bg-ivory-50 pt-24">
         <PageBanner
           pageKey="projects"
           imageFallback="/images/project_dama_lazurd.jpg"

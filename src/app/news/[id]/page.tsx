@@ -124,17 +124,17 @@ export default async function SingleNewsPage({ params }: NewsRouteProps) {
   return (
     <>
       <Header />
-      <main className="flex-1 bg-[#F8F9F4] pb-20 pt-28 sm:pt-32" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+      <main className="flex-1 bg-ivory-50 pb-20 pt-28 sm:pt-32" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
         <div className="mx-auto max-w-[1216px] space-y-9 px-5 sm:px-8 lg:space-y-12">
           <nav aria-label={locale === 'ar' ? 'مسار التنقل' : 'Breadcrumb'} className="flex items-center justify-between gap-5 text-xs text-[#5A677B] sm:text-sm">
             <ol className="flex min-w-0 items-center gap-2">
-              <li><Link href={homePath} className="whitespace-nowrap transition-colors hover:text-[#101E39]">{locale === 'ar' ? 'الرئيسية' : 'Home'}</Link></li>
+              <li><Link href={homePath} className="whitespace-nowrap transition-colors hover:text-navy-900">{locale === 'ar' ? 'الرئيسية' : 'Home'}</Link></li>
               <li aria-hidden="true">/</li>
-              <li><Link href={archivePath} className="whitespace-nowrap transition-colors hover:text-[#101E39]">{locale === 'ar' ? 'الأخبار' : 'News'}</Link></li>
+              <li><Link href={archivePath} className="whitespace-nowrap transition-colors hover:text-navy-900">{locale === 'ar' ? 'الأخبار' : 'News'}</Link></li>
               <li aria-hidden="true">/</li>
-              <li aria-current="page" className="truncate font-semibold text-[#101E39]">{title}</li>
+              <li aria-current="page" className="truncate font-semibold text-navy-900">{title}</li>
             </ol>
-            <Link href={archivePath} className="inline-flex shrink-0 items-center gap-2 font-bold text-[#101E39] transition-colors hover:text-[#B7913D]">
+            <Link href={archivePath} className="inline-flex shrink-0 items-center gap-2 font-bold text-navy-900 transition-colors hover:text-gold-500">
               <BackArrow className="h-4 w-4" />
               <span className="hidden sm:inline">{locale === 'ar' ? 'العودة للأخبار' : 'Back to news'}</span>
             </Link>
@@ -142,24 +142,24 @@ export default async function SingleNewsPage({ params }: NewsRouteProps) {
 
           <header className="space-y-5">
             {category && (
-              <span className="inline-flex rounded-full bg-[#B7913D]/10 px-4 py-1.5 text-xs font-bold text-[#96742B]">
+              <span className="inline-flex rounded-full bg-gold-500/10 px-4 py-1.5 text-xs font-bold text-gold-600">
                 {category}
               </span>
             )}
-            <h1 className="max-w-5xl text-3xl font-bold leading-[1.5] tracking-tight text-[#101E39] sm:text-4xl lg:text-5xl">
+            <h1 className="max-w-5xl text-3xl font-bold leading-[1.5] tracking-tight text-navy-900 sm:text-4xl lg:text-5xl">
               {title}
             </h1>
-            <div className="flex flex-col gap-5 border-b border-[#101E39]/10 pb-6 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-5 border-b border-navy-900/10 pb-6 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex flex-wrap items-center gap-x-5 gap-y-3 text-xs text-[#5A677B] sm:text-sm">
                 <span className="inline-flex items-center gap-2">
-                  <Calendar aria-hidden="true" className="h-4 w-4 text-[#B7913D]" />
+                  <Calendar aria-hidden="true" className="h-4 w-4 text-gold-500" />
                   <time dateTime={article.publishedAt || undefined}>
                     {article.publishedAt ? formatDate(article.publishedAt, locale) : article.date}
                   </time>
                 </span>
-                <span aria-hidden="true" className="text-[#B7913D]">•</span>
+                <span aria-hidden="true" className="text-gold-500">•</span>
                 <span className="inline-flex items-center gap-2">
-                  <Clock aria-hidden="true" className="h-4 w-4 text-[#B7913D]" />
+                  <Clock aria-hidden="true" className="h-4 w-4 text-gold-500" />
                   <span>{locale === 'ar' ? `${readTime} قراءة` : `${readTime} read`}</span>
                 </span>
               </div>
@@ -169,7 +169,7 @@ export default async function SingleNewsPage({ params }: NewsRouteProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={locale === 'ar' ? 'مشاركة على لينكدإن' : 'Share on LinkedIn'}
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#101E39]/15 bg-white text-[#101E39] transition-colors hover:border-[#101E39] hover:bg-[#101E39] hover:text-white"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-navy-900/15 bg-white text-navy-900 transition-colors hover:border-navy-900 hover:bg-navy-900 hover:text-white"
                 >
                   <span aria-hidden="true" className="text-xs font-extrabold">in</span>
                 </a>
@@ -178,14 +178,14 @@ export default async function SingleNewsPage({ params }: NewsRouteProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={locale === 'ar' ? 'مشاركة على إكس' : 'Share on X'}
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#101E39]/15 bg-white text-sm font-bold text-[#101E39] transition-colors hover:border-[#101E39] hover:bg-[#101E39] hover:text-white"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-navy-900/15 bg-white text-sm font-bold text-navy-900 transition-colors hover:border-navy-900 hover:bg-navy-900 hover:text-white"
                 >
                   X
                 </a>
                 <a
                   href={`mailto:?subject=${shareTitle}&body=${shareUrl}`}
                   aria-label={locale === 'ar' ? 'مشاركة عبر البريد الإلكتروني' : 'Share by email'}
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#101E39]/15 bg-white text-[#101E39] transition-colors hover:border-[#101E39] hover:bg-[#101E39] hover:text-white"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-navy-900/15 bg-white text-navy-900 transition-colors hover:border-navy-900 hover:bg-navy-900 hover:text-white"
                 >
                   <Mail className="h-4 w-4" />
                 </a>
@@ -193,7 +193,7 @@ export default async function SingleNewsPage({ params }: NewsRouteProps) {
             </div>
           </header>
 
-          <div className="relative aspect-[1.8] max-h-[560px] min-h-[220px] overflow-hidden rounded-sm bg-[#101E39]/5 sm:aspect-[2.25]">
+          <div className="relative aspect-[1.8] max-h-[560px] min-h-[220px] overflow-hidden rounded-sm bg-navy-900/5 sm:aspect-[2.25]">
             {article.image ? (
               <Image
                 src={article.image}
@@ -204,14 +204,14 @@ export default async function SingleNewsPage({ params }: NewsRouteProps) {
                 className="object-cover"
               />
             ) : (
-              <div className="absolute inset-0 bg-gradient-to-br from-[#101E39] to-[#1B4332]" aria-hidden="true" />
+              <div className="absolute inset-0 bg-gradient-to-br from-navy-900 to-[#1B4332]" aria-hidden="true" />
             )}
           </div>
 
           <div className={`grid gap-8 lg:gap-12 ${article.statistics?.length || companyName ? 'lg:grid-cols-[minmax(0,1.8fr)_minmax(260px,0.8fr)]' : ''}`}>
             <article className="min-w-0 rounded-sm bg-white px-5 py-7 shadow-[0_8px_32px_rgba(16,30,57,0.05)] sm:px-8 sm:py-10 lg:px-12">
               {showExcerpt && (
-                <p className="mb-7 border-b border-[#101E39]/10 pb-7 text-lg font-semibold leading-9 text-[#101E39] sm:text-xl">
+                <p className="mb-7 border-b border-navy-900/10 pb-7 text-lg font-semibold leading-9 text-navy-900 sm:text-xl">
                   {excerpt}
                 </p>
               )}
@@ -224,7 +224,7 @@ export default async function SingleNewsPage({ params }: NewsRouteProps) {
             {Boolean(article.statistics?.length || companyName) && (
               <aside className="space-y-6">
                 {article.statistics && article.statistics.length > 0 && (
-                  <section className="rounded-sm bg-[#101E39] p-6 text-white sm:p-7">
+                  <section className="rounded-sm bg-navy-900 p-6 text-white sm:p-7">
                     <h2 className="text-lg font-bold">{locale === 'ar' ? 'أرقام المبادرة' : 'Initiative in numbers'}</h2>
                     <ul className="mt-5 grid grid-cols-2 gap-3">
                       {article.statistics.map((statistic, index) => {
@@ -243,8 +243,8 @@ export default async function SingleNewsPage({ params }: NewsRouteProps) {
                 )}
 
                 {companyName && (
-                  <section className="rounded-sm border border-[#101E39]/10 bg-white p-6 sm:p-7">
-                    <p className="text-xs font-bold text-[#B7913D]">{locale === 'ar' ? 'الشركة المعنية' : 'Featured company'}</p>
+                  <section className="rounded-sm border border-navy-900/10 bg-white p-6 sm:p-7">
+                    <p className="text-xs font-bold text-gold-500">{locale === 'ar' ? 'الشركة المعنية' : 'Featured company'}</p>
                     {companyLogo && (
                       <div className="relative mt-5 h-16 w-40">
                         <Image
@@ -256,14 +256,14 @@ export default async function SingleNewsPage({ params }: NewsRouteProps) {
                         />
                       </div>
                     )}
-                    <h2 className="mt-4 text-xl font-bold text-[#101E39]">{companyName}</h2>
+                    <h2 className="mt-4 text-xl font-bold text-navy-900">{companyName}</h2>
                     {companyDescription && <p className="mt-3 text-sm leading-7 text-[#5A677B]">{companyDescription}</p>}
                     {companyUrl && (
                       <a
                         href={companyUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-[#101E39] transition-colors hover:text-[#B7913D]"
+                        className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-navy-900 transition-colors hover:text-gold-500"
                       >
                         <span>{locale === 'ar' ? 'زيارة الموقع' : 'Visit website'}</span>
                         <BackArrow className="h-4 w-4" />
@@ -276,12 +276,12 @@ export default async function SingleNewsPage({ params }: NewsRouteProps) {
           </div>
 
           {relatedNews.length > 0 && (
-            <section className="space-y-6 border-t border-[#101E39]/10 pt-10 sm:pt-14">
+            <section className="space-y-6 border-t border-navy-900/10 pt-10 sm:pt-14">
               <div className="flex items-end justify-between gap-4">
-                <h2 className="text-2xl font-bold text-[#101E39] sm:text-3xl">
+                <h2 className="text-2xl font-bold text-navy-900 sm:text-3xl">
                   {locale === 'ar' ? 'أخبار ذات صلة' : 'Related news'}
                 </h2>
-                <Link href={archivePath} className="inline-flex items-center gap-2 text-sm font-bold text-[#101E39] transition-colors hover:text-[#B7913D]">
+                <Link href={archivePath} className="inline-flex items-center gap-2 text-sm font-bold text-navy-900 transition-colors hover:text-gold-500">
                   <span>{locale === 'ar' ? 'كل الأخبار' : 'All news'}</span>
                   <BackArrow className="h-4 w-4" />
                 </Link>
@@ -293,7 +293,7 @@ export default async function SingleNewsPage({ params }: NewsRouteProps) {
                     href={`${archivePath}/${related.id}`}
                     className="group flex min-w-0 gap-4 overflow-hidden rounded-sm bg-white p-4 shadow-sm transition-shadow hover:shadow-lg sm:gap-5 sm:p-5"
                   >
-                    <div className="relative h-24 w-28 shrink-0 overflow-hidden bg-[#101E39]/5 sm:h-32 sm:w-40">
+                    <div className="relative h-24 w-28 shrink-0 overflow-hidden bg-navy-900/5 sm:h-32 sm:w-40">
                       {related.image ? (
                         <Image
                           src={related.image}
@@ -303,14 +303,14 @@ export default async function SingleNewsPage({ params }: NewsRouteProps) {
                           className="object-cover transition-transform duration-500 group-hover:scale-105"
                         />
                       ) : (
-                        <div className="absolute inset-0 bg-gradient-to-br from-[#101E39] to-[#1B4332]" aria-hidden="true" />
+                        <div className="absolute inset-0 bg-gradient-to-br from-navy-900 to-[#1B4332]" aria-hidden="true" />
                       )}
                     </div>
                     <div className="min-w-0 py-1">
-                      <time dateTime={related.publishedAt || undefined} className="text-xs font-semibold text-[#B7913D]">
+                      <time dateTime={related.publishedAt || undefined} className="text-xs font-semibold text-gold-500">
                         {related.publishedAt ? formatDate(related.publishedAt, locale) : related.date}
                       </time>
-                      <h3 className="mt-2 line-clamp-3 text-sm font-bold leading-6 text-[#101E39] transition-colors group-hover:text-[#B7913D] sm:text-base">
+                      <h3 className="mt-2 line-clamp-3 text-sm font-bold leading-6 text-navy-900 transition-colors group-hover:text-gold-500 sm:text-base">
                         {getLocalizedString(related.title, locale)}
                       </h3>
                     </div>

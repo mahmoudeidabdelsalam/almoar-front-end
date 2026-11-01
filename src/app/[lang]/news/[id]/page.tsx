@@ -18,7 +18,7 @@ async function LocalizedNewsContent({ params }: Props) {
 
 export default function LocalizedNewsSingle({ params }: Props) {
   return (
-    <Suspense fallback={<div className="min-h-screen animate-pulse bg-[#F8F9F4]" aria-label="Loading news article" />}>
+    <Suspense fallback={<div className="min-h-screen animate-pulse bg-ivory-50" aria-label="Loading news article" />}>
       <LocalizedNewsContent params={params} />
     </Suspense>
   );

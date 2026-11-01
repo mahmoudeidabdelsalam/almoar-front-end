@@ -13,11 +13,11 @@ export const ApproachSection: React.FC = () => {
   if (!approach.title[locale] && !approach.descriptionOne[locale]) return null;
 
   return (
-    <section className="bg-[#F8F9F4] py-24 lg:h-[408px] lg:py-0">
+    <section className="bg-ivory-50 py-24 lg:h-[408px] lg:py-0">
       <div className="mx-auto flex h-full max-w-[1216px] items-center px-5 sm:px-8 lg:px-0">
         <div className="flex w-full flex-col justify-between gap-8 lg:flex-row lg:items-center">
           <div className="space-y-7">
-            <h2 className="max-w-[760px] text-3xl font-bold leading-tight text-[#101E39] sm:text-4xl lg:text-5xl">
+            <h2 className="max-w-[760px] text-3xl font-bold leading-tight text-navy-900 sm:text-4xl lg:text-5xl">
               {approach.title[locale]}
             </h2>
             <p className="max-w-[760px] text-base leading-8 text-[#5A677B] lg:text-lg">
@@ -26,7 +26,7 @@ export const ApproachSection: React.FC = () => {
           </div>
           <Link
             href={`/${locale === 'ar' ? 'ar' : 'en'}/about`}
-            className="inline-flex h-[54px] w-fit items-center justify-center gap-3 rounded-sm bg-[#101E39] px-7 text-sm font-bold text-white transition-colors hover:bg-[#B7913D]"
+            className="inline-flex h-[54px] w-fit items-center justify-center gap-3 rounded-sm bg-navy-900 px-7 text-sm font-bold text-white transition-colors hover:bg-gold-500"
           >
             <span>{locale === 'ar' ? 'من نحن' : 'About Us'}</span>
             <ArrowIcon className="h-4 w-4" />

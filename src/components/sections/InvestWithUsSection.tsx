@@ -57,40 +57,40 @@ export function InvestWithUsSection({ form, pageContent, contactContent }: Inves
           </>
         )}
         <div className="relative mx-auto flex min-h-[600px] max-w-[1440px] flex-col px-5 pb-20 pt-15 sm:px-8 lg:px-14">
-          <nav aria-label={locale === 'ar' ? 'مسار التنقل' : 'Breadcrumb'} className="flex items-center gap-2 text-[12px] text-[#F8F7F2]">
+          <nav aria-label={locale === 'ar' ? 'مسار التنقل' : 'Breadcrumb'} className="flex items-center gap-2 text-[12px] text-ivory-50">
             <Link href={prefix} className="hover:text-white">{t.nav.home}</Link>
             <span aria-hidden="true">/</span>
             <span aria-current="page" className="text-white/75">{heroTitle}</span>
           </nav>
           <div className="flex flex-1 items-end justify-start pb-12 pt-12">
             <div className="max-w-3xl">
-              {heroBadge && <p className="mb-2 text-[12px] font-medium text-[#D4AF37]">{heroBadge}</p>}
-              <h1 className="text-[56px] font-normal tracking-tight text-[#F8F7F2] sm:text-6xl lg:text-[84px]">{heroTitle}</h1>
+              {heroBadge && <p className="mb-2 text-[12px] font-medium text-gold-500">{heroBadge}</p>}
+              <h1 className="text-[56px] font-normal tracking-tight text-ivory-50 sm:text-6xl lg:text-[84px]">{heroTitle}</h1>
               {heroDescription && <p className="mt-4 max-w-2xl text-sm leading-7 text-white/80 sm:text-base">{heroDescription}</p>}
             </div>
           </div>
         </div>
-        <Notch fill="#F8F7F2" className="absolute start-1/2 bottom-0 z-[1] mb-[-4px] h-[30px] w-[400px] -translate-x-1/2 rotate-180" />
+        <Notch fill="var(--color-ivory-50)" className="absolute start-1/2 bottom-0 z-[1] mb-[-4px] h-[30px] w-[400px] -translate-x-1/2 rotate-180" />
       </section>
 
       {hasOpportunityContent && (
-        <section className="bg-[#F8F7F2] px-5 pb-14 pt-16 sm:px-8 lg:px-14 lg:pb-20 lg:pt-20">
+        <section className="bg-ivory-50 px-5 pb-14 pt-16 sm:px-8 lg:px-14 lg:pb-20 lg:pt-20">
           <div className="mx-auto max-w-[1280px] flex flex-row gap-10 sm:gap-12 lg:gap-14">
             {(opportunityHeading || opportunityDescription) && (
               <header className="mb-8 text-sm text-[#7D8490] sm:mb-10">
-                <p className="mb-2 text-[12px] font-normal text-[#A07A22]">{processHeading}</p>
-                {opportunityHeading && <h2 className="text-[36px] font-normal leading-tight text-[#0F1F38] sm:text-[56px]">{opportunityHeading}</h2>}
+                <p className="mb-2 text-[12px] font-normal text-gold-600">{processHeading}</p>
+                {opportunityHeading && <h2 className="text-[36px] font-normal leading-tight text-navy-900 sm:text-[56px]">{opportunityHeading}</h2>}
                 {opportunityDescription && <p className="mt-4 max-w-4xl text-sm leading-7 text-[#586274] sm:text-base">{opportunityDescription}</p>}
               </header>
             )}
 
             {steps.length > 0 && (
-              <ol className="flex flex-1 flex-col gap-4 sm:gap-5 lg:gap-6 min-w-[540px] rounded-lg border border-[#D7DAE0] bg-white p-5 transition hover:border-[#C3942E]">
+              <ol className="flex flex-1 flex-col gap-4 sm:gap-5 lg:gap-6 min-w-[540px] rounded-lg border border-[#D7DAE0] bg-white p-5 transition hover:border-gold-500">
                 {steps.map((step, index) => (
                   <li key={`${step.title.ar}-${index}`} className="flex flex-row items-start gap-6 sm:p-6">
-                    <span className="flex h-[52px] w-[52px] items-center justify-center rounded-full text-sm bg-[#F7F0DE] font-medium text-[#A07A22]">{String(index + 1).padStart(2, '0')}</span>
+                    <span className="flex h-[52px] w-[52px] items-center justify-center rounded-full text-sm bg-[#F7F0DE] font-medium text-gold-600">{String(index + 1).padStart(2, '0')}</span>
                     <div>
-                      {localized(step.title, locale) && <h3 className="text-lg font-medium text-[#0F1F38]">{localized(step.title, locale)}</h3>}
+                      {localized(step.title, locale) && <h3 className="text-lg font-medium text-navy-900">{localized(step.title, locale)}</h3>}
                       {localized(step.description, locale) && <p className="mt-2 text-sm leading-6 text-[#707784]">{localized(step.description, locale)}</p>}
                     </div>
                   </li>
@@ -102,10 +102,10 @@ export function InvestWithUsSection({ form, pageContent, contactContent }: Inves
       )}
 
       {hasInquiryContent && (
-        <section className="bg-[#F8F7F2] px-5 pb-14 pt-4 sm:px-8 lg:px-14 lg:pb-20">
+        <section className="bg-ivory-50 px-5 pb-14 pt-4 sm:px-8 lg:px-14 lg:pb-20">
           <div className="mx-auto max-w-[1280px]">
             <header className="mb-5 text-sm text-[#7D8490] sm:mb-8">
-              {contactHeading && <h2 className="text-[36px] font-normal leading-tight text-[#0F1F38] sm:text-[56px]">{contactHeading}</h2>}
+              {contactHeading && <h2 className="text-[36px] font-normal leading-tight text-navy-900 sm:text-[56px]">{contactHeading}</h2>}
               {contactDescription && <p className="mt-3 max-w-3xl text-sm leading-7 text-[#586274] sm:text-base">{contactDescription}</p>}
             </header>
 
@@ -122,21 +122,21 @@ export function InvestWithUsSection({ form, pageContent, contactContent }: Inves
 
               <aside className="contact-map-pattern relative flex min-h-[260px] flex-col justify-between overflow-hidden rounded-xl bg-[#10213D] p-5 text-white md:col-span-4 md:min-h-[350px] md:p-6">
                 <div className="relative z-10">
-                  <p className="text-[10px] font-medium text-[#C3942E]">{contactContent?.badge[locale] || t.contact_section.badge}</p>
+                  <p className="text-[10px] font-medium text-gold-500">{contactContent?.badge[locale] || t.contact_section.badge}</p>
                   <h3 className="mt-2 text-xl font-medium">{contactHeading || (locale === 'ar' ? 'تواصل معنا' : 'Get in touch')}</h3>
                   {contactDescription && <p className="mt-3 text-sm leading-6 text-white/80">{contactDescription}</p>}
                 </div>
                 <div aria-hidden="true" className="absolute inset-0 opacity-30">
-                  <div className="absolute -left-8 top-8 h-64 w-64 rotate-45 border-[18px] border-[#344866]" />
-                  <div className="absolute -right-12 bottom-5 h-52 w-52 rotate-45 border-[16px] border-[#344866]" />
-                  <div className="absolute left-1/2 top-1/2 h-[140%] w-[18px] -translate-x-1/2 -translate-y-1/2 rotate-45 bg-[#344866]" />
+                  <div className="absolute -left-8 top-8 h-64 w-64 rotate-45 border-[18px] border-slate-700" />
+                  <div className="absolute -right-12 bottom-5 h-52 w-52 rotate-45 border-[16px] border-slate-700" />
+                  <div className="absolute left-1/2 top-1/2 h-[140%] w-[18px] -translate-x-1/2 -translate-y-1/2 rotate-45 bg-slate-700" />
                 </div>
                 {contactItems.length > 0 && (
                   <ul className="relative z-10 mt-8 space-y-3">
                     {contactItems.map(({ href, value, icon: Icon, label, ltr }) => (
                       <li key={label}>
                         <a href={href} target={href.startsWith('http') ? '_blank' : undefined} rel={href.startsWith('http') ? 'noopener noreferrer' : undefined} aria-label={`${label}: ${value}`} className="flex items-center justify-between gap-3 text-sm text-white/90 transition hover:text-[#E2B84A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
-                          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#C3942E] text-[#10213D]"><Icon aria-hidden="true" size={15} /></span>
+                          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gold-500 text-[#10213D]"><Icon aria-hidden="true" size={15} /></span>
                           <span className="min-w-0 flex-1 break-all text-end" dir={ltr ? 'ltr' : dir}>{value}</span>
                         </a>
                       </li>
@@ -153,14 +153,14 @@ export function InvestWithUsSection({ form, pageContent, contactContent }: Inves
         </section>
       )}
 
-      <nav aria-label={locale === 'ar' ? 'صفحات ذات صلة' : 'Related pages'} className="bg-[#F8F7F2] px-5 py-12 sm:px-8 lg:px-14">
+      <nav aria-label={locale === 'ar' ? 'صفحات ذات صلة' : 'Related pages'} className="bg-ivory-50 px-5 py-12 sm:px-8 lg:px-14">
         <div className="mx-auto grid max-w-[1280px] gap-3 sm:grid-cols-2">
-          <Link href={`${prefix}/about`} className="flex min-h-[78px] items-center justify-between rounded-lg border border-[#D7DAE0] bg-white px-5 py-4 text-sm transition hover:border-[#C3942E] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C3942E]">
+          <Link href={`${prefix}/about`} className="flex min-h-[78px] items-center justify-between rounded-lg border border-[#D7DAE0] bg-white px-5 py-4 text-sm transition hover:border-gold-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500">
             {dir === 'rtl' ? <ArrowRight aria-hidden="true" size={17} /> : <ArrowLeft aria-hidden="true" size={17} />}
-            <span className="text-end"><span className="block text-[9px] text-[#818896]">{locale === 'ar' ? 'اكتشف مسيرتنا' : 'Discover our story'}</span><span className="mt-1 block font-medium text-[#12233F]">{t.nav.about}</span></span>
+            <span className="text-end"><span className="block text-[9px] text-[#818896]">{locale === 'ar' ? 'اكتشف مسيرتنا' : 'Discover our story'}</span><span className="mt-1 block font-medium text-navy-800">{t.nav.about}</span></span>
           </Link>
-          <Link href={`${prefix}/contact-us`} className="flex min-h-[78px] items-center justify-between rounded-lg border border-[#C3942E] bg-white px-5 py-4 text-sm transition hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C3942E]">
-            <span className="text-end"><span className="block text-[9px] text-[#818896]">{locale === 'ar' ? 'تواصل معنا' : 'Get in touch'}</span><span className="mt-1 block font-medium text-[#12233F]">{t.nav.contact}</span></span>
+          <Link href={`${prefix}/contact-us`} className="flex min-h-[78px] items-center justify-between rounded-lg border border-gold-500 bg-white px-5 py-4 text-sm transition hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500">
+            <span className="text-end"><span className="block text-[9px] text-[#818896]">{locale === 'ar' ? 'تواصل معنا' : 'Get in touch'}</span><span className="mt-1 block font-medium text-navy-800">{t.nav.contact}</span></span>
             {dir === 'rtl' ? <ArrowLeft aria-hidden="true" size={17} /> : <ArrowRight aria-hidden="true" size={17} />}
           </Link>
         </div>

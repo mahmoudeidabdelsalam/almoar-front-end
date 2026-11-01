@@ -152,13 +152,13 @@ export const Header: React.FC = () => {
     <>
       <header
         onMouseMove={(event) => { if (event.clientY < 80) setHidden(false); }}
-        className={`fixed inset-x-0 top-0 z-[59] bg-white text-[#101E39] border-b border-[#101E39]/8 ${ready ? 'transition-transform duration-300 ease-[cubic-bezier(.4,0,.2,1)]' : 'transition-none'} ${hidden ? '-translate-y-[calc(100%+40px)]' : 'translate-y-0'}`}
+        className={`fixed inset-x-0 top-0 z-[59] bg-white text-navy-900 border-b border-navy-900/8 ${ready ? 'transition-transform duration-300 ease-[cubic-bezier(.4,0,.2,1)]' : 'transition-none'} ${hidden ? '-translate-y-[calc(100%+40px)]' : 'translate-y-0'}`}
       >
         <div className="mx-auto flex h-[72px] max-w-[1440px] items-center justify-between px-5 sm:px-8 lg:px-12">
           <button
             type="button"
             onClick={() => { setSearchOpen(false); setMenuOpen((open) => !open); setSubmenu(null); setActiveImage(menu[0]?.image || ''); }}
-            className={`group inline-flex items-center gap-2 border-0 bg-transparent p-2 text-[#101E39] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#B7913D] cursor-pointer ${locale === 'ar' ? 'order-1' : 'order-2'}`}
+            className={`group inline-flex items-center gap-2 border-0 bg-transparent p-2 text-navy-900 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold-500 cursor-pointer ${locale === 'ar' ? 'order-1' : 'order-2'}`}
             aria-label={menuOpen ? (locale === 'ar' ? 'إغلاق القائمة' : 'Close menu') : (locale === 'ar' ? 'فتح القائمة' : 'Open menu')}
             aria-expanded={menuOpen}
           >
@@ -177,7 +177,7 @@ export const Header: React.FC = () => {
             <button
               type="button"
               onClick={toggleLocale}
-              className="flex h-10 items-center gap-1  px-3 text-xs font-bold transition-colors hover:bg-[#101E39] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B7913D]"
+              className="flex h-10 items-center gap-1  px-3 text-xs font-bold transition-colors hover:bg-navy-900 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500"
               aria-label={locale === 'ar' ? 'Switch to English' : 'التبديل إلى العربية'}
             >
               <span>{locale === 'ar' ? 'English' : 'عربي'}</span>
@@ -185,7 +185,7 @@ export const Header: React.FC = () => {
             <button
               type="button"
               onClick={() => { setSubmenu(null); setMenuOpen(false); setSearchOpen((open) => !open); }}
-              className="flex h-10 w-10 items-center justify-center transition-colors hover:bg-[#101E39] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B7913D]"
+              className="flex h-10 w-10 items-center justify-center transition-colors hover:bg-navy-900 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500"
               aria-label={locale === 'ar' ? 'فتح البحث' : 'Open search'}
               aria-expanded={searchOpen}
             >
@@ -206,7 +206,7 @@ export const Header: React.FC = () => {
       >
         <div className="site-menu__scrim absolute inset-0" />
         <div className="relative h-full">
-          <div className="site-menu__panel pattern mx-auto grid h-full max-w-[1440px] grid-cols-1 rounded-lg bg-[#0F1F38] bg-[url('/bg-menu.png')] bg-no-repeat bg-right-bottom px-5 py-5 lg:grid-cols-[60%_40%]">
+          <div className="site-menu__panel pattern mx-auto grid h-full max-w-[1440px] grid-cols-1 rounded-lg bg-navy-900 bg-[url('/bg-menu.png')] bg-no-repeat bg-right-bottom px-5 py-5 lg:grid-cols-[60%_40%]">
             <nav className="site-menu__body h-full px-0 lg:px-[7%]" aria-label={locale === 'ar' ? 'القائمة الرئيسية' : 'Main menu'}>
               <div className="site-menu__top">
                 <div className="site-menu__crumb">
@@ -315,7 +315,7 @@ export const Header: React.FC = () => {
                   <img src={logo} alt="" className="max-h-32 max-w-[220px] object-contain brightness-0 invert" />
                 </div>
               )}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#101E39]/55 via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-navy-900/55 via-transparent to-transparent" />
             </div>
           </div>
         </div>
@@ -328,25 +328,25 @@ export const Header: React.FC = () => {
         aria-label={locale === 'ar' ? 'البحث' : 'Search'}
       >
         <div className="mx-auto max-w-[960px] px-5 pt-[110px] lg:px-12 lg:pt-[140px]">
-          <form onSubmit={(event) => { event.preventDefault(); runSearch(query); }} className="flex items-center border-b-2 border-[#101E39]">
-            <Search className="h-7 w-7 shrink-0 text-[#B7913D]" />
+          <form onSubmit={(event) => { event.preventDefault(); runSearch(query); }} className="flex items-center border-b-2 border-navy-900">
+            <Search className="h-7 w-7 shrink-0 text-gold-500" />
             <input
               value={query}
               onChange={(event) => runSearch(event.target.value)}
               autoFocus={searchOpen}
-              className="min-h-20 w-full border-0 bg-transparent px-4 text-2xl outline-none placeholder:text-[#101E39]/35 lg:text-4xl"
+              className="min-h-20 w-full border-0 bg-transparent px-4 text-2xl outline-none placeholder:text-navy-900/35 lg:text-4xl"
               placeholder={locale === 'ar' ? 'ابحث في الموقع...' : 'Search the website...'}
               aria-label={locale === 'ar' ? 'بحث' : 'Search'}
             />
           </form>
           <div className="mt-8" aria-live="polite">
-            {searching && <p className="text-sm text-[#101E39]/55">{locale === 'ar' ? 'جارٍ البحث...' : 'Searching...'}</p>}
+            {searching && <p className="text-sm text-navy-900/55">{locale === 'ar' ? 'جارٍ البحث...' : 'Searching...'}</p>}
             {!searching && query.trim().length >= 2 && searchResults.length === 0 && (
-              <p className="text-sm text-[#101E39]/55">{locale === 'ar' ? 'لا توجد نتائج' : 'No results found'}</p>
+              <p className="text-sm text-navy-900/55">{locale === 'ar' ? 'لا توجد نتائج' : 'No results found'}</p>
             )}
-            <div className="divide-y divide-[#101E39]/10">
+            <div className="divide-y divide-navy-900/10">
               {searchResults.map((result) => (
-                <Link key={result.id} href={result.url} onClick={closeOverlays} className="group flex items-center justify-between py-5 text-xl font-bold hover:text-[#B7913D]">
+                <Link key={result.id} href={result.url} onClick={closeOverlays} className="group flex items-center justify-between py-5 text-xl font-bold hover:text-gold-500">
                   <span>{result.title}</span>
                   <ChevronRight className="directional-icon h-5 w-5" />
                 </Link>

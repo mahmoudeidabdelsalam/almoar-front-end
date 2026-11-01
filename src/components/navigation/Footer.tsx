@@ -43,7 +43,7 @@ function FooterSocialLink({ platform, url, locale }: FooterSocialLinkProps) {
       dir="ltr"
       aria-label={locale === 'ar' ? `تابعنا على ${presentation.label}` : `Follow us on ${presentation.label}`}
       title={presentation.label}
-      className="flex h-10 w-10 items-center justify-center rounded-full border border-[#2A3B4D]/20 text-[#2A3B4D] bg-[#F2F0EB] transition-colors hover:border-[#101E39] hover:bg-[#101E39] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B7913D]"
+      className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-700/20 text-slate-700 bg-[#F2F0EB] transition-colors hover:border-navy-900 hover:bg-navy-900 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500"
     >
       <span className="text-xs font-bold" aria-hidden="true">{presentation.glyph}</span>
     </a>
@@ -90,11 +90,11 @@ export const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="relative bg-[#101E39] text-white">
+    <footer className="relative bg-navy-900 text-white">
       <button
         type="button"
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        className="absolute left-12 top-[-42px] hidden h-[84px] w-[84px] flex-col items-center cursor-pointer justify-center rounded-full bg-[#C5A265] text-white font-bold shadow-lg transition-colors hover:bg-[#BF9432] lg:flex"
+        className="absolute left-12 top-[-42px] hidden h-[84px] w-[84px] flex-col items-center cursor-pointer justify-center rounded-full bg-gold-200 text-white font-bold shadow-lg transition-colors hover:bg-gold-500 lg:flex"
         aria-label={locale === 'ar' ? 'العودة إلى الأعلى' : 'Back to top'}
       >
         <ArrowUp className="h-4 w-4 rotate-45" />
@@ -109,7 +109,7 @@ export const Footer: React.FC = () => {
 
         {columns.slice(0, 2).map((column, columnIndex) => (
           <div key={`${column.title.ar}-${columnIndex}`}>
-            <h2 className="text-[12px] font-normal text-[#BF9432]">{locale === 'ar' ? column.title.ar : column.title.en}</h2>
+            <h2 className="text-[12px] font-normal text-gold-500">{locale === 'ar' ? column.title.ar : column.title.en}</h2>
             <ul className="mt-8 space-y-4 text-[28px] font-normal text-white">
               {column.links.map((link, linkIndex) => {
                 const href = localizedUrl(link.url);
@@ -129,11 +129,11 @@ export const Footer: React.FC = () => {
                 return (
                   <li key={`${href}-${linkIndex}`}>
                     {external ? (
-                      <a href={href} className="flex items-center gap-3 transition-colors hover:text-[#C5A265]">
+                      <a href={href} className="flex items-center gap-3 transition-colors hover:text-gold-200">
                         {content}
                       </a>
                     ) : (
-                      <Link href={href} className="flex items-center gap-3 transition-colors hover:text-[#C5A265]">
+                      <Link href={href} className="flex items-center gap-3 transition-colors hover:text-gold-200">
                         {content}
                       </Link>
                     )}
@@ -146,7 +146,7 @@ export const Footer: React.FC = () => {
       </div>
 
       <div className="border-t border-white/10 bg-white">
-        <div className="mx-auto flex min-h-[84px] max-w-[1216px] flex-col items-center justify-between gap-4 px-5 py-5 text-xs text-[#2A3B4D] sm:px-8 md:flex-row lg:px-0">
+        <div className="mx-auto flex min-h-[84px] max-w-[1216px] flex-col items-center justify-between gap-4 px-5 py-5 text-xs text-slate-700 sm:px-8 md:flex-row lg:px-0">
           {socialLinks.length > 0 && (
             <div dir={dir} className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
               <span>{locale === 'ar' ? 'تابعونا على:' : 'Follow us:'}</span>

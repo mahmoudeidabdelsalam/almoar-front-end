@@ -54,7 +54,7 @@ const inter = Inter({
 });
 
 export const viewport: Viewport = {
-  themeColor: '#101E39',
+  themeColor: '#0F1F38',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
@@ -95,7 +95,7 @@ export default async function RootLayout({
 
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning className={`${ibmPlexArabic.variable} ${cairo.variable} ${playfair.variable} ${inter.variable}`}>
-      <body className="antialiased min-h-screen flex flex-col selection:bg-[#B7913D] selection:text-white">
+      <body className="antialiased min-h-screen flex flex-col selection:bg-gold-500 selection:text-white">
         <Script id="locale-direction" strategy="beforeInteractive">
           {`const segment = window.location.pathname.split('/')[1]; const locale = segment === 'en' ? 'en' : 'ar'; document.documentElement.lang = locale; document.documentElement.dir = locale === 'ar' ? 'rtl' : 'ltr';`}
         </Script>

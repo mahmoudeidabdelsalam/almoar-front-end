@@ -33,7 +33,7 @@ async function LocalizedContactContent({ params }: Props) {
 
 export default function LocalizedContact({ params }: Props) {
   return (
-    <Suspense fallback={<div className="min-h-screen animate-pulse bg-[#F8F7F3]" aria-label="Loading contact page" />}>
+    <Suspense fallback={<div className="min-h-screen animate-pulse bg-ivory-50" aria-label="Loading contact page" />}>
       <LocalizedContactContent params={params} />
     </Suspense>
   );

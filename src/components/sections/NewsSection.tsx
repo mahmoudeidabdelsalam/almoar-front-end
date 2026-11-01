@@ -32,11 +32,11 @@ export const NewsSection: React.FC<NewsProps> = ({ articles }) => {
       <div className="mx-auto max-w-[1216px] px-5 sm:px-8 lg:px-0">
         <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <div className="space-y-3 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#101E39]/5 border border-[#101E39]/10 text-xs font-bold text-[#101E39]">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#B7913D]" />
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-navy-900/5 border border-navy-900/10 text-xs font-bold text-navy-900">
+              <span className="w-1.5 h-1.5 rounded-full bg-gold-500" />
               <span>{copy?.badge[locale] || (content.previewMode ? t.news_section.badge : '')}</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#101E39] tracking-tight">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-navy-900 tracking-tight">
               {copy?.title[locale] || (content.previewMode ? t.news_section.title : '')}
             </h2>
             <p className="text-base sm:text-lg text-[#5A677B]">
@@ -46,7 +46,7 @@ export const NewsSection: React.FC<NewsProps> = ({ articles }) => {
 
           <Link
             href={localizedLink(copy?.ctaUrl || archivePath, locale)}
-            className="group inline-flex h-[54px] w-fit items-center justify-center gap-3 rounded-sm bg-[#101E39] px-7 text-sm font-bold text-white transition-colors hover:bg-[#B7913D]"
+            className="group inline-flex h-[54px] w-fit items-center justify-center gap-3 rounded-sm bg-navy-900 px-7 text-sm font-bold text-white transition-colors hover:bg-gold-500"
           >
             <span>{copy?.ctaLabel[locale] || (content.previewMode ? t.news_section.view_all_news : '')}</span>
             <DirectionalArrow direction="next" dir={dir} className={`h-4 w-4 transition-transform ${dir === 'rtl' ? 'group-hover:-translate-x-1' : 'group-hover:translate-x-1'}`} />
@@ -62,16 +62,16 @@ export const NewsSection: React.FC<NewsProps> = ({ articles }) => {
                     <Image src={article.image} alt={locale === 'ar' ? article.title.ar : article.title.en} fill sizes="(max-width: 767px) 100vw, (max-width: 1279px) 33vw, 405px" className="object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
                   )}
                 </Link>
-                <p className="mt-3 text-xs font-semibold text-[#B7913D]">
+                <p className="mt-3 text-xs font-semibold text-gold-500">
                   {locale === 'ar' ? article.category.ar : article.category.en}
                 </p>
-                <h3 className="mt-2 line-clamp-2 min-h-14 text-lg font-bold leading-7 text-[#101E39]">
+                <h3 className="mt-2 line-clamp-2 min-h-14 text-lg font-bold leading-7 text-navy-900">
                   <Link href={`${archivePath}/${article.id}`}>
                     {locale === 'ar' ? article.title.ar : article.title.en}
                   </Link>
                 </h3>
                 <div className="mt-4 flex items-center justify-between text-xs text-[#5A677B]">
-                  <Link href={`${archivePath}/${article.id}`} className="inline-flex items-center gap-2 font-bold text-[#101E39]">
+                  <Link href={`${archivePath}/${article.id}`} className="inline-flex items-center gap-2 font-bold text-navy-900">
                     <DirectionalArrow direction="next" dir={dir} className="h-4 w-4" />
                     <span>{t.news_section.read_more}</span>
                   </Link>
@@ -82,13 +82,13 @@ export const NewsSection: React.FC<NewsProps> = ({ articles }) => {
           </div>
 
           <div className="flex items-start gap-3 lg:flex-col">
-            <button type="button" onClick={next} className="flex h-12 w-12 items-center justify-center rounded-full border border-[#101E39]/20 text-[#101E39] hover:bg-[#101E39] hover:text-white" aria-label={locale === 'ar' ? 'الأخبار التالية' : 'Next news'}>
+            <button type="button" onClick={next} className="flex h-12 w-12 items-center justify-center rounded-full border border-navy-900/20 text-navy-900 hover:bg-navy-900 hover:text-white" aria-label={locale === 'ar' ? 'الأخبار التالية' : 'Next news'}>
               <DirectionalArrow direction="next" dir={dir} className="h-4 w-4" />
             </button>
-            <button type="button" onClick={previous} className="flex h-12 w-12 items-center justify-center rounded-full border border-[#101E39]/20 text-[#101E39] hover:bg-[#101E39] hover:text-white" aria-label={locale === 'ar' ? 'الأخبار السابقة' : 'Previous news'}>
+            <button type="button" onClick={previous} className="flex h-12 w-12 items-center justify-center rounded-full border border-navy-900/20 text-navy-900 hover:bg-navy-900 hover:text-white" aria-label={locale === 'ar' ? 'الأخبار السابقة' : 'Previous news'}>
               <DirectionalArrow direction="previous" dir={dir} className="h-4 w-4" />
             </button>
-            <span className="hidden text-xl font-bold text-[#101E39] lg:block">
+            <span className="hidden text-xl font-bold text-navy-900 lg:block">
               {String(start + 1).padStart(2, '0')} <span className="text-sm text-[#5A677B]">/ {String(localizedArticles.length).padStart(2, '0')}</span>
             </span>
           </div>

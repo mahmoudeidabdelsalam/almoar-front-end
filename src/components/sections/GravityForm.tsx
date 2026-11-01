@@ -162,7 +162,7 @@ export function GravityForm({ form, title, submitLabel, className = '' }: Gravit
       'aria-invalid': Boolean(error),
       'aria-describedby': error ? `${id}-error` : undefined,
       dir: inputType === 'email' || inputType === 'phone' ? 'ltr' as const : dir,
-      className: `min-h-10 w-full rounded-sm border bg-white px-3 py-2 text-sm text-[#12233F] outline-none transition focus:border-[#C3942E] focus:ring-2 focus:ring-[#C3942E]/20 ${error ? 'border-red-500' : 'border-[#D6D9DE]'}`,
+      className: `min-h-10 w-full rounded-sm border bg-white px-3 py-2 text-sm text-navy-800 outline-none transition focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 ${error ? 'border-red-500' : 'border-[#D6D9DE]'}`,
     };
 
     return (
@@ -195,9 +195,9 @@ export function GravityForm({ form, title, submitLabel, className = '' }: Gravit
   if (confirmation) {
     return (
       <div className={`rounded-lg border border-[#D6D9DE] bg-white p-8 text-center ${className}`} role="status" aria-live="polite">
-        <h3 className="text-xl font-semibold text-[#12233F]">{locale === 'ar' ? 'شكرًا لتواصلكم' : 'Thank you for contacting us'}</h3>
+        <h3 className="text-xl font-semibold text-navy-800">{locale === 'ar' ? 'شكرًا لتواصلكم' : 'Thank you for contacting us'}</h3>
         <div className="mt-3 text-sm leading-7 text-[#596273]" dangerouslySetInnerHTML={{ __html: sanitizeNewsContent(confirmation) }} />
-        <button type="button" onClick={() => setConfirmation('')} className="mt-6 rounded-sm bg-[#C3942E] px-5 py-3 text-sm font-medium text-white hover:bg-[#A77C22] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#12233F]">
+        <button type="button" onClick={() => setConfirmation('')} className="mt-6 rounded-sm bg-gold-500 px-5 py-3 text-sm font-medium text-white hover:bg-[#A77C22] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-800">
           {locale === 'ar' ? 'إرسال طلب آخر' : 'Send another inquiry'}
         </button>
       </div>
@@ -207,7 +207,7 @@ export function GravityForm({ form, title, submitLabel, className = '' }: Gravit
   return (
     <form onSubmit={handleSubmit} className={`rounded-lg border border-[#D6D9DE] bg-white p-5 shadow-sm sm:p-7 ${className}`} noValidate>
       {title && <div className="mb-5">
-        <h2 className="text-xl font-semibold text-[#12233F]">{title}</h2>
+        <h2 className="text-xl font-semibold text-navy-800">{title}</h2>
         <p className="mt-1 text-xs text-[#818896]">{locale === 'ar' ? 'يرجى تعبئة البيانات التالية وسنتواصل معكم في أقرب وقت.' : 'Complete the details below and our team will be in touch.'}</p>
       </div>}
       {generalError && <p role="alert" className="mb-4 rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">{generalError}</p>}
@@ -215,7 +215,7 @@ export function GravityForm({ form, title, submitLabel, className = '' }: Gravit
         {form.fields.map((field) => {
           if (!isVisible(field, values)) return null;
           if (field.type === 'section') {
-            return <h3 key={field.id} className="col-span-full border-b border-[#E8E9EC] pb-2 pt-2 text-sm font-semibold text-[#12233F]">{localizedLabel(field.label, locale)}</h3>;
+            return <h3 key={field.id} className="col-span-full border-b border-[#E8E9EC] pb-2 pt-2 text-sm font-semibold text-navy-800">{localizedLabel(field.label, locale)}</h3>;
           }
           if (field.type === 'name' || field.type === 'address') {
             const inputs = field.inputs.filter((input) => !input.isHidden && input.id);
@@ -243,7 +243,7 @@ export function GravityForm({ form, title, submitLabel, className = '' }: Gravit
       </div>
       <div className="mt-5 flex flex-wrap items-center justify-between gap-4">
         <p className="text-[10px] text-[#9298A2]">{locale === 'ar' ? 'جميع الحقول المطلوبة موضحة بعلامة *' : 'Required fields are marked with *'}</p>
-        <button type="submit" disabled={isSubmitting} className="inline-flex min-w-32 items-center justify-center gap-2 rounded-sm bg-[#C3942E] px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-[#A77C22] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#12233F] disabled:cursor-wait disabled:opacity-60">
+        <button type="submit" disabled={isSubmitting} className="inline-flex min-w-32 items-center justify-center gap-2 rounded-sm bg-gold-500 px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-[#A77C22] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-800 disabled:cursor-wait disabled:opacity-60">
           <span>{isSubmitting ? t.contact_section.form_submitting : submitLabel || form.buttonText || t.contact_section.form_submit}</span>
           <span aria-hidden="true" className="directional-icon">←</span>
         </button>

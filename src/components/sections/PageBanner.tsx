@@ -30,7 +30,7 @@ export const PageBanner: React.FC<PageBannerProps> = ({
   if (!useFallbackCopy && !contactContent?.badge[locale] && !contactContent?.title[locale] && !contactContent?.description[locale] && !banner?.badge[locale] && !banner?.title[locale] && !banner?.description[locale]) return null;
 
   return (
-    <div className="relative py-20 lg:py-28 bg-[#101E39] text-white overflow-hidden">
+    <div className="relative py-20 lg:py-28 bg-navy-900 text-white overflow-hidden">
       <div className="absolute inset-0 opacity-20">
         <Image
           src={contactContent?.bannerImage || banner?.image || imageFallback}
@@ -41,7 +41,7 @@ export const PageBanner: React.FC<PageBannerProps> = ({
         />
       </div>
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
-        <span className="text-xs font-bold uppercase tracking-widest text-[#B7913D]">
+        <span className="text-xs font-bold uppercase tracking-widest text-gold-500">
           {contactContent?.badge[locale] || banner?.badge[locale] || (useFallbackCopy ? badgeFallback : '')}
         </span>
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">

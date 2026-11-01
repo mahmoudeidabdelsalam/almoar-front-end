@@ -32,7 +32,7 @@ export default async function ContactPage() {
   return (
     <>
       <Header />
-      <main className="flex-1 bg-[#F8F7F2] pt-[72px]">
+      <main className="flex-1 bg-ivory-50 pt-[72px]">
         <ContactSection pageContent={pageContent} form={form} />
       </main>
       <Footer />

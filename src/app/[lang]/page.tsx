@@ -41,7 +41,7 @@ async function LocalizedHomeContent({ params }: Props) {
 
 export default function LocalizedHomePage({ params }: Props) {
   return (
-    <Suspense fallback={<div className="min-h-screen animate-pulse bg-[#F8F7F3]" aria-label="Loading homepage" />}>
+    <Suspense fallback={<div className="min-h-screen animate-pulse bg-ivory-50" aria-label="Loading homepage" />}>
       <LocalizedHomeContent params={params} />
     </Suspense>
   );

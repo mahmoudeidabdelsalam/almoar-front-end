@@ -26,11 +26,11 @@ function ProjectTextBandSection({ band, locale }: { band?: ProjectTextBand; loca
   if (!tag && !headline && !items.length) return null;
 
   return (
-    <section className="space-y-7 rounded-3xl border border-[#101E39]/10 bg-white p-8 shadow-lg sm:p-10">
+    <section className="space-y-7 rounded-3xl border border-navy-900/10 bg-white p-8 shadow-lg sm:p-10">
       {(tag || headline) && (
         <div className="space-y-2">
-          {tag && <p className="text-xs font-bold uppercase tracking-wider text-[#B7913D]">{tag}</p>}
-          {headline && <h2 className="text-2xl font-bold text-[#101E39] sm:text-3xl">{headline}</h2>}
+          {tag && <p className="text-xs font-bold uppercase tracking-wider text-gold-500">{tag}</p>}
+          {headline && <h2 className="text-2xl font-bold text-navy-900 sm:text-3xl">{headline}</h2>}
         </div>
       )}
       {items.length > 0 && (
@@ -39,8 +39,8 @@ function ProjectTextBandSection({ band, locale }: { band?: ProjectTextBand; loca
             const head = localizedText(item.head, locale);
             const text = localizedText(item.text, locale);
             return (
-              <article key={`${head}-${index}`} className="space-y-2 border-s-2 border-[#B7913D] ps-4">
-                {head && <h3 className="text-lg font-bold text-[#101E39]">{head}</h3>}
+              <article key={`${head}-${index}`} className="space-y-2 border-s-2 border-gold-500 ps-4">
+                {head && <h3 className="text-lg font-bold text-navy-900">{head}</h3>}
                 {text && <p className="text-sm leading-7 text-[#5A677B]">{text}</p>}
               </article>
             );
@@ -60,11 +60,11 @@ function ProjectCompaniesBand({ project, locale }: { project: Project; locale: L
   if (!tag && !headline && !items.length) return null;
 
   return (
-    <section className="space-y-7 rounded-3xl border border-[#101E39]/10 bg-white p-8 shadow-lg sm:p-10">
+    <section className="space-y-7 rounded-3xl border border-navy-900/10 bg-white p-8 shadow-lg sm:p-10">
       {(tag || headline) && (
         <div className="space-y-2">
-          {tag && <p className="text-xs font-bold uppercase tracking-wider text-[#B7913D]">{tag}</p>}
-          {headline && <h2 className="text-2xl font-bold text-[#101E39] sm:text-3xl">{headline}</h2>}
+          {tag && <p className="text-xs font-bold uppercase tracking-wider text-gold-500">{tag}</p>}
+          {headline && <h2 className="text-2xl font-bold text-navy-900 sm:text-3xl">{headline}</h2>}
         </div>
       )}
       {items.length > 0 && (
@@ -87,12 +87,12 @@ function ProjectCompaniesBand({ project, locale }: { project: Project; locale: L
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={alt}
-                className="flex min-h-28 items-center justify-center rounded-2xl border border-[#101E39]/10 bg-[#F8F9F4] p-5 transition-shadow hover:shadow-md"
+                className="flex min-h-28 items-center justify-center rounded-2xl border border-navy-900/10 bg-ivory-50 p-5 transition-shadow hover:shadow-md"
               >
                 {logo}
               </a>
             ) : (
-              <div key={`${alt}-${index}`} className="flex min-h-28 items-center justify-center rounded-2xl border border-[#101E39]/10 bg-[#F8F9F4] p-5">
+              <div key={`${alt}-${index}`} className="flex min-h-28 items-center justify-center rounded-2xl border border-navy-900/10 bg-ivory-50 p-5">
                 {logo}
               </div>
             );
@@ -117,8 +117,8 @@ function ProjectKeyProjectsBand({ project, locale }: { project: Project; locale:
     <section className="space-y-7">
       {(tag || headline) && (
         <div className="space-y-2">
-          {tag && <p className="text-xs font-bold uppercase tracking-wider text-[#B7913D]">{tag}</p>}
-          {headline && <h2 className="text-2xl font-bold text-[#101E39] sm:text-3xl">{headline}</h2>}
+          {tag && <p className="text-xs font-bold uppercase tracking-wider text-gold-500">{tag}</p>}
+          {headline && <h2 className="text-2xl font-bold text-navy-900 sm:text-3xl">{headline}</h2>}
         </div>
       )}
       {items.length > 0 && (
@@ -135,13 +135,13 @@ function ProjectKeyProjectsBand({ project, locale }: { project: Project; locale:
                   </div>
                 )}
                 <div className="space-y-2 p-5">
-                  {location && <p className="text-xs font-semibold text-[#B7913D]">{location}</p>}
-                  {head && <h3 className="text-lg font-bold text-[#101E39]">{head}</h3>}
+                  {location && <p className="text-xs font-semibold text-gold-500">{location}</p>}
+                  {head && <h3 className="text-lg font-bold text-navy-900">{head}</h3>}
                   {text && <p className="text-sm leading-6 text-[#5A677B]">{text}</p>}
                 </div>
               </>
             );
-            const className = 'group overflow-hidden rounded-2xl border border-[#101E39]/10 bg-white shadow-sm transition-shadow hover:shadow-lg';
+            const className = 'group overflow-hidden rounded-2xl border border-navy-900/10 bg-white shadow-sm transition-shadow hover:shadow-lg';
             const key = `${head}-${index}`;
             return item.link.url ? (
               <a
@@ -223,21 +223,21 @@ export default async function SingleProjectPage({ params }: Props) {
   return (
     <>
       <Header />
-      <main className="flex-1 bg-[#F8F9F4] pt-28 pb-20" dir={direction}>
+      <main className="flex-1 bg-ivory-50 pt-28 pb-20" dir={direction}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           {/* Breadcrumb & Top Bar */}
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-xs sm:text-sm text-[#5A677B]">
-              <Link href={`/${locale}`} className="hover:text-[#101E39] transition-colors">{locale === 'ar' ? 'الرئيسية' : 'Home'}</Link>
+              <Link href={`/${locale}`} className="hover:text-navy-900 transition-colors">{locale === 'ar' ? 'الرئيسية' : 'Home'}</Link>
               <span>/</span>
-              <Link href={projectsPath} className="hover:text-[#101E39] transition-colors">{locale === 'ar' ? 'مشاريعنا' : 'Projects'}</Link>
+              <Link href={projectsPath} className="hover:text-navy-900 transition-colors">{locale === 'ar' ? 'مشاريعنا' : 'Projects'}</Link>
               <span>/</span>
-              <span className="text-[#101E39] font-bold">{projectTitle}</span>
+              <span className="text-navy-900 font-bold">{projectTitle}</span>
             </div>
 
             <Link
               href={projectsPath}
-              className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#101E39] hover:text-[#B7913D] transition-colors"
+              className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-navy-900 hover:text-gold-500 transition-colors"
             >
               {locale === 'ar' ? <ArrowRight className="w-4 h-4" /> : <ArrowLeft className="w-4 h-4" />}
               <span>{locale === 'ar' ? 'العودة لكافة المشاريع' : 'Back to all projects'}</span>
@@ -247,31 +247,31 @@ export default async function SingleProjectPage({ params }: Props) {
           {/* Project Title & Badges */}
           <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
             {project.logo && (
-              <div className="flex h-24 w-36 shrink-0 items-center justify-center rounded-2xl border border-[#101E39]/10 bg-white p-4 shadow-sm">
+              <div className="flex h-24 w-36 shrink-0 items-center justify-center rounded-2xl border border-navy-900/10 bg-white p-4 shadow-sm">
                 <Image src={project.logo.url} alt={project.logo.alt || `${projectTitle} logo`} width={160} height={96} className="max-h-full w-full object-contain" />
               </div>
             )}
             <div className="space-y-4">
               <div className="flex flex-wrap items-center gap-3">
                 {projectCategory && (
-                  <span className="rounded-full bg-[#101E39] px-3.5 py-1 text-xs font-bold text-white">
+                  <span className="rounded-full bg-navy-900 px-3.5 py-1 text-xs font-bold text-white">
                     {projectCategory}
                   </span>
                 )}
                 {projectStatus && (
-                  <span className="rounded-full border border-[#B7913D]/30 bg-[#B7913D]/20 px-3.5 py-1 text-xs font-bold text-[#101E39]">
+                  <span className="rounded-full border border-gold-500/30 bg-gold-500/20 px-3.5 py-1 text-xs font-bold text-navy-900">
                     {projectStatus}
                   </span>
                 )}
                 {projectLocation && (
                   <span className="flex items-center gap-1 text-xs font-semibold text-[#5A677B]">
-                    <MapPin className="h-3.5 w-3.5 text-[#B7913D]" />
+                    <MapPin className="h-3.5 w-3.5 text-gold-500" />
                     <span>{projectLocation}</span>
                   </span>
                 )}
               </div>
 
-              <h1 className="text-3xl font-bold tracking-tight text-[#101E39] sm:text-4xl lg:text-5xl">
+              <h1 className="text-3xl font-bold tracking-tight text-navy-900 sm:text-4xl lg:text-5xl">
                 {projectTitle}
               </h1>
             </div>
@@ -289,7 +289,7 @@ export default async function SingleProjectPage({ params }: Props) {
                   priority
                 />
               ) : (
-                <div className="absolute inset-0 bg-gradient-to-br from-[#101E39] to-[#1B4332]" aria-hidden="true" />
+                <div className="absolute inset-0 bg-gradient-to-br from-navy-900 to-[#1B4332]" aria-hidden="true" />
               )}
             </div>
 
@@ -312,8 +312,8 @@ export default async function SingleProjectPage({ params }: Props) {
           {/* Details & Specs Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
             {/* Left Narrative Column */}
-            <div className="lg:col-span-8 bg-white rounded-3xl p-8 sm:p-10 shadow-lg border border-[#101E39]/10 space-y-6">
-              <h2 className="text-2xl font-bold text-[#101E39] pb-3 border-b border-[#101E39]/10">
+            <div className="lg:col-span-8 bg-white rounded-3xl p-8 sm:p-10 shadow-lg border border-navy-900/10 space-y-6">
+              <h2 className="text-2xl font-bold text-navy-900 pb-3 border-b border-navy-900/10">
                 {locale === 'ar' ? 'نظرة عامة على المشروع' : 'Project overview'}
               </h2>
 
@@ -323,12 +323,12 @@ export default async function SingleProjectPage({ params }: Props) {
               </div>
 
               {/* Architectural Highlights */}
-              {projectHighlights.length > 0 && <div className="pt-6 border-t border-[#101E39]/10 space-y-4">
-                <h3 className="text-lg font-bold text-[#101E39]">{locale === 'ar' ? 'أبرز المزايا والمواصفات:' : 'Key features and specifications'}</h3>
+              {projectHighlights.length > 0 && <div className="pt-6 border-t border-navy-900/10 space-y-4">
+                <h3 className="text-lg font-bold text-navy-900">{locale === 'ar' ? 'أبرز المزايا والمواصفات:' : 'Key features and specifications'}</h3>
                 <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-[#5A677B]">
                   {projectHighlights.map((highlight, index) => (
                     <li key={`${highlight}-${index}`} className="flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-[#B7913D]" />
+                      <span className="w-2 h-2 rounded-full bg-gold-500" />
                       <span>{highlight}</span>
                     </li>
                   ))}
@@ -338,8 +338,8 @@ export default async function SingleProjectPage({ params }: Props) {
 
             {/* Right Specs Sidebar */}
             <div className="lg:col-span-4 space-y-6">
-              <div className="bg-[#101E39] text-white rounded-3xl p-8 shadow-xl space-y-6">
-                <h3 className="text-lg font-bold text-[#B7913D] border-b border-white/10 pb-3">
+              <div className="bg-navy-900 text-white rounded-3xl p-8 shadow-xl space-y-6">
+                <h3 className="text-lg font-bold text-gold-500 border-b border-white/10 pb-3">
                   {locale === 'ar' ? 'بيانات ومواصفات المشروع' : 'Project specifications'}
                 </h3>
 
@@ -383,7 +383,7 @@ export default async function SingleProjectPage({ params }: Props) {
                 <div className="pt-2 space-y-3">
                   <Link
                     href={`/${locale}/contact-us`}
-                    className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-sm text-[#101E39] gold-gradient-bg shadow-lg hover:shadow-xl transition-all"
+                    className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-sm text-navy-900 gold-gradient-bg shadow-lg hover:shadow-xl transition-all"
                   >
                     <PhoneCall className="w-4 h-4" />
                     <span>{locale === 'ar' ? 'حجز أو استفسار عن المشروع' : 'Enquire about this project'}</span>
@@ -413,14 +413,14 @@ export default async function SingleProjectPage({ params }: Props) {
 
           {/* Related Projects */}
           {relatedProjects.length > 0 && (
-            <div className="space-y-6 pt-12 border-t border-[#101E39]/10">
-              <h3 className="text-2xl font-bold text-[#101E39]">{locale === 'ar' ? 'مشاريع أخرى من محفظتنا' : 'Other projects in our portfolio'}</h3>
+            <div className="space-y-6 pt-12 border-t border-navy-900/10">
+              <h3 className="text-2xl font-bold text-navy-900">{locale === 'ar' ? 'مشاريع أخرى من محفظتنا' : 'Other projects in our portfolio'}</h3>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 {relatedProjects.map((p) => (
                   <Link
                     key={p.id}
                     href={`${projectsPath}/${p.slug}`}
-                    className="bg-white rounded-2xl overflow-hidden border border-[#101E39]/10 shadow-sm hover:shadow-md transition-all group"
+                    className="bg-white rounded-2xl overflow-hidden border border-navy-900/10 shadow-sm hover:shadow-md transition-all group"
                   >
                     <div className="relative h-44">
                       {p.image ? (
@@ -431,12 +431,12 @@ export default async function SingleProjectPage({ params }: Props) {
                           className="object-cover group-hover:scale-105 transition-transform"
                         />
                       ) : (
-                        <div className="absolute inset-0 bg-gradient-to-br from-[#101E39] to-[#1B4332]" aria-hidden="true" />
+                        <div className="absolute inset-0 bg-gradient-to-br from-navy-900 to-[#1B4332]" aria-hidden="true" />
                       )}
                     </div>
                     <div className="p-4 space-y-1">
-                      <span className="text-[10px] font-bold uppercase text-[#B7913D]">{locale === 'ar' ? p.category : p.category_en || p.category}</span>
-                      <h4 className="font-bold text-[#101E39] text-sm group-hover:text-[#B7913D] transition-colors">
+                      <span className="text-[10px] font-bold uppercase text-gold-500">{locale === 'ar' ? p.category : p.category_en || p.category}</span>
+                      <h4 className="font-bold text-navy-900 text-sm group-hover:text-gold-500 transition-colors">
                         {localizedText(p.title, locale)}
                       </h4>
                     </div>

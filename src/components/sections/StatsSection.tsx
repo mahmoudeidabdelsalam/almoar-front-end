@@ -61,16 +61,16 @@ export const StatsSection: React.FC<StatProps> = ({ stats }) => {
           return (
             <div
               key={item.key || index}
-              className="bg-white rounded-2xl p-6 md:p-8 shadow-xl shadow-[#101E39]/5 border border-[#101E39]/10 luxury-card group relative overflow-hidden"
+              className="bg-white rounded-2xl p-6 md:p-8 shadow-xl shadow-navy-900/5 border border-navy-900/10 luxury-card group relative overflow-hidden"
             >
               {/* Top Accent Strip */}
-              <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-[#B7913D] via-[#D4AF37] to-[#B7913D] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-gold-500 via-gold-500 to-gold-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
               <div className="flex items-center justify-between mb-4">
-                <span className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#101E39] tracking-tight group-hover:text-[#B7913D] transition-colors">
+                <span className="text-3xl sm:text-4xl lg:text-5xl font-black text-navy-900 tracking-tight group-hover:text-gold-500 transition-colors">
                   {item.number}
                 </span>
-                <div className="p-3 rounded-xl bg-[#F8F9F4] text-[#B7913D] group-hover:bg-[#B7913D] group-hover:text-white transition-all duration-300">
+                <div className="p-3 rounded-xl bg-ivory-50 text-gold-500 group-hover:bg-gold-500 group-hover:text-white transition-all duration-300">
                   <Icon className="w-5 h-5" />
                 </div>
               </div>

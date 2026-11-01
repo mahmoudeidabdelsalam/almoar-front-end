@@ -19,13 +19,13 @@ export const ProjectIdentity: React.FC<{ project: Project }> = ({ project }) => 
     <>
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-2 text-xs sm:text-sm text-[#5A677B]">
-          <Link href="/" className="hover:text-[#101E39] transition-colors">{label.home}</Link>
+          <Link href="/" className="hover:text-navy-900 transition-colors">{label.home}</Link>
           <span>/</span>
-          <Link href="/projects" className="hover:text-[#101E39] transition-colors">{label.projects}</Link>
+          <Link href="/projects" className="hover:text-navy-900 transition-colors">{label.projects}</Link>
           <span>/</span>
-          <span className="text-[#101E39] font-bold">{title}</span>
+          <span className="text-navy-900 font-bold">{title}</span>
         </div>
-        <Link href="/projects" className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#101E39] hover:text-[#B7913D] transition-colors">
+        <Link href="/projects" className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-navy-900 hover:text-gold-500 transition-colors">
           <ArrowRight className="w-4 h-4" />
           <span>{label.back}</span>
         </Link>
@@ -33,18 +33,18 @@ export const ProjectIdentity: React.FC<{ project: Project }> = ({ project }) => 
 
       <div className="space-y-4">
         <div className="flex flex-wrap items-center gap-3">
-          <span className="px-3.5 py-1 rounded-full text-xs font-bold text-white bg-[#101E39]">
+          <span className="px-3.5 py-1 rounded-full text-xs font-bold text-white bg-navy-900">
             {locale === 'ar' ? project.category : project.category_en}
           </span>
-          <span className="px-3.5 py-1 rounded-full text-xs font-bold text-[#101E39] bg-[#B7913D]/20 border border-[#B7913D]/30">
+          <span className="px-3.5 py-1 rounded-full text-xs font-bold text-navy-900 bg-gold-500/20 border border-gold-500/30">
             {locale === 'ar' ? project.status : project.status_en}
           </span>
           <span className="flex items-center gap-1 text-xs font-semibold text-[#5A677B]">
-            <MapPin className="w-3.5 h-3.5 text-[#B7913D]" />
+            <MapPin className="w-3.5 h-3.5 text-gold-500" />
             <span>{locale === 'ar' ? project.location : project.location_en}</span>
           </span>
         </div>
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#101E39] tracking-tight">
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-navy-900 tracking-tight">
           {title}
         </h1>
       </div>
@@ -96,19 +96,19 @@ export const ProjectNarrativeAndSpecs: React.FC<{ project: Project }> = ({ proje
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-      <div className="lg:col-span-8 bg-white rounded-3xl p-8 sm:p-10 shadow-lg border border-[#101E39]/10 space-y-6">
-        <h2 className="text-2xl font-bold text-[#101E39] pb-3 border-b border-[#101E39]/10">{copy.overview}</h2>
+      <div className="lg:col-span-8 bg-white rounded-3xl p-8 sm:p-10 shadow-lg border border-navy-900/10 space-y-6">
+        <h2 className="text-2xl font-bold text-navy-900 pb-3 border-b border-navy-900/10">{copy.overview}</h2>
         <div className="space-y-4 text-base text-[#5A677B] leading-relaxed">
           {project.excerpt[locale] && <p>{project.excerpt[locale]}</p>}
           {project.content?.[locale] && <p>{project.content[locale]}</p>}
         </div>
         {features.length > 0 && (
-          <div className="pt-6 border-t border-[#101E39]/10 space-y-4">
-            <h3 className="text-lg font-bold text-[#101E39]">{copy.highlights}</h3>
+          <div className="pt-6 border-t border-navy-900/10 space-y-4">
+            <h3 className="text-lg font-bold text-navy-900">{copy.highlights}</h3>
             <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-[#5A677B]">
               {features.map((feature, index) => (
                 <li key={`${feature}-${index}`} className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-[#B7913D]" />
+                  <span className="w-2 h-2 rounded-full bg-gold-500" />
                   <span>{feature}</span>
                 </li>
               ))}
@@ -118,8 +118,8 @@ export const ProjectNarrativeAndSpecs: React.FC<{ project: Project }> = ({ proje
       </div>
 
       <div className="lg:col-span-4 space-y-6">
-        <div className="bg-[#101E39] text-white rounded-3xl p-8 shadow-xl space-y-6">
-          <h3 className="text-lg font-bold text-[#B7913D] border-b border-white/10 pb-3">{copy.details}</h3>
+        <div className="bg-navy-900 text-white rounded-3xl p-8 shadow-xl space-y-6">
+          <h3 className="text-lg font-bold text-gold-500 border-b border-white/10 pb-3">{copy.details}</h3>
           <div className="space-y-4 text-sm">
             {specs.map(([label, value]) => (
               <div key={label} className="flex items-center justify-between py-2 border-b border-white/10">
@@ -129,7 +129,7 @@ export const ProjectNarrativeAndSpecs: React.FC<{ project: Project }> = ({ proje
             ))}
           </div>
           <div className="pt-2 space-y-3">
-            <Link href="/contact" className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-sm text-[#101E39] gold-gradient-bg shadow-lg hover:shadow-xl transition-all">
+            <Link href="/contact" className="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-sm text-navy-900 gold-gradient-bg shadow-lg hover:shadow-xl transition-all">
               <PhoneCall className="w-4 h-4" />
               <span>{copy.inquire}</span>
             </Link>
@@ -152,21 +152,21 @@ export const RelatedProjects: React.FC<{ projects: Project[] }> = ({ projects })
   if (!localizedProjects.length) return null;
 
   return (
-    <div className="space-y-6 pt-12 border-t border-[#101E39]/10">
-      <h3 className="text-2xl font-bold text-[#101E39]">{locale === 'ar' ? 'مشاريع أخرى من محفظتنا' : 'More from our portfolio'}</h3>
+    <div className="space-y-6 pt-12 border-t border-navy-900/10">
+      <h3 className="text-2xl font-bold text-navy-900">{locale === 'ar' ? 'مشاريع أخرى من محفظتنا' : 'More from our portfolio'}</h3>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         {localizedProjects.map((project) => (
-          <Link key={project.id} href={`/projects/${project.slug}`} className="bg-white rounded-2xl overflow-hidden border border-[#101E39]/10 shadow-sm hover:shadow-md transition-all group">
+          <Link key={project.id} href={`/projects/${project.slug}`} className="bg-white rounded-2xl overflow-hidden border border-navy-900/10 shadow-sm hover:shadow-md transition-all group">
             <div className="relative h-44">
             {project.image ? (
               <Image src={project.image} alt={project.title[locale]} fill className="object-cover group-hover:scale-105 transition-transform" />
             ) : (
-              <div className="absolute inset-0 bg-gradient-to-br from-[#101E39] to-[#1B4332]" aria-hidden="true" />
+              <div className="absolute inset-0 bg-gradient-to-br from-navy-900 to-[#1B4332]" aria-hidden="true" />
             )}
             </div>
             <div className="p-4 space-y-1">
-              <span className="text-[10px] font-bold uppercase text-[#B7913D]">{locale === 'ar' ? project.category : project.category_en}</span>
-              <h4 className="font-bold text-[#101E39] text-sm group-hover:text-[#B7913D] transition-colors">{project.title[locale]}</h4>
+              <span className="text-[10px] font-bold uppercase text-gold-500">{locale === 'ar' ? project.category : project.category_en}</span>
+              <h4 className="font-bold text-navy-900 text-sm group-hover:text-gold-500 transition-colors">{project.title[locale]}</h4>
             </div>
           </Link>
         ))}

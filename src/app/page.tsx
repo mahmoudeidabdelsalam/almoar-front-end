@@ -12,7 +12,7 @@ function HomeLoading() {
   return (
     <div className="min-h-[70vh]" aria-label="Loading homepage content">
       <div className="mx-auto max-w-[1440px] px-6 py-24">
-        <div className="h-[420px] animate-pulse rounded-[2rem] bg-[#101E39]/5" />
+        <div className="h-[420px] animate-pulse rounded-[2rem] bg-navy-900/5" />
       </div>
     </div>
   );

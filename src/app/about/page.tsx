@@ -26,7 +26,7 @@ export default async function AboutPage() {
   return (
     <>
       <Header />
-      <main className="flex-1 bg-[#F8F9F4]">
+      <main className="flex-1 bg-ivory-50">
         <AboutHero />
         <AboutOverview />
         <AboutStatistics />

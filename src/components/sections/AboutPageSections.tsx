@@ -13,11 +13,11 @@ const overviewImageFallbacks = [
 ];
 
 const portfolioCardColors = [
-  'bg-[#C3942C] text-[#101E39]',
+  'bg-gold-500 text-navy-900',
   'bg-[#19392F] text-white',
   'bg-[#17294A] text-white',
   'bg-[#10203B] text-white',
-  'bg-[#E8DFCF] text-[#101E39]',
+  'bg-[#E8DFCF] text-navy-900',
 ];
 
 function localized(value: LocalizedString, locale: 'ar' | 'en'): string {
@@ -67,10 +67,10 @@ export const AboutHero: React.FC = () => {
   const breadcrumbAbout = locale === 'ar' ? 'من نحن' : 'About Us';
 
   return (
-    <section className="relative min-h-[390px] overflow-hidden bg-[#101E39] pt-[118px] text-white sm:min-h-[450px] lg:min-h-[520px] lg:pt-[150px]" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+    <section className="relative min-h-[390px] overflow-hidden bg-navy-900 pt-[118px] text-white sm:min-h-[450px] lg:min-h-[520px] lg:pt-[150px]" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
       <div className="mx-auto flex min-h-[250px] max-w-[1216px] flex-col justify-between px-5 pb-16 sm:px-8 lg:min-h-[300px] lg:px-0 lg:pb-20">
         <nav className="text-xs text-white/55" aria-label={locale === 'ar' ? 'مسار التنقل' : 'Breadcrumb'}>
-          <Link href={`/${locale}`} className="transition-colors hover:text-[#C5A265]">{breadcrumbHome}</Link>
+          <Link href={`/${locale}`} className="transition-colors hover:text-gold-200">{breadcrumbHome}</Link>
           <span className="mx-2" aria-hidden="true">/</span>
           <span className="text-white/80">{breadcrumbAbout}</span>
         </nav>
@@ -78,7 +78,7 @@ export const AboutHero: React.FC = () => {
           {title}
         </h1>
       </div>
-      <svg className="pointer-events-none absolute inset-x-0 bottom-0 h-8 w-full text-[#F8F9F4] sm:h-12" viewBox="0 0 1440 64" preserveAspectRatio="none" aria-hidden="true">
+      <svg className="pointer-events-none absolute inset-x-0 bottom-0 h-8 w-full text-ivory-50 sm:h-12" viewBox="0 0 1440 64" preserveAspectRatio="none" aria-hidden="true">
         <path fill="currentColor" d="M0 30H540C600 30 610 0 720 0s120 30 180 30h540v34H0z" />
       </svg>
     </section>
@@ -107,10 +107,10 @@ export const AboutOverview: React.FC = () => {
   const overviewImageSizes = '(max-width: 767px) min(470px, calc(100vw - 2.5rem)), (max-width: 1023px) calc((100vw - 6rem) / 2), 470px';
 
   return (
-    <section className="bg-[#F8F9F4] py-14 sm:py-20 lg:py-24" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+    <section className="bg-ivory-50 py-14 sm:py-20 lg:py-24" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
       <div className="mx-auto flex max-w-[1440px] flex-col justify-between gap-8 px-5 sm:px-8 md:flex-row md:items-center lg:px-0">
         <div className="order-2 w-full min-w-0 md:order-1 md:flex-1" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
-          {firstDescription && <p className="mt-6 text-[#0F1F38] text-[64px]">{firstDescription}</p>}
+          {firstDescription && <p className="mt-6 text-navy-900 text-[64px]">{firstDescription}</p>}
           <div className="relative aspect-square w-full max-w-[470px] overflow-hidden rounded-xl md:mt-20">
             <Image src={firstImage} alt={firstAlt} fill priority  className="object-cover" />
           </div>
@@ -119,7 +119,7 @@ export const AboutOverview: React.FC = () => {
           <div className="relative aspect-square w-full max-w-[470px] overflow-hidden rounded-xl md:ml-auto">
             <Image src={secondImage} alt={secondAlt} fill sizes={overviewImageSizes} className="object-cover" />
           </div>
-          {secondDescription && <p className="mt-6 max-w-[360px] text-[18px] leading-7 text-[#2A3B4D]">{secondDescription}</p>}
+          {secondDescription && <p className="mt-6 max-w-[360px] text-[18px] leading-7 text-slate-700">{secondDescription}</p>}
         </div>
       </div>
     </section>
@@ -133,11 +133,11 @@ export const AboutStatistics: React.FC = () => {
 
   return (
     <section className="mt-5" aria-label={locale === 'ar' ? 'إحصائيات العمر القابضة' : 'Alomar Holding statistics'}>
-      <dl className="mx-auto grid max-w-full grid-cols-2 divide-x divide-[#101E39]/10 rtl:divide-x-reverse sm:grid-cols-4 items-center lg:max-w-[1440px]">
+      <dl className="mx-auto grid max-w-full grid-cols-2 divide-x divide-navy-900/10 rtl:divide-x-reverse sm:grid-cols-4 items-center lg:max-w-[1440px]">
         {statistics.map((statistic, index) => (
-          <div key={`${statistic.value}-${index}`} className="group px-4 py-6 border-b-1 lg:border-b-0 lg:min-h-[240px] flex flex-col justify-center border-r border-r-[#101E39]/10 border-t-[3px] border-t-transparent hover:border-t-[#BF9432] hover:bg-[#0F1F38] hover:text-[#BF9432] sm:px-6 sm:py-8">
+          <div key={`${statistic.value}-${index}`} className="group px-4 py-6 border-b-1 lg:border-b-0 lg:min-h-[240px] flex flex-col justify-center border-r border-r-navy-900/10 border-t-[3px] border-t-transparent hover:border-t-gold-500 hover:bg-navy-900 hover:text-gold-500 sm:px-6 sm:py-8">
             <dt className="text-xs text-[#8A8E93] group-hover:text-[#fff] sm:text-sm">{localized(statistic.label, locale)}</dt>
-            <dd className="mt-5 text-[44px] lg:text-[72px] font-medium tabular-nums text-[#101E39] group-hover:text-[#BF9432] sm:text-4xl lg:text-[46px]">{statistic.value}</dd>
+            <dd className="mt-5 text-[44px] lg:text-[72px] font-medium tabular-nums text-navy-900 group-hover:text-gold-500 sm:text-4xl lg:text-[46px]">{statistic.value}</dd>
           </div>
         ))}
       </dl>
@@ -161,16 +161,16 @@ export const AboutStrategy: React.FC = () => {
   const ArrowIcon = locale === 'ar' ? ArrowLeft : ArrowRight;
 
   return (
-    <section className="bg-[#101E39] py-16 text-white sm:py-20 lg:py-24" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+    <section className="bg-navy-900 py-16 text-white sm:py-20 lg:py-24" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
       <div className="mx-auto max-w-[1216px] px-5 sm:px-8 lg:px-0">
         <div className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
           <div className="max-w-3xl">
-            {localized(strategy.eyebrow, locale) && <p className="mb-3 text-xs font-medium text-[#C5A265]">{localized(strategy.eyebrow, locale)}</p>}
+            {localized(strategy.eyebrow, locale) && <p className="mb-3 text-xs font-medium text-gold-200">{localized(strategy.eyebrow, locale)}</p>}
             <h2 className="text-3xl font-semibold leading-tight sm:text-4xl">{title}</h2>
             {description && <p className="mt-4 max-w-2xl text-sm leading-7 text-white/65">{description}</p>}
           </div>
           {buttonLabel && buttonHref && (
-            <ContentLink href={buttonHref} className="inline-flex shrink-0 items-center gap-3 bg-[#C3942C] px-5 py-3 text-xs font-semibold text-[#101E39] transition-colors hover:bg-[#D4AF57]">
+            <ContentLink href={buttonHref} className="inline-flex shrink-0 items-center gap-3 bg-gold-500 px-5 py-3 text-xs font-semibold text-navy-900 transition-colors hover:bg-[#D4AF57]">
               <span>{buttonLabel}</span><ArrowIcon className="h-4 w-4" aria-hidden="true" />
             </ContentLink>
           )}
@@ -217,14 +217,14 @@ export const AboutPortfolio: React.FC = () => {
   const ArrowIcon = locale === 'ar' ? ArrowLeft : ArrowRight;
 
   return (
-    <section className="bg-[#F8F9F4] py-16 sm:py-20 lg:py-24" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+    <section className="bg-ivory-50 py-16 sm:py-20 lg:py-24" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
       <div className="mx-auto max-w-[1216px] px-5 sm:px-8 lg:px-0">
         <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
           <div>
-            {localized(portfolio.eyebrow, locale) && <p className="mb-3 text-xs text-[#C3942C]">{localized(portfolio.eyebrow, locale)}</p>}
-            {localized(portfolio.title, locale) && <h2 className="max-w-xl text-3xl font-semibold leading-tight text-[#101E39] sm:text-4xl">{localized(portfolio.title, locale)}</h2>}
+            {localized(portfolio.eyebrow, locale) && <p className="mb-3 text-xs text-gold-500">{localized(portfolio.eyebrow, locale)}</p>}
+            {localized(portfolio.title, locale) && <h2 className="max-w-xl text-3xl font-semibold leading-tight text-navy-900 sm:text-4xl">{localized(portfolio.title, locale)}</h2>}
           </div>
-          {buttonLabel && buttonHref && <ContentLink href={buttonHref} className="inline-flex w-fit items-center gap-3 bg-[#101E39] px-5 py-3 text-xs font-semibold text-white transition-colors hover:bg-[#23395C]"><span>{buttonLabel}</span><ArrowIcon className="h-4 w-4" aria-hidden="true" /></ContentLink>}
+          {buttonLabel && buttonHref && <ContentLink href={buttonHref} className="inline-flex w-fit items-center gap-3 bg-navy-900 px-5 py-3 text-xs font-semibold text-white transition-colors hover:bg-[#23395C]"><span>{buttonLabel}</span><ArrowIcon className="h-4 w-4" aria-hidden="true" /></ContentLink>}
         </div>
 
         {items.length > 0 && (
@@ -235,16 +235,16 @@ export const AboutPortfolio: React.FC = () => {
                 const description = localized(item.description, locale);
                 const isOpen = openIndex === index;
                 return (
-                  <div key={`${title}-${index}`} className="border-b border-[#101E39]/10">
+                  <div key={`${title}-${index}`} className="border-b border-navy-900/10">
                     <button
                       type="button"
                       aria-expanded={isOpen}
                       aria-controls={`about-portfolio-item-${index}`}
                       onClick={() => setOpenIndex(isOpen ? -1 : index)}
-                      className="flex w-full items-center justify-between gap-4 py-4 text-start text-sm font-medium text-[#101E39] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#C3942C]"
+                      className="flex w-full items-center justify-between gap-4 py-4 text-start text-sm font-medium text-navy-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold-500"
                     >
                       <span>{title}</span>
-                      <ChevronDown className={`h-4 w-4 shrink-0 text-[#C3942C] transition-transform ${isOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
+                      <ChevronDown className={`h-4 w-4 shrink-0 text-gold-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
                     </button>
                     {isOpen && description && <p id={`about-portfolio-item-${index}`} className="pb-4 text-xs leading-6 text-[#687181]">{description}</p>}
                   </div>
@@ -259,7 +259,7 @@ export const AboutPortfolio: React.FC = () => {
                   onClick={() => setOpenIndex(index)}
                   aria-label={localized(item.title, locale) || (locale === 'ar' ? `مجال استثماري ${index + 1}` : `Investment area ${index + 1}`)}
                   aria-pressed={openIndex === index}
-                  className={`flex min-h-20 min-w-0 flex-1 flex-col justify-between rounded-lg p-2 text-start transition-transform hover:-translate-y-1 sm:min-h-28 sm:p-4 ${portfolioCardColors[index % portfolioCardColors.length]} ${openIndex === index ? 'ring-1 ring-[#C3942C]' : ''}`}
+                  className={`flex min-h-20 min-w-0 flex-1 flex-col justify-between rounded-lg p-2 text-start transition-transform hover:-translate-y-1 sm:min-h-28 sm:p-4 ${portfolioCardColors[index % portfolioCardColors.length]} ${openIndex === index ? 'ring-1 ring-gold-500' : ''}`}
                 >
                   <span className="text-lg font-medium tabular-nums sm:text-2xl">{item.metric || String(index + 1).padStart(2, '0')}</span>
                   <span className="line-clamp-2 text-[9px] leading-4 sm:text-[11px]">{localized(item.title, locale)}</span>
@@ -287,16 +287,16 @@ export const AboutCompanies: React.FC = () => {
     >
       <div className="relative z-10 mx-auto max-w-[1216px] px-5 sm:px-8 lg:px-0">
         <div className="mb-10 flex flex-col gap-3 md:mb-14 md:items-end">
-          {localized(companies.eyebrow, locale) && <p className="text-xs text-[#C5A265]">{localized(companies.eyebrow, locale)}</p>}
+          {localized(companies.eyebrow, locale) && <p className="text-xs text-gold-200">{localized(companies.eyebrow, locale)}</p>}
           {localized(companies.title, locale) && <h2 className="max-w-2xl text-3xl font-semibold leading-tight sm:text-4xl">{localized(companies.title, locale)}</h2>}
         </div>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {items.map((company, index) => {
             const name = localized(company.name, locale);
             const card = (
-              <article className={`group relative flex min-h-[220px] flex-col justify-between overflow-hidden rounded-xl p-5 transition-transform hover:-translate-y-1 sm:min-h-[290px] ${company.image ? 'bg-white text-[#101E39] lg:col-span-1' : 'border border-white/10 bg-[#10203B]/90 text-white'}`}>
+              <article className={`group relative flex min-h-[220px] flex-col justify-between overflow-hidden rounded-xl p-5 transition-transform hover:-translate-y-1 sm:min-h-[290px] ${company.image ? 'bg-white text-navy-900 lg:col-span-1' : 'border border-white/10 bg-[#10203B]/90 text-white'}`}>
                 {company.image && <Image src={company.image} alt="" fill sizes="(max-width: 768px) 50vw, 25vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />}
-                {company.image && <div className="absolute inset-0 bg-gradient-to-t from-[#101E39]/85 via-[#101E39]/10 to-transparent" />}
+                {company.image && <div className="absolute inset-0 bg-gradient-to-t from-navy-900/85 via-navy-900/10 to-transparent" />}
                 <div className="relative z-10 flex h-full flex-col justify-between gap-5">
                   {company.logo && <Image src={company.logo} alt={name ? `${name} logo` : ''} width={150} height={72} className="max-h-14 w-auto max-w-[150px] object-contain object-start" />}
                   <div>
@@ -307,7 +307,7 @@ export const AboutCompanies: React.FC = () => {
               </article>
             );
             return company.link ? (
-              <ContentLink key={`${name}-${index}`} href={localizedHref(company.link, locale)} className="block rounded-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#C5A265]">{card}</ContentLink>
+              <ContentLink key={`${name}-${index}`} href={localizedHref(company.link, locale)} className="block rounded-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold-200">{card}</ContentLink>
             ) : <div key={`${name}-${index}`}>{card}</div>;
           })}
         </div>
@@ -325,20 +325,20 @@ export const AboutResponsibility: React.FC = () => {
   const current = items[activeIndex % items.length];
 
   return (
-    <section className="bg-[#F8F9F4] py-16 sm:py-20 lg:py-24" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+    <section className="bg-ivory-50 py-16 sm:py-20 lg:py-24" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
       <div className="mx-auto max-w-[1216px] px-5 sm:px-8 lg:px-0">
         <div className="mb-8 flex items-center justify-between gap-6">
           <div>
-            {localized(responsibility.eyebrow, locale) && <p className="mb-3 text-xs text-[#C3942C]">{localized(responsibility.eyebrow, locale)}</p>}
-            {localized(responsibility.title, locale) && <h2 className="text-2xl font-semibold text-[#101E39] sm:text-3xl">{localized(responsibility.title, locale)}</h2>}
+            {localized(responsibility.eyebrow, locale) && <p className="mb-3 text-xs text-gold-500">{localized(responsibility.eyebrow, locale)}</p>}
+            {localized(responsibility.title, locale) && <h2 className="text-2xl font-semibold text-navy-900 sm:text-3xl">{localized(responsibility.title, locale)}</h2>}
           </div>
           {items.length > 1 && (
             <div className="flex gap-2">
-              <button type="button" onClick={() => setActiveIndex((activeIndex - 1 + items.length) % items.length)} className="flex h-9 w-9 items-center justify-center rounded-full border border-[#101E39]/15 text-[#101E39] hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#C3942C]" aria-label={locale === 'ar' ? 'المبادرة السابقة' : 'Previous initiative'}>
+              <button type="button" onClick={() => setActiveIndex((activeIndex - 1 + items.length) % items.length)} className="flex h-9 w-9 items-center justify-center rounded-full border border-navy-900/15 text-navy-900 hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold-500" aria-label={locale === 'ar' ? 'المبادرة السابقة' : 'Previous initiative'}>
                 {locale === 'ar' ? <ArrowRight className="h-4 w-4" /> : <ArrowLeft className="h-4 w-4" />}
               </button>
               <span className="self-center text-xs tabular-nums text-[#667080]">{String(activeIndex + 1).padStart(2, '0')} / {String(items.length).padStart(2, '0')}</span>
-              <button type="button" onClick={() => setActiveIndex((activeIndex + 1) % items.length)} className="flex h-9 w-9 items-center justify-center rounded-full border border-[#101E39]/15 text-[#101E39] hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#C3942C]" aria-label={locale === 'ar' ? 'المبادرة التالية' : 'Next initiative'}>
+              <button type="button" onClick={() => setActiveIndex((activeIndex + 1) % items.length)} className="flex h-9 w-9 items-center justify-center rounded-full border border-navy-900/15 text-navy-900 hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold-500" aria-label={locale === 'ar' ? 'المبادرة التالية' : 'Next initiative'}>
                 {locale === 'ar' ? <ArrowLeft className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
               </button>
             </div>
@@ -351,7 +351,7 @@ export const AboutResponsibility: React.FC = () => {
             </div>
           )}
           <div>
-            {localized(current.title, locale) && <h3 className="text-2xl font-semibold text-[#101E39]">{localized(current.title, locale)}</h3>}
+            {localized(current.title, locale) && <h3 className="text-2xl font-semibold text-navy-900">{localized(current.title, locale)}</h3>}
             {localized(current.description, locale) && <p className="mt-4 text-sm leading-7 text-[#667080]">{localized(current.description, locale)}</p>}
           </div>
         </div>
@@ -367,11 +367,11 @@ export const AboutBoard: React.FC = () => {
   if (!members.length) return null;
 
   return (
-    <section className="bg-[#F8F9F4] py-14 sm:py-20 lg:py-24" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+    <section className="bg-ivory-50 py-14 sm:py-20 lg:py-24" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
       <div className="mx-auto max-w-[1216px] px-5 sm:px-8 lg:px-0">
         <div className="mb-10 text-center">
-          {localized(board.eyebrow, locale) && <p className="mb-3 text-xs text-[#C3942C]">{localized(board.eyebrow, locale)}</p>}
-          {localized(board.title, locale) && <h2 className="text-3xl font-semibold text-[#101E39] sm:text-4xl">{localized(board.title, locale)}</h2>}
+          {localized(board.eyebrow, locale) && <p className="mb-3 text-xs text-gold-500">{localized(board.eyebrow, locale)}</p>}
+          {localized(board.title, locale) && <h2 className="text-3xl font-semibold text-navy-900 sm:text-4xl">{localized(board.title, locale)}</h2>}
         </div>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4">
           {members.map((member, index) => {
@@ -384,7 +384,7 @@ export const AboutBoard: React.FC = () => {
                     <Image src={member.image} alt={name || (locale === 'ar' ? 'عضو مجلس الإدارة' : 'Board member')} fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover object-top" />
                   ) : <UserRound className="absolute bottom-4 left-1/2 h-2/3 w-2/3 -translate-x-1/2 text-[#C8CDD2]" strokeWidth={1} aria-hidden="true" />}
                 </div>
-                {name && <h3 className="text-sm font-semibold text-[#101E39]">{name}</h3>}
+                {name && <h3 className="text-sm font-semibold text-navy-900">{name}</h3>}
                 {role && <p className="mt-1 text-[10px] leading-4 text-[#667080]">{role}</p>}
               </article>
             );
@@ -402,13 +402,13 @@ export const AboutNavigationLinks: React.FC = () => {
   const direction = locale === 'ar' ? <ArrowUpLeft className="h-4 w-4" /> : <ArrowDownLeft className="h-4 w-4" />;
 
   return (
-    <nav className="bg-[#F8F9F4] pb-14 sm:pb-20" aria-label={locale === 'ar' ? 'روابط ذات صلة' : 'Related pages'} dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+    <nav className="bg-ivory-50 pb-14 sm:pb-20" aria-label={locale === 'ar' ? 'روابط ذات صلة' : 'Related pages'} dir={locale === 'ar' ? 'rtl' : 'ltr'}>
       <div className="mx-auto grid max-w-[1216px] gap-3 px-5 sm:grid-cols-2 sm:px-8 lg:px-0">
         {links.map((item, index) => (
-          <ContentLink key={`${item.url}-${index}`} href={localizedHref(item.url, locale)} className="group relative flex min-h-[88px] items-center justify-between overflow-hidden rounded-xl border border-[#101E39]/15 bg-white p-5 text-[#101E39] transition-colors hover:border-[#C3942C] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#C3942C]">
+          <ContentLink key={`${item.url}-${index}`} href={localizedHref(item.url, locale)} className="group relative flex min-h-[88px] items-center justify-between overflow-hidden rounded-xl border border-navy-900/15 bg-white p-5 text-navy-900 transition-colors hover:border-gold-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold-500">
             {item.image && <Image src={item.image} alt="" fill sizes="180px" className="object-cover opacity-20" />}
             <span className="relative z-10 text-sm font-semibold">{localized(item.label, locale)}</span>
-            <span className="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-[#101E39] text-white transition-colors group-hover:bg-[#C3942C] group-hover:text-[#101E39]" aria-hidden="true">{direction}</span>
+            <span className="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-navy-900 text-white transition-colors group-hover:bg-gold-500 group-hover:text-navy-900" aria-hidden="true">{direction}</span>
           </ContentLink>
         ))}
       </div>

@@ -43,7 +43,7 @@ async function InvestWithUsContent({ params }: Props) {
   return (
     <>
       <Header />
-      <main className="flex-1 bg-[#F8F7F2] pt-[72px]">
+      <main className="flex-1 bg-ivory-50 pt-[72px]">
         <InvestWithUsSection form={form} pageContent={pageContent} contactContent={contactContent} />
       </main>
       <Footer />
@@ -53,7 +53,7 @@ async function InvestWithUsContent({ params }: Props) {
 
 export default function InvestWithUs({ params }: Props) {
   return (
-    <Suspense fallback={<div className="min-h-screen animate-pulse bg-[#F8F7F3]" aria-label="Loading Invest With Us page" />}>
+    <Suspense fallback={<div className="min-h-screen animate-pulse bg-ivory-50" aria-label="Loading Invest With Us page" />}>
       <InvestWithUsContent params={params} />
     </Suspense>
   );

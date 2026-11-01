@@ -48,13 +48,13 @@ export const Vision2030Banner: React.FC = () => {
   return (
     <section className="py-20 lg:py-28 emerald-pattern-bg text-white relative overflow-hidden">
       {/* Decorative Golden Ambient Light */}
-      <div className="absolute top-0 right-1/4 w-80 h-80 bg-[#B7913D]/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-0 right-1/4 w-80 h-80 bg-gold-500/15 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-3xl space-y-4 mb-14">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md">
-            <span className="w-2 h-2 rounded-full bg-[#B7913D]" />
-            <span className="text-xs font-bold tracking-wider text-[#B7913D]">
+            <span className="w-2 h-2 rounded-full bg-gold-500" />
+            <span className="text-xs font-bold tracking-wider text-gold-500">
               {vision.badge[locale] || (content.previewMode ? t.vision_section.badge : '')}
             </span>
           </div>
@@ -77,7 +77,7 @@ export const Vision2030Banner: React.FC = () => {
                 key={index}
                 className="bg-white/10 hover:bg-white/15 backdrop-blur-md rounded-2xl p-7 border border-white/15 transition-all duration-300 hover:-translate-y-2 group shadow-xl"
               >
-                <div className="p-3.5 rounded-xl bg-white/10 text-[#B7913D] group-hover:bg-[#B7913D] group-hover:text-[#101E39] w-fit mb-5 transition-colors">
+                <div className="p-3.5 rounded-xl bg-white/10 text-gold-500 group-hover:bg-gold-500 group-hover:text-navy-900 w-fit mb-5 transition-colors">
                   <Icon className="w-6 h-6" />
                 </div>
 
@@ -102,7 +102,7 @@ export const Vision2030Banner: React.FC = () => {
           </p>
           <Link
             href={vision.ctaUrl || (content.previewMode ? '/about' : '#')}
-            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-xs sm:text-sm font-bold text-[#101E39] gold-gradient-bg shadow-md hover:scale-105 transition-all flex-shrink-0"
+            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-xs sm:text-sm font-bold text-navy-900 gold-gradient-bg shadow-md hover:scale-105 transition-all flex-shrink-0"
           >
             <span>{vision.ctaLabel[locale] || (content.previewMode ? (locale === 'ar' ? 'اكتشف ركائزنا' : 'Discover Our Pillars') : '')}</span>
             <ArrowIcon className="w-4 h-4" />

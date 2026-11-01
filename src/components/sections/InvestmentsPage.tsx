@@ -53,8 +53,8 @@ export function InvestmentsPage({ locale, content, projects }: InvestmentsPagePr
       ];
 
   return (
-    <div dir={direction} className="bg-[#F8F7F2] pt-[72px]">
-      <section className="relative overflow-hidden bg-[#101E39] text-white">
+    <div dir={direction} className="bg-ivory-50 pt-[72px]">
+      <section className="relative overflow-hidden bg-navy-900 text-white">
         <div className="relative mx-auto flex min-h-[600px] max-w-[1216px] flex-col  px-5 pb-16 pt-12 sm:px-8 lg:px-0">
           <nav aria-label={isArabic ? 'مسار التنقل' : 'Breadcrumb'} className="mb-10 flex items-center gap-2 text-xs text-white/65 mb-auto">
             <Link href={`/${locale}`} className="transition-colors hover:text-white">{isArabic ? 'الرئيسية' : 'Home'}</Link>
@@ -62,7 +62,7 @@ export function InvestmentsPage({ locale, content, projects }: InvestmentsPagePr
             <span aria-current="page" className="text-white">{heroTitle}</span>
           </nav>
           {localized(content?.heroBadge, locale) && (
-            <p className="mb-2 text-xs font-medium text-[#C5A265]">{localized(content?.heroBadge, locale)}</p>
+            <p className="mb-2 text-xs font-medium text-gold-200">{localized(content?.heroBadge, locale)}</p>
           )}
           <h1 className="max-w-3xl text-4xl font-normal tracking-tight sm:text-5xl lg:text-6xl">{heroTitle}</h1>
           {localized(content?.heroDescription, locale) && (
@@ -71,16 +71,16 @@ export function InvestmentsPage({ locale, content, projects }: InvestmentsPagePr
             </p>
           )}
         </div>
-        <Notch fill="#F8F7F2" className="absolute start-1/2 bottom-0 z-[1] mb-[-4px] h-[30px] w-[400px] -translate-x-1/2 rotate-180" />
+        <Notch fill="var(--color-ivory-50)" className="absolute start-1/2 bottom-0 z-[1] mb-[-4px] h-[30px] w-[400px] -translate-x-1/2 rotate-180" />
       </section>
 
-      <section className="px-5 py-14 sm:px-8 lg:px-14 lg:py-20 bg-[#F8F7F2]">
+      <section className="px-5 py-14 sm:px-8 lg:px-14 lg:py-20 bg-ivory-50">
         <div className="mx-auto grid max-w-[1216px] items-center gap-10 md:grid-cols-2 lg:gap-16">
           <div className="max-w-xl">
             {localized(content?.introEyebrow, locale) && (
-              <p className="mb-3 text-xs font-medium text-[#A07A22]">{localized(content?.introEyebrow, locale)}</p>
+              <p className="mb-3 text-xs font-medium text-gold-600">{localized(content?.introEyebrow, locale)}</p>
             )}
-            <h2 className="text-3xl font-normal leading-tight text-[#101E39] sm:text-[64px]">{introHeading}</h2>
+            <h2 className="text-3xl font-normal leading-tight text-navy-900 sm:text-[64px]">{introHeading}</h2>
             {localized(content?.introDescription, locale) && (
               <p className="mt-5 text-sm leading-8 text-[#626D7B]">{localized(content?.introDescription, locale)}</p>
             )}
@@ -100,11 +100,11 @@ export function InvestmentsPage({ locale, content, projects }: InvestmentsPagePr
 
       {content?.statistics.length ? (
       <section className="mt-5 bg-white" aria-label={locale === 'ar' ? 'إحصائيات العمر القابضة' : 'Alomar Holding statistics'}>
-        <dl className="mx-auto grid max-w-full grid-cols-2 divide-x divide-[#101E39]/10 rtl:divide-x-reverse sm:grid-cols-4 items-center lg:max-w-[1440px]">
+        <dl className="mx-auto grid max-w-full grid-cols-2 divide-x divide-navy-900/10 rtl:divide-x-reverse sm:grid-cols-4 items-center lg:max-w-[1440px]">
           {content.statistics.map((statistic, index) => (
-            <div key={`${statistic.value}-${index}`} className="group px-4 py-6 border-b-1 lg:border-b-0 lg:min-h-[240px] flex flex-col justify-center border-r border-r-[#101E39]/10 border-t-[3px] border-t-transparent hover:border-t-[#BF9432] hover:bg-[#0F1F38] hover:text-[#BF9432] sm:px-6 sm:py-8">
+            <div key={`${statistic.value}-${index}`} className="group px-4 py-6 border-b-1 lg:border-b-0 lg:min-h-[240px] flex flex-col justify-center border-r border-r-navy-900/10 border-t-[3px] border-t-transparent hover:border-t-gold-500 hover:bg-navy-900 hover:text-gold-500 sm:px-6 sm:py-8">
               <dt className="text-xs text-[#8A8E93] group-hover:text-[#fff] sm:text-sm">{localized(statistic.label, locale)}</dt>
-              <dd className="mt-5 text-[44px] lg:text-[72px] font-medium tabular-nums text-[#101E39] group-hover:text-[#BF9432] sm:text-4xl lg:text-[46px]">{statistic.value}</dd>
+              <dd className="mt-5 text-[44px] lg:text-[72px] font-medium tabular-nums text-navy-900 group-hover:text-gold-500 sm:text-4xl lg:text-[46px]">{statistic.value}</dd>
             </div>
           ))}
         </dl>
@@ -125,19 +125,19 @@ export function InvestmentsPage({ locale, content, projects }: InvestmentsPagePr
           >
           <div className="max-w-2xl px-5 py-4 text-white">
             {localized(content?.ctaEyebrow, locale) && (
-              <p className="mb-3 text-xs font-medium text-[#C5A265]">{localized(content?.ctaEyebrow, locale)}</p>
+              <p className="mb-3 text-xs font-medium text-gold-200">{localized(content?.ctaEyebrow, locale)}</p>
             )}
             <h2 className="text-3xl font-normal leading-tight sm:text-[64px]">{ctaHeading}</h2>
               {localized(content?.ctaDescription, locale) && (
                 <p className="mt-4 max-w-xl text-sm leading-7 text-white/75 mb-5">{localized(content?.ctaDescription, locale)}</p>
               )}
              {isExternalCta ? (
-              <a href={ctaUrl} className="inline-flex shrink-0 items-center gap-3 bg-[#BF9432] px-6 py-3 text-sm text-[#101E39] transition-colors hover:bg-[#BF9432]/80 hover:text-[#fff]">
+              <a href={ctaUrl} className="inline-flex shrink-0 items-center gap-3 bg-gold-500 px-6 py-3 text-sm text-navy-900 transition-colors hover:bg-gold-500/80 hover:text-[#fff]">
                 {ctaLabel}
                 {isArabic ? <ArrowLeft aria-hidden="true" size={16} /> : <ArrowRight aria-hidden="true" size={16} />}
               </a>
             ) : (
-              <Link href={ctaUrl} className="inline-flex shrink-0 items-center gap-3 rounded-full border border-[#C5A265] px-6 py-3 text-sm text-white transition-colors hover:bg-[#C5A265] hover:text-[#101E39]">
+              <Link href={ctaUrl} className="inline-flex shrink-0 items-center gap-3 rounded-full border border-gold-200 px-6 py-3 text-sm text-white transition-colors hover:bg-gold-200 hover:text-navy-900">
                 {ctaLabel}
                 {isArabic ? <ArrowLeft aria-hidden="true" size={16} /> : <ArrowRight aria-hidden="true" size={16} />}
               </Link>
@@ -148,7 +148,7 @@ export function InvestmentsPage({ locale, content, projects }: InvestmentsPagePr
       </section>
 
       {navigationLinks.length > 0 && (
-        <section className="bg-[#F8F7F2] px-5 py-10 sm:px-8 lg:px-14 lg:py-14">
+        <section className="bg-ivory-50 px-5 py-10 sm:px-8 lg:px-14 lg:py-14">
           <div className="mx-auto grid max-w-[1216px] gap-4 sm:grid-cols-2">
             {navigationLinks.map((item, index) => {
               const url = localizedUrl(item.url, locale);
@@ -157,24 +157,24 @@ export function InvestmentsPage({ locale, content, projects }: InvestmentsPagePr
               const description = localized(item.description, locale);
               const external = /^(https?:|mailto:|tel:)/i.test(url);
               const card = (
-                <div className="group relative flex min-h-40 flex-col justify-end overflow-hidden rounded-xl p-6 text-[#101E39] border border-[#D7D9DC] bg-white transition hover:-translate-y-1 hover:border-[#C79A32] hover:shadow-lg">
+                <div className="group relative flex min-h-40 flex-col justify-end overflow-hidden rounded-xl p-6 text-navy-900 border border-[#D7D9DC] bg-white transition hover:-translate-y-1 hover:border-[#C79A32] hover:shadow-lg">
                   {item.image && (
                     <>
                       <Image src={item.image} alt="" fill sizes="(max-width: 640px) 100vw, 50vw" className="object-cover opacity-35 transition-transform duration-500 group-hover:scale-105" />
-                      <span aria-hidden="true" className="absolute inset-0 bg-[#101E39]/45" />
+                      <span aria-hidden="true" className="absolute inset-0 bg-navy-900/45" />
                     </>
                   )}
                   <span className="relative z-10 text-lg font-medium">{label}</span>
                   {description && <span className="relative z-10 mt-2 text-sm text-white/75">{description}</span>}
-                  <span className="relative z-10 mt-4 flex items-center gap-2 text-xs text-[#101E39]">
+                  <span className="relative z-10 mt-4 flex items-center gap-2 text-xs text-navy-900">
                     {isArabic ? 'اكتشف المزيد' : 'Discover more'}
                     {isArabic ? <ArrowLeft aria-hidden="true" size={14} /> : <ArrowRight aria-hidden="true" size={14} />}
                   </span>
                 </div>
               );
               return external
-                ? <a key={`${url}-${index}`} href={url} className="block rounded-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B7913D]">{card}</a>
-                : <Link key={`${url}-${index}`} href={url} className="block rounded-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B7913D]">{card}</Link>;
+                ? <a key={`${url}-${index}`} href={url} className="block rounded-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500">{card}</a>
+                : <Link key={`${url}-${index}`} href={url} className="block rounded-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500">{card}</Link>;
             })}
           </div>
         </section>

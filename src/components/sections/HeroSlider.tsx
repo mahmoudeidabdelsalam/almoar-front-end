@@ -83,7 +83,7 @@ export const HeroSlider: React.FC<{ slides?: HeroSlide[] }> = ({ slides: cmsSlid
 
   return (
     <section
-      className="relative h-[720px] overflow-hidden bg-[#101E39] text-white lg:h-[900px]"
+      className="relative h-[720px] overflow-hidden bg-navy-900 text-white lg:h-[900px]"
       aria-label="Homepage hero"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -100,7 +100,7 @@ export const HeroSlider: React.FC<{ slides?: HeroSlide[] }> = ({ slides: cmsSlid
         >
           <Image src={slide.image} alt={locale === 'ar' ? slide.title_ar : slide.title_en} fill priority={index === 0} sizes="100vw" className="object-cover object-center" />
           <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(6,13,26,0.78)_0%,rgba(16,30,57,0.18)_58%,rgba(16,30,57,0.08)_100%)]" />
-          <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-[#101E39]/85 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-navy-900/85 to-transparent" />
         </div>
       ))}
 
@@ -111,7 +111,7 @@ export const HeroSlider: React.FC<{ slides?: HeroSlide[] }> = ({ slides: cmsSlid
             type="button"
             onClick={() => setCurrent(index)}
             className={`flex h-10 w-10 items-center justify-center rounded-full border text-xs transition-colors ${
-              index === current ? 'border-white bg-[#B7913D] text-white' : 'border-white/35 text-white/70 hover:border-white'
+              index === current ? 'border-white bg-gold-500 text-white' : 'border-white/35 text-white/70 hover:border-white'
             }`}
             aria-label={`${locale === 'ar' ? 'عرض الشريحة' : 'Show slide'} ${index + 1}`}
             aria-current={index === current ? 'true' : undefined}
@@ -123,7 +123,7 @@ export const HeroSlider: React.FC<{ slides?: HeroSlide[] }> = ({ slides: cmsSlid
 
       <div className="relative z-10 mx-auto flex h-full max-w-[1216px] items-center px-5 sm:px-8 lg:px-0">
         <div className={`w-full max-w-[680px] space-y-6 ${dir === 'rtl' ? 'mr-auto text-right' : 'ml-auto text-left'}`}>
-          <p className="text-sm font-bold text-[#D4AF37]">{locale === 'ar' ? active.badge_ar : active.badge_en}</p>
+          <p className="text-sm font-bold text-gold-500">{locale === 'ar' ? active.badge_ar : active.badge_en}</p>
           <h1 className="text-5xl font-bold leading-[1.05] sm:text-6xl lg:text-7xl">
             {locale === 'ar' ? active.title_ar : active.title_en}
           </h1>
@@ -132,7 +132,7 @@ export const HeroSlider: React.FC<{ slides?: HeroSlide[] }> = ({ slides: cmsSlid
           </p>
           <Link
             href={localizedLink(active.primary_link, locale)}
-            className="inline-flex h-[54px] items-center gap-3 rounded-sm bg-[#C5A265] px-7 text-sm font-bold text-[#101E39] transition-colors hover:bg-white"
+            className="inline-flex h-[54px] items-center gap-3 rounded-sm bg-gold-200 px-7 text-sm font-bold text-navy-900 transition-colors hover:bg-white"
           >
             <span>{locale === 'ar' ? 'اكتشف' : 'Discover'}</span>
             <ArrowIcon className="h-4 w-4" />

@@ -152,12 +152,12 @@ export const CompaniesSection: React.FC<CompaniesProps> = ({ projects }) => {
   return (
     <section
       ref={sectionRef}
-      className={`homepage-projects-track relative bg-[#101E39] text-white ${scrollEnabled ? '' : 'min-h-[720px]'}`}
+      className={`homepage-projects-track relative bg-navy-900 text-white ${scrollEnabled ? '' : 'min-h-[720px]'}`}
       style={scrollEnabled ? { height: `${sectionHeight}px` } : undefined}
     >
       <div
         ref={stageRef}
-        className={`homepage-projects-stage relative isolate overflow-hidden bg-[#101E39] ${scrollEnabled ? 'sticky top-0' : ''}`}
+        className={`homepage-projects-stage relative isolate overflow-hidden bg-navy-900 ${scrollEnabled ? 'sticky top-0' : ''}`}
         style={{
           height: scrollEnabled ? `${stageHeight}px` : 'auto',
           minHeight: `${minimumStageHeight}px`,
@@ -198,7 +198,7 @@ export const CompaniesSection: React.FC<CompaniesProps> = ({ projects }) => {
         >
           <div
             ref={progressFillRef}
-            className="project-scroll-progress h-full bg-[#C5A265] transition-transform duration-300 motion-reduce:transition-none"
+            className="project-scroll-progress h-full bg-gold-200 transition-transform duration-300 motion-reduce:transition-none"
             style={{
               transformOrigin: dir === 'rtl' ? 'right' : 'left',
               ...(reducedMotion ? { transform: `scaleX(${visibleProgress})` } : {}),
@@ -225,7 +225,7 @@ export const CompaniesSection: React.FC<CompaniesProps> = ({ projects }) => {
 
           <div key={project.id} className="animate-project-slide mt-8 flex min-h-0 flex-1 flex-col items-start justify-between gap-5 lg:mt-12">
             {localized({ ar: project.location, en: project.location_en || project.location }) && (
-              <span className="block text-[#C5A265]">
+              <span className="block text-gold-200">
                 {localized({ ar: project.location, en: project.location_en || project.location })}
               </span>
             )}
@@ -245,7 +245,7 @@ export const CompaniesSection: React.FC<CompaniesProps> = ({ projects }) => {
                 type="button"
                 onClick={() => goToSlide(Math.min(activeIndex + 1, localizedProjects.length - 1))}
                 disabled={activeIndex === localizedProjects.length - 1}
-                className="flex h-11 w-11 items-center justify-center rounded-full border border-white/50 transition-colors hover:bg-white hover:text-[#101E39] disabled:cursor-not-allowed disabled:opacity-40"
+                className="flex h-11 w-11 items-center justify-center rounded-full border border-white/50 transition-colors hover:bg-white hover:text-navy-900 disabled:cursor-not-allowed disabled:opacity-40"
                 aria-label={locale === 'ar' ? 'المشروع التالي' : 'Next project'}
               >
                 <DirectionalArrow direction="next" dir={dir} className="h-4 w-4" />
@@ -254,7 +254,7 @@ export const CompaniesSection: React.FC<CompaniesProps> = ({ projects }) => {
                 type="button"
                 onClick={() => goToSlide(Math.max(activeIndex - 1, 0))}
                 disabled={activeIndex === 0}
-                className="flex h-11 w-11 items-center justify-center rounded-full border border-white/50 transition-colors hover:bg-white hover:text-[#101E39] disabled:cursor-not-allowed disabled:opacity-40"
+                className="flex h-11 w-11 items-center justify-center rounded-full border border-white/50 transition-colors hover:bg-white hover:text-navy-900 disabled:cursor-not-allowed disabled:opacity-40"
                 aria-label={locale === 'ar' ? 'المشروع السابق' : 'Previous project'}
               >
                 <DirectionalArrow direction="previous" dir={dir} className="h-4 w-4" />
@@ -264,7 +264,7 @@ export const CompaniesSection: React.FC<CompaniesProps> = ({ projects }) => {
 
           <Link
             href={`/${locale}/projects/${project.slug}`}
-            className="mt-6 block rounded-sm border border-white/10 bg-[#101E39]/55 p-5 backdrop-blur-md transition-colors hover:border-white/30 sm:p-6 lg:mt-8 lg:px-10 lg:py-8"
+            className="mt-6 block rounded-sm border border-white/10 bg-navy-900/55 p-5 backdrop-blur-md transition-colors hover:border-white/30 sm:p-6 lg:mt-8 lg:px-10 lg:py-8"
           >
             <span className="sr-only">
               {locale === 'ar' ? 'تفاصيل المشروع: ' : 'Project details: '}
@@ -274,7 +274,7 @@ export const CompaniesSection: React.FC<CompaniesProps> = ({ projects }) => {
               <>
                 {(statsTag || statsHeadline) && (
                   <div className="mb-4 space-y-1">
-                    {statsTag && <p className="text-xs font-bold uppercase tracking-wider text-[#C5A265]">{statsTag}</p>}
+                    {statsTag && <p className="text-xs font-bold uppercase tracking-wider text-gold-200">{statsTag}</p>}
                     {statsHeadline && <h3 className="text-lg font-bold text-white">{statsHeadline}</h3>}
                   </div>
                 )}

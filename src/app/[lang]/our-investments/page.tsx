@@ -57,7 +57,7 @@ async function LocalizedInvestmentsContent({ params }: Props) {
 
 export default function LocalizedInvestments({ params }: Props) {
   return (
-    <Suspense fallback={<div className="min-h-screen animate-pulse bg-[#F8F7F2]" aria-label="Loading investments page" />}>
+    <Suspense fallback={<div className="min-h-screen animate-pulse bg-ivory-50" aria-label="Loading investments page" />}>
       <LocalizedInvestmentsContent params={params} />
     </Suspense>
   );

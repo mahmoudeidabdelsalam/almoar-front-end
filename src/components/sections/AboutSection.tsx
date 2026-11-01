@@ -60,7 +60,7 @@ export const AboutSection: React.FC = () => {
   if (!about.title[locale] && !content.previewMode) return null;
 
   return (
-    <section className="py-20 lg:py-28 bg-[#F8F9F4] relative overflow-hidden">
+    <section className="py-20 lg:py-28 bg-ivory-50 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           {/* Visual Showcase with Framing */}
@@ -72,13 +72,13 @@ export const AboutSection: React.FC = () => {
                 fill
                 className="object-cover"
               />}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#101E39]/80 via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-navy-900/80 via-transparent to-transparent" />
             </div>
 
             {/* Floating Experience Badge */}
             {content.previewMode && (
-              <div className="absolute -bottom-6 -right-4 sm:-bottom-8 sm:right-6 bg-[#101E39] text-white p-5 sm:p-6 rounded-2xl shadow-xl border border-white/10 max-w-[240px]">
-                <span className="text-[#B7913D] text-xs font-bold uppercase tracking-wider block mb-1">
+              <div className="absolute -bottom-6 -right-4 sm:-bottom-8 sm:right-6 bg-navy-900 text-white p-5 sm:p-6 rounded-2xl shadow-xl border border-white/10 max-w-[240px]">
+                <span className="text-gold-500 text-xs font-bold uppercase tracking-wider block mb-1">
                   {locale === 'ar' ? 'العمر القابضة' : 'Alomar Holding'}
                 </span>
                 <p className="text-white font-bold text-base sm:text-lg leading-snug">
@@ -90,12 +90,12 @@ export const AboutSection: React.FC = () => {
 
           {/* Narrative & Pillars */}
           <div className="lg:col-span-7 space-y-6 order-1 lg:order-2">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#101E39]/5 border border-[#101E39]/10 text-xs font-bold text-[#101E39]">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#B7913D]" />
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-navy-900/5 border border-navy-900/10 text-xs font-bold text-navy-900">
+              <span className="w-1.5 h-1.5 rounded-full bg-gold-500" />
               <span>{about.badge[locale] || (content.previewMode ? t.about_section.badge : '')}</span>
             </div>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#101E39] leading-tight tracking-tight">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-navy-900 leading-tight tracking-tight">
               {about.title[locale] || (content.previewMode ? t.about_section.title : '')}
             </h2>
 
@@ -111,13 +111,13 @@ export const AboutSection: React.FC = () => {
                 return (
                   <div
                     key={idx}
-                    className="p-4 rounded-xl bg-white border border-[#101E39]/5 shadow-sm hover:shadow-md transition-shadow"
+                    className="p-4 rounded-xl bg-white border border-navy-900/5 shadow-sm hover:shadow-md transition-shadow"
                   >
                     <div className="flex items-center gap-3 mb-2">
-                      <div className="p-2 rounded-lg bg-[#101E39]/5 text-[#B7913D]">
+                      <div className="p-2 rounded-lg bg-navy-900/5 text-gold-500">
                         <Icon className="w-4 h-4" />
                       </div>
-                      <h4 className="font-bold text-[#101E39] text-sm">
+                      <h4 className="font-bold text-navy-900 text-sm">
                         {locale === 'ar' ? pillar.title_ar : pillar.title_en}
                       </h4>
                     </div>
@@ -132,7 +132,7 @@ export const AboutSection: React.FC = () => {
             <div className="pt-4">
               <Link
                 href="/about"
-                className="inline-flex items-center gap-2 text-sm font-bold text-[#101E39] hover:text-[#B7913D] transition-colors group"
+                className="inline-flex items-center gap-2 text-sm font-bold text-navy-900 hover:text-gold-500 transition-colors group"
               >
                 <span>{t.about_section.learn_more}</span>
                 <ArrowIcon className="w-4 h-4 transition-transform group-hover:translate-x-1" />

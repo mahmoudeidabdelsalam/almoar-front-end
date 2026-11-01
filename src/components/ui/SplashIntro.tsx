@@ -76,13 +76,13 @@ export const SplashIntro: React.FC = () => {
           <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-white">
             {locale === 'ar' ? content.settings.site_name.ar : content.settings.site_name.en}
           </h1>
-          <p className="text-[#B7913D] text-sm md:text-base font-semibold tracking-widest uppercase">
+          <p className="text-gold-500 text-sm md:text-base font-semibold tracking-widest uppercase">
             {locale === 'ar' ? content.settings.tagline.ar : content.settings.tagline.en}
           </p>
         </div>
 
         {/* Elegant divider */}
-        <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-[#B7913D] to-transparent my-2" />
+        <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-gold-500 to-transparent my-2" />
 
         {/* Subtitle */}
         <p className="text-white/60 text-xs md:text-sm max-w-md leading-relaxed">

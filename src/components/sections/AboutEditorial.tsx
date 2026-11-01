@@ -39,9 +39,9 @@ export const ChairmanMessage: React.FC = () => {
 
   return (
     <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="bg-white rounded-3xl p-8 sm:p-12 lg:p-16 shadow-xl border border-[#101E39]/10 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+      <div className="bg-white rounded-3xl p-8 sm:p-12 lg:p-16 shadow-xl border border-navy-900/10 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
         <div className="lg:col-span-5 relative">
-          <div className="relative h-96 sm:h-[450px] rounded-2xl overflow-hidden shadow-lg border-2 border-[#101E39]/10">
+          <div className="relative h-96 sm:h-[450px] rounded-2xl overflow-hidden shadow-lg border-2 border-navy-900/10">
             {chairmanImage && <Image
               src={chairmanImage}
               alt={about.chairmanName[locale] || text.name}
@@ -49,17 +49,17 @@ export const ChairmanMessage: React.FC = () => {
               className="object-cover object-top"
             />}
           </div>
-          <div className="absolute -bottom-4 right-4 bg-[#101E39] text-white px-5 py-3 rounded-xl border border-white/10 shadow-lg">
-            <span className="text-xs text-[#B7913D] font-bold block">{about.chairmanRole[locale] || text.role}</span>
+          <div className="absolute -bottom-4 right-4 bg-navy-900 text-white px-5 py-3 rounded-xl border border-white/10 shadow-lg">
+            <span className="text-xs text-gold-500 font-bold block">{about.chairmanRole[locale] || text.role}</span>
             <span className="text-sm font-bold">{about.chairmanName[locale] || text.name}</span>
           </div>
         </div>
 
         <div className="lg:col-span-7 space-y-6">
-          <span className="text-xs font-bold uppercase tracking-widest text-[#B7913D] block">
+          <span className="text-xs font-bold uppercase tracking-widest text-gold-500 block">
             {about.messageHeading[locale] || text.heading}
           </span>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#101E39] leading-snug">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-navy-900 leading-snug">
             &ldquo;{about.quote[locale] || text.quote}&rdquo;
           </h2>
           <div className="space-y-4 text-sm sm:text-base text-[#5A677B] leading-relaxed">
@@ -105,26 +105,26 @@ export const AboutPrinciples: React.FC = () => {
   if (!content.previewMode && !about.visionTitle[locale] && !about.missionTitle[locale] && !values.length) return null;
 
   return (
-    <section className="py-16 bg-white border-y border-[#101E39]/10">
+    <section className="py-16 bg-white border-y border-navy-900/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="bg-[#F8F9F4] rounded-2xl p-8 border border-[#101E39]/10 space-y-4">
-            <div className="p-3 rounded-xl bg-[#101E39] text-[#B7913D] w-fit"><Compass className="w-6 h-6" /></div>
-            <h3 className="text-xl font-bold text-[#101E39]">{about.visionTitle[locale] || copy.visionTitle}</h3>
+          <div className="bg-ivory-50 rounded-2xl p-8 border border-navy-900/10 space-y-4">
+            <div className="p-3 rounded-xl bg-navy-900 text-gold-500 w-fit"><Compass className="w-6 h-6" /></div>
+            <h3 className="text-xl font-bold text-navy-900">{about.visionTitle[locale] || copy.visionTitle}</h3>
             <p className="text-sm text-[#5A677B] leading-relaxed">{about.visionDescription[locale] || copy.visionDescription}</p>
           </div>
-          <div className="bg-[#F8F9F4] rounded-2xl p-8 border border-[#101E39]/10 space-y-4">
-            <div className="p-3 rounded-xl bg-[#101E39] text-[#B7913D] w-fit"><Target className="w-6 h-6" /></div>
-            <h3 className="text-xl font-bold text-[#101E39]">{about.missionTitle[locale] || copy.missionTitle}</h3>
+          <div className="bg-ivory-50 rounded-2xl p-8 border border-navy-900/10 space-y-4">
+            <div className="p-3 rounded-xl bg-navy-900 text-gold-500 w-fit"><Target className="w-6 h-6" /></div>
+            <h3 className="text-xl font-bold text-navy-900">{about.missionTitle[locale] || copy.missionTitle}</h3>
             <p className="text-sm text-[#5A677B] leading-relaxed">{about.missionDescription[locale] || copy.missionDescription}</p>
           </div>
-          <div className="bg-[#F8F9F4] rounded-2xl p-8 border border-[#101E39]/10 space-y-4">
-            <div className="p-3 rounded-xl bg-[#101E39] text-[#B7913D] w-fit"><Sparkles className="w-6 h-6" /></div>
-            <h3 className="text-xl font-bold text-[#101E39]">{copy.valuesTitle}</h3>
+          <div className="bg-ivory-50 rounded-2xl p-8 border border-navy-900/10 space-y-4">
+            <div className="p-3 rounded-xl bg-navy-900 text-gold-500 w-fit"><Sparkles className="w-6 h-6" /></div>
+            <h3 className="text-xl font-bold text-navy-900">{copy.valuesTitle}</h3>
             <ul className="space-y-2 text-sm text-[#5A677B]">
               {values.filter((value) => value.title[locale] && value.description[locale]).map((value, index) => (
                 <li key={`${value.title.ar}-${index}`} className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#B7913D]" />
+                  <CheckCircle2 className="w-4 h-4 text-gold-500" />
                   <span><strong>{value.title[locale]}:</strong> {value.description[locale]}</span>
                 </li>
               ))}

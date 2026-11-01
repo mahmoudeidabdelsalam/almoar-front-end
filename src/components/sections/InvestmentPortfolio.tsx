@@ -61,12 +61,12 @@ export function InvestmentPortfolio({
     : projects.filter((project) => projectCategories(project).some((category) => category.slug === selectedCategory));
 
   return (
-    <section className="bg-[#F8F7F2] px-5 py-16 sm:px-8 lg:px-14 lg:py-24" dir={direction}>
+    <section className="bg-ivory-50 px-5 py-16 sm:px-8 lg:px-14 lg:py-24" dir={direction}>
       <div className="mx-auto max-w-[1216px]">
         <header className="mb-9 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div className="max-w-2xl">
-            {eyebrow && <p className="mb-3 text-xs font-medium text-[#A07A22]">{eyebrow}</p>}
-            <h2 className="text-3xl font-normal leading-tight text-[#101E39] sm:text-[64px]">{heading}</h2>
+            {eyebrow && <p className="mb-3 text-xs font-medium text-gold-600">{eyebrow}</p>}
+            <h2 className="text-3xl font-normal leading-tight text-navy-900 sm:text-[64px]">{heading}</h2>
             {description && <p className="mt-4 max-w-xl text-sm leading-7 text-[#626D7B]">{description}</p>}
           </div>
           <p className="shrink-0 text-xs text-[#737B86]" aria-live="polite">
@@ -80,10 +80,10 @@ export function InvestmentPortfolio({
               type="button"
               onClick={() => setSelectedCategory('all')}
               aria-pressed={selectedCategory === 'all'}
-              className={`rounded-full border px-4 py-2 text-xs transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B7913D] ${
+              className={`rounded-full border px-4 py-2 text-xs transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500 ${
                 selectedCategory === 'all'
-                  ? 'border-[#101E39] bg-[#101E39] text-white'
-                  : 'border-[#D7D9DC] bg-transparent text-[#566174] hover:border-[#101E39]'
+                  ? 'border-navy-900 bg-navy-900 text-white'
+                  : 'border-[#D7D9DC] bg-transparent text-[#566174] hover:border-navy-900'
               }`}
             >
               {isArabic ? 'الكل' : 'All'}
@@ -94,10 +94,10 @@ export function InvestmentPortfolio({
                 key={category.slug}
                 onClick={() => setSelectedCategory(category.slug)}
                 aria-pressed={selectedCategory === category.slug}
-                className={`rounded-full border px-4 py-2 text-xs transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B7913D] ${
+                className={`rounded-full border px-4 py-2 text-xs transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500 ${
                   selectedCategory === category.slug
-                    ? 'border-[#101E39] bg-[#101E39] text-white'
-                    : 'border-[#D7D9DC] bg-transparent text-[#566174] hover:border-[#101E39]'
+                    ? 'border-navy-900 bg-navy-900 text-white'
+                    : 'border-[#D7D9DC] bg-transparent text-[#566174] hover:border-navy-900'
                 }`}
               >
                 {categoryLabel(category, locale)}
@@ -119,7 +119,7 @@ export function InvestmentPortfolio({
                 >
                   <Link
                     href={`/${locale}/projects/${project.slug}`}
-                    className="flex flex-1 flex-col focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-[#B7913D]"
+                    className="flex flex-1 flex-col focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-gold-500"
                     aria-label={`${isArabic ? 'عرض' : 'View'} ${title}`}
                   >
                     <div className="relative flex h-[124px] items-center justify-center bg-[#F0EFEA]">
@@ -132,16 +132,16 @@ export function InvestmentPortfolio({
                           className={project.logo ? 'object-contain p-8' : 'object-contain p-5'}
                         />
                       ) : (
-                        <span className="text-sm font-semibold text-[#101E39]/70">{title}</span>
+                        <span className="text-sm font-semibold text-navy-900/70">{title}</span>
                       )}
                     </div>
                     <div className="flex flex-1 flex-col p-5">
-                      {category && <span className="mb-2 text-[10px] font-medium text-[#A07A22]">{categoryLabel(category, locale)}</span>}
-                      <h3 className="text-base font-medium text-[#101E39] transition-colors group-hover:text-[#A07A22]">{title}</h3>
+                      {category && <span className="mb-2 text-[10px] font-medium text-gold-600">{categoryLabel(category, locale)}</span>}
+                      <h3 className="text-base font-medium text-navy-900 transition-colors group-hover:text-gold-600">{title}</h3>
                       {localized(project.excerpt, locale) && (
                         <p className="mt-2 line-clamp-3 text-xs leading-6 text-[#68717E]">{localized(project.excerpt, locale)}</p>
                       )}
-                      <span className="mt-auto flex items-center gap-2 pt-5 text-[11px] font-medium text-[#A07A22]">
+                      <span className="mt-auto flex items-center gap-2 pt-5 text-[11px] font-medium text-gold-600">
                         {isArabic ? 'تعرف على الشركة' : 'Discover the company'}
                         {isArabic
                           ? <ArrowLeft aria-hidden="true" size={14} />
