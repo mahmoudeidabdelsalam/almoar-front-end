@@ -51,12 +51,30 @@ export const HeroSlider: React.FC<{ slides?: HeroSlide[] }> = ({ slides: cmsSlid
   const { locale, dir, content } = useLanguage();
   const slides = cmsSlides?.length ? cmsSlides : content.previewMode ? previewSlides : [];
   const [current, setCurrent] = useState(0);
+  const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const [pageVisible, setPageVisible] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(true);
 
   useEffect(() => {
-    if (slides.length < 2) return;
+    const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const updateMotionPreference = () => setReducedMotion(motionPreference.matches);
+    const updatePageVisibility = () => setPageVisible(!document.hidden);
+    updateMotionPreference();
+    updatePageVisibility();
+    motionPreference.addEventListener('change', updateMotionPreference);
+    document.addEventListener('visibilitychange', updatePageVisibility);
+    return () => {
+      motionPreference.removeEventListener('change', updateMotionPreference);
+      document.removeEventListener('visibilitychange', updatePageVisibility);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (slides.length < 2 || hovered || focused || reducedMotion || !pageVisible) return;
     const timer = window.setInterval(() => setCurrent((value) => (value + 1) % slides.length), 6500);
     return () => window.clearInterval(timer);
-  }, [slides.length]);
+  }, [current, focused, hovered, pageVisible, reducedMotion, slides.length]);
 
   if (!slides.length) return null;
 
@@ -64,7 +82,16 @@ export const HeroSlider: React.FC<{ slides?: HeroSlide[] }> = ({ slides: cmsSlid
   const ArrowIcon = dir === 'rtl' ? ArrowLeft : ArrowRight;
 
   return (
-    <section className="relative h-[720px] overflow-hidden bg-[#101E39] text-white lg:h-[900px]" aria-label="Homepage hero">
+    <section
+      className="relative h-[720px] overflow-hidden bg-[#101E39] text-white lg:h-[900px]"
+      aria-label="Homepage hero"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onFocusCapture={() => setFocused(true)}
+      onBlurCapture={(event) => {
+        if (!(event.relatedTarget instanceof Node) || !event.currentTarget.contains(event.relatedTarget)) setFocused(false);
+      }}
+    >
       {slides.map((slide, index) => (
         <div
           key={slide.id}
@@ -87,6 +114,7 @@ export const HeroSlider: React.FC<{ slides?: HeroSlide[] }> = ({ slides: cmsSlid
               index === current ? 'border-white bg-[#B7913D] text-white' : 'border-white/35 text-white/70 hover:border-white'
             }`}
             aria-label={`${locale === 'ar' ? 'عرض الشريحة' : 'Show slide'} ${index + 1}`}
+            aria-current={index === current ? 'true' : undefined}
           >
             {index + 1}
           </button>
