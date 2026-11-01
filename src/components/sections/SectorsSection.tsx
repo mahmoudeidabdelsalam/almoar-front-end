@@ -28,6 +28,7 @@ export const SectorsSection: React.FC = () => {
       data-scroll-reveal
       className="bg-ivory-50 py-16 sm:py-20 lg:py-28"
       dir={dir}
+      id="sectors"
     >
       <div className="mx-auto grid max-w-[1440px] gap-10 px-5 sm:px-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-start lg:gap-16 lg:px-12">
         <header className="text-start lg:sticky lg:top-32 lg:pt-10">
