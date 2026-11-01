@@ -337,20 +337,40 @@ img, video { max-inline-size: 100%; }
   .circle-btn--large { width: 84px; height: 84px; }
 
   .hero-slide-control {
+    position: relative;
     display: flex;
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     align-items: center;
     justify-content: center;
-    border: 1px solid rgb(255 255 255 / 35%);
+    border: 1px solid var(--color-gold-500);
     border-radius: 50%;
-    color: rgb(255 255 255 / 70%);
+    color: var(--color-gold-500);
     font-size: 12px;
-    transition: color 0.35s, background 0.35s, border-color 0.35s;
+    font-family: var(--font-serif);
+    transition: width 0.35s var(--ease-out), height 0.35s var(--ease-out), color 0.35s, background 0.35s, border-color 0.35s;
   }
 
-  .hero-slide-control[aria-current="true"] { border-color: white; background: var(--color-gold-500); color: white; }
+  .hero-slide-control[aria-current="true"] {
+    width: 64px;
+    height: 64px;
+    border: 1.5px solid var(--color-ivory-50);
+    color: white;
+  }
+
+  .hero-slide-control__progress {
+    position: absolute;
+    inset: 0;
+    transform: rotate(-90deg);
+  }
+
+  .hero-slide-control__progress circle { fill: none; stroke: var(--color-ivory-50); stroke-width: 1.5px; stroke-dasharray: 188.5; stroke-dashoffset: 188.5; animation: hero-number-progress 5s linear both; }
   .hero-slide-control:hover { border-color: var(--color-gold-500); background: var(--color-gold-500); color: var(--color-navy-900); }
+  .hero-slide-control[aria-current="true"]:hover { border-color: var(--color-ivory-50); background: transparent; color: white; }
+
+  @keyframes hero-number-progress {
+    to { stroke-dashoffset: 0; }
+  }
 
   .hero-slider__controls {
     opacity: 0;
@@ -358,6 +378,27 @@ img, video { max-inline-size: 100%; }
   }
 
   .hero-slider.is-ready .hero-slider__controls { opacity: 1; }
+
+  .hero-slider__progress { font-family: var(--font-serif); font-size: 14px; }
+  .hero-slider__progress-items { display: flex; align-items: center; gap: 16px; direction: ltr; }
+  .hero-slider__progress-track { position: relative; width: 160px; height: 1px; overflow: hidden; background: rgb(248 247 242 / 35%); direction: ltr; }
+  .hero-slider__progress-track i { position: absolute; inset-block: 0; inset-inline-start: 0; width: 100%; transform: scaleX(0); transform-origin: left; background: var(--color-gold-500); animation: hero-line-progress 5s linear both; }
+  .hero-slider.is-paused .hero-slide-control__progress circle,
+  .hero-slider.is-paused .hero-slider__progress-track i { animation-play-state: paused; }
+
+  @keyframes hero-line-progress {
+    to { transform: scaleX(1); }
+  }
+
+  .hero-scroll-cue { position: relative; display: block; width: 20px; height: 32px; overflow: hidden; border: 1px solid rgb(248 247 242 / 65%); border-radius: 999px; }
+  .hero-scroll-cue i { position: absolute; top: 5px; left: 50%; width: 3px; height: 3px; transform: translateX(-50%); border-radius: 50%; background: white; animation: hero-scroll-dot 1.5s var(--ease-out) infinite; }
+
+  @keyframes hero-scroll-dot {
+    0% { opacity: 0; transform: translate(-50%, 0); }
+    25% { opacity: 1; }
+    75% { opacity: 1; }
+    100% { opacity: 0; transform: translate(-50%, 12px); }
+  }
 
   .hero-slide {
     position: absolute;
@@ -385,11 +426,6 @@ img, video { max-inline-size: 100%; }
   .hero-slide--exit-next { --slide-offset: 100%; --parallax-offset: -50%; --content-offset: 35%; }
   .hero-slide--enter-previous { --slide-offset: 100%; --parallax-offset: -50%; --content-offset: 35%; }
   .hero-slide--exit-previous { --slide-offset: -100%; --parallax-offset: 50%; --content-offset: -35%; }
-
-  [dir="ltr"] .hero-slide--enter-next { --slide-offset: 100%; --parallax-offset: -50%; --content-offset: 35%; }
-  [dir="ltr"] .hero-slide--exit-next { --slide-offset: -100%; --parallax-offset: 50%; --content-offset: -35%; }
-  [dir="ltr"] .hero-slide--enter-previous { --slide-offset: -100%; --parallax-offset: 50%; --content-offset: -35%; }
-  [dir="ltr"] .hero-slide--exit-previous { --slide-offset: 100%; --parallax-offset: -50%; --content-offset: 35%; }
 
   @keyframes hero-slide-enter {
     from { transform: translateX(var(--slide-offset)); }

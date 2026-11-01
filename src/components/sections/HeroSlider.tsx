@@ -127,10 +127,11 @@ export const HeroSlider: React.FC<{ slides?: HeroSlide[] }> = ({ slides: cmsSlid
   if (!slides.length) return null;
 
   const ArrowIcon = dir === 'rtl' ? ArrowLeft : ArrowRight;
+  const isPaused = hovered || focused || reducedMotion || !pageVisible || !heroReady;
 
   return (
     <section
-      className={`hero-slider relative h-[720px] overflow-hidden bg-navy-900 text-white lg:h-[900px] ${heroReady ? 'is-ready' : ''}`}
+      className={`hero-slider relative h-[720px] overflow-hidden bg-navy-900 text-white lg:h-[900px] ${heroReady ? 'is-ready' : ''} ${isPaused ? 'is-paused' : ''}`}
       aria-label="Homepage hero"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -157,8 +158,8 @@ export const HeroSlider: React.FC<{ slides?: HeroSlide[] }> = ({ slides: cmsSlid
             <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(6,13,26,0.78)_0%,rgba(16,30,57,0.18)_58%,rgba(16,30,57,0.08)_100%)]" />
             <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-navy-900/85 to-transparent" />
 
-            <div className="relative z-10 mx-auto flex h-full max-w-[1216px] items-center px-5 sm:px-8 lg:px-0">
-              <div className="hero-slide__content ms-auto w-full max-w-[680px] space-y-6 text-start">
+            <div className="relative z-10 mx-auto flex h-full max-w-[1216px] items-center px-5 sm:px-8 lg:px-12">
+              <div className="hero-slide__content me-auto w-full max-w-[680px] space-y-6 text-start">
                 <p className="hero-anim text-sm font-bold text-gold-500">{locale === 'ar' ? slide.badge_ar : slide.badge_en}</p>
                 {isActive ? (
                   <h1 className="hero-anim text-5xl font-bold leading-[1.05] sm:text-6xl lg:text-7xl">
@@ -169,7 +170,7 @@ export const HeroSlider: React.FC<{ slides?: HeroSlide[] }> = ({ slides: cmsSlid
                     {locale === 'ar' ? slide.title_ar : slide.title_en}
                   </h2>
                 )}
-                <p className="hero-anim ms-auto max-w-[520px] text-base leading-8 text-white/85 sm:text-lg">
+                <p className="hero-anim me-auto max-w-[520px] text-base leading-8 text-white/85 sm:text-lg">
                   {locale === 'ar' ? slide.desc_ar : slide.desc_en}
                 </p>
                 <Link href={localizedLink(slide.primary_link, locale)} className="hero-anim btn btn--gold" tabIndex={isActive ? 0 : -1}>
@@ -182,24 +183,39 @@ export const HeroSlider: React.FC<{ slides?: HeroSlide[] }> = ({ slides: cmsSlid
         );
       })}
 
-      <div className="hero-slider__controls absolute start-5 top-1/2 z-20 hidden -translate-y-1/2 flex-col gap-3 lg:start-[72px] lg:flex">
+      <div className={`hero-slider__controls absolute ${dir === 'rtl' ? 'end-5 lg:end-[72px]' : 'start-5 lg:start-[72px]'} top-1/2 z-20 hidden -translate-y-1/2 flex-col items-center gap-6 lg:flex`}>
         {slides.map((slide, index) => (
           <button
-            key={slide.id}
+            key={`${slide.id}-${isPaused}`}
             type="button"
             onClick={() => navigateToSlide(index)}
             className="hero-slide-control"
             aria-label={`${locale === 'ar' ? 'عرض الشريحة' : 'Show slide'} ${index + 1}`}
             aria-current={index === current ? 'true' : undefined}
           >
-            {index + 1}
+            <span>{index + 1}</span>
+            {index === current && (
+              <svg className="hero-slide-control__progress" viewBox="0 0 64 64" aria-hidden="true">
+                <circle cx="32" cy="32" r="30" />
+              </svg>
+            )}
           </button>
         ))}
       </div>
 
-      <div className="hero-slider__controls absolute bottom-20 start-5 z-20 hidden items-center gap-3 text-xs text-white/75 lg:start-[72px] lg:flex">
+      <div className={`hero-slider__controls hero-slider__scroll absolute bottom-20 ${dir === 'rtl' ? 'start-5 lg:start-[72px] flex-row-reverse' : 'end-5 lg:end-[72px]'} z-20 hidden items-center gap-3 text-xs text-white/75 lg:flex`}>
         <span>{locale === 'ar' ? 'مرّر للأسفل لاستكشاف المزيد' : 'Scroll to explore more'}</span>
-        <span className="h-8 w-5 rounded-full border border-white/50" />
+        <span className="hero-scroll-cue" aria-hidden="true"><i /></span>
+      </div>
+
+      <div className={`hero-slider__controls hero-slider__progress absolute bottom-20 ${dir === 'rtl' ? 'end-5 lg:end-[72px]' : 'start-5 lg:start-[72px]'} z-20 hidden text-white/75 lg:flex`} dir={dir} role="group" aria-label={locale === 'ar' ? `الشريحة ${current + 1} من ${slides.length}` : `Slide ${current + 1} of ${slides.length}`}>
+        <span className="hero-slider__progress-items" dir="ltr">
+          <span className="hero-slider__total">{String(slides.length).padStart(2, '0')}</span>
+          <span className="hero-slider__progress-track" aria-hidden="true">
+            <i key={`${current}-${isPaused}`} />
+          </span>
+          <span className="hero-slider__current">{String(current + 1).padStart(2, '0')}</span>
+        </span>
       </div>
     </section>
   );
