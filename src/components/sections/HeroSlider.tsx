@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import type { HeroSlide } from '@/types';
+import { localizedLink } from '@/lib/localized-link';
 
 const previewSlides: HeroSlide[] = [
   {
@@ -102,7 +103,7 @@ export const HeroSlider: React.FC<{ slides?: HeroSlide[] }> = ({ slides: cmsSlid
             {locale === 'ar' ? active.desc_ar : active.desc_en}
           </p>
           <Link
-            href={active.primary_link}
+            href={localizedLink(active.primary_link, locale)}
             className="inline-flex h-[54px] items-center gap-3 rounded-sm bg-[#C5A265] px-7 text-sm font-bold text-[#101E39] transition-colors hover:bg-white"
           >
             <span>{locale === 'ar' ? 'اكتشف' : 'Discover'}</span>

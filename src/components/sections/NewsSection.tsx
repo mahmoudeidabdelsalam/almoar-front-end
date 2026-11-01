@@ -7,7 +7,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { formatDate } from '@/lib/i18n/getLocalized';
 import { NewsArticle } from '@/types';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
-import { SITE_URL } from '@/lib/seo';
+import { localizedLink } from '@/lib/localized-link';
 
 interface NewsProps {
   articles: NewsArticle[];
@@ -28,27 +28,6 @@ export const NewsSection: React.FC<NewsProps> = ({ articles }) => {
     : localizedArticles;
   const previous = () => setStart((value) => (value - 1 + localizedArticles.length) % localizedArticles.length);
   const next = () => setStart((value) => (value + 1) % localizedArticles.length);
-  const localizedLink = (url: string) => {
-    if (!url || /^(mailto:|tel:)/i.test(url) || url.startsWith('//')) return url;
-
-    try {
-      const base = new URL(SITE_URL);
-      const target = new URL(url, base);
-      const localHost = target.hostname === 'localhost' || target.hostname === '127.0.0.1';
-      if (target.origin !== base.origin && !localHost) return url;
-
-      const segments = target.pathname.split('/').filter(Boolean);
-      if (segments[0] === 'ar' || segments[0] === 'en') {
-        return `${target.pathname}${target.search}${target.hash}`;
-      }
-
-      const path = target.pathname === '/' ? '' : target.pathname;
-      return `/${locale}${path}${target.search}${target.hash}`;
-    } catch {
-      return url;
-    }
-  };
-
   return (
     <section className="bg-white py-20 lg:h-[796px] lg:py-[112px]">
       <div className="mx-auto max-w-[1216px] px-5 sm:px-8 lg:px-0">
@@ -67,7 +46,7 @@ export const NewsSection: React.FC<NewsProps> = ({ articles }) => {
           </div>
 
           <Link
-            href={localizedLink(copy?.ctaUrl || archivePath)}
+            href={localizedLink(copy?.ctaUrl || archivePath, locale)}
             className="inline-flex h-[54px] w-fit items-center justify-center gap-3 rounded-sm bg-[#101E39] px-7 text-sm font-bold text-white transition-colors hover:bg-[#B7913D]"
           >
             <span>{copy?.ctaLabel[locale] || (content.previewMode ? t.news_section.view_all_news : '')}</span>
