@@ -111,14 +111,14 @@ export const SectorsSection: React.FC = () => {
                         )}
                       </div>
                       {item.logo && (
-                        <div className="pattern relative flex aspect-[1.6] w-full max-w-[245px] shrink-0 items-center justify-center overflow-hidden rounded-xl bg-navy-900 p-5">
+                        <div className="pattern relative flex aspect-[1.6] w-full max-w-[245px] shrink-0 items-center justify-center overflow-hidden rounded-xl bg-navy-900 p-0">
                           <Image
                             src={item.logo}
                             alt={title ? `${title} logo` : ''}
                             width={480}
                             height={300}
                             sizes="(max-width: 639px) 100vw, 245px"
-                            className="h-full w-full object-contain"
+                            className="h-full w-full object-cover"
                           />
                         </div>
                       )}
