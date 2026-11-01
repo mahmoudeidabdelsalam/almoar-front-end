@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: LocalizedAboutProps): Promise
     description: lang === 'ar'
       ? 'تعرف على مجموعة العمر القابضة ورؤيتها الاستثمارية ومبادراتها في المملكة العربية السعودية.'
       : 'Learn about Alomar Holding, its investment vision, and its initiatives in Saudi Arabia.',
-  }, lang);
+  }, lang, '/about');
 }
 
 async function LocalizedAboutContent({ params }: LocalizedAboutProps) {

@@ -7,6 +7,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { formatDate } from '@/lib/i18n/getLocalized';
 import { NewsArticle } from '@/types';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
+import { SITE_URL } from '@/lib/seo';
 
 interface NewsProps {
   articles: NewsArticle[];
@@ -30,9 +31,8 @@ export const NewsSection: React.FC<NewsProps> = ({ articles }) => {
   const localizedLink = (url: string) => {
     if (!url || /^(mailto:|tel:)/i.test(url) || url.startsWith('//')) return url;
 
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://alomarholding.sa';
     try {
-      const base = new URL(baseUrl);
+      const base = new URL(SITE_URL);
       const target = new URL(url, base);
       const localHost = target.hostname === 'localhost' || target.hostname === '127.0.0.1';
       if (target.origin !== base.origin && !localHost) return url;

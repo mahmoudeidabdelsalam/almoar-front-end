@@ -8,6 +8,7 @@ import { wpClient } from '@/lib/wordpress/client';
 import { MapPin, Download, ArrowRight, ArrowLeft, PhoneCall } from 'lucide-react';
 import type { Metadata } from 'next';
 import type { Locale, LocalizedString, Project, ProjectTextBand } from '@/types';
+import { createLocalizedMetadata } from '@/lib/seo';
 
 interface Props {
   params: Promise<{ slug: string; lang?: string }>;
@@ -174,13 +175,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const project = await wpClient.getProjectBySlug(slug);
   if (!project) return { title: locale === 'ar' ? 'المشروع غير موجود | العمر القابضة' : 'Project not found | Alomar Holding' };
 
-  return {
+  const availableLocales = (['ar', 'en'] as const).filter((projectLocale) =>
+    project.title[projectLocale].trim(),
+  );
+  return createLocalizedMetadata({
     title: `${localizedText(project.title, locale)} | Alomar Holding`,
-    description: localizedText(project.excerpt, locale),
-    openGraph: {
-      images: project.image ? [project.image] : [],
-    },
-  };
+    description: localizedText(project.excerpt, locale) || `${localizedText(project.title, locale)} | Alomar Holding`,
+    locale,
+    pathname: `/${locale}/projects/${slug}`,
+    alternateLocales: availableLocales,
+    image: project.image,
+  });
 }
 
 export default async function SingleProjectPage({ params }: Props) {

@@ -6,6 +6,7 @@ import { Header } from '@/components/navigation/Header';
 import { InvestmentsPage } from '@/components/sections/InvestmentsPage';
 import { wpClient } from '@/lib/wordpress/client';
 import type { Locale } from '@/types';
+import { createLocalizedMetadata } from '@/lib/seo';
 
 type Props = { params: Promise<{ lang: string }> };
 
@@ -26,25 +27,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const locale: Locale = lang;
   const content = await wpClient.getInvestmentsPageContent();
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://alomarholding.sa';
-  return {
+  return createLocalizedMetadata({
     title: content?.seoTitle[locale] || pageCopy[locale].title,
     description: content?.seoDescription[locale] || pageCopy[locale].description,
-    alternates: {
-      canonical: `${baseUrl}/${locale}/investments`,
-      languages: {
-        ar: `${baseUrl}/ar/investments`,
-        en: `${baseUrl}/en/investments`,
-      },
-    },
-    openGraph: {
-      title: content?.seoTitle[locale] || pageCopy[locale].title,
-      description: content?.seoDescription[locale] || pageCopy[locale].description,
-      url: `${baseUrl}/${locale}/investments`,
-      locale: locale === 'ar' ? 'ar_SA' : 'en_US',
-      type: 'website',
-    },
-  };
+    locale,
+    pathname: `/${locale}/our-investments`,
+  });
 }
 
 async function LocalizedInvestmentsContent({ params }: Props) {

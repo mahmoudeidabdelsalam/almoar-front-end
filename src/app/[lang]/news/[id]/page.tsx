@@ -1,8 +1,14 @@
 import { Suspense } from 'react';
 import SingleNewsPage from '@/app/news/[id]/page';
 import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
+import { buildNewsMetadata } from '@/app/news/[id]/page';
 
 type Props = { params: Promise<{ lang: string; id: string }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  return buildNewsMetadata(await params);
+}
 
 async function LocalizedNewsContent({ params }: Props) {
   const { lang, id } = await params;

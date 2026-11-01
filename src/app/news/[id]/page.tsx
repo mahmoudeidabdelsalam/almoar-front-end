@@ -10,6 +10,7 @@ import type { Locale } from '@/types';
 import { ArrowLeft, ArrowRight, Calendar, Clock, Mail } from 'lucide-react';
 import type { Metadata } from 'next';
 import { sanitizeNewsContent } from '@/lib/sanitize-news-content';
+import { createLocalizedMetadata, getSiteUrl } from '@/lib/seo';
 
 export interface NewsRouteProps {
   params: Promise<{ id: string; lang?: string }>;
@@ -30,28 +31,25 @@ export async function buildNewsMetadata(
 
   const title = getLocalizedString(article.title, locale);
   const description = getLocalizedString(article.excerpt, locale);
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://alomarholding.sa';
-  const canonical = `${baseUrl}/${locale}/news/${article.id}`;
-  return {
+  const availableLocales = (['ar', 'en'] as const).filter((articleLocale) =>
+    article.title[articleLocale].trim(),
+  );
+  const metadata = createLocalizedMetadata({
     title: `${title} | Alomar Holding`,
-    description,
-    alternates: {
-      canonical,
-      languages: {
-        ar: `${baseUrl}/ar/news/${article.id}`,
-        en: `${baseUrl}/en/news/${article.id}`,
-      },
-    },
-    openGraph: {
-      title,
-      description,
-      url: canonical,
-      locale: locale === 'ar' ? 'ar_SA' : 'en_US',
-      type: 'article',
-      ...(article.image ? { images: [article.image] } : {}),
-      ...(article.publishedAt ? { publishedTime: article.publishedAt } : {}),
-    },
-  };
+    description: description || (locale === 'ar'
+      ? `اقرأ تفاصيل خبر ${title} من العمر القابضة.`
+      : `Read the latest details of ${title} from Alomar Holding.`),
+    locale,
+    pathname: `/${locale}/news/${article.id}`,
+    alternateLocales: availableLocales,
+    image: article.image,
+    imageAlt: article.imageAlt,
+    publishedTime: article.publishedAt && !Number.isNaN(Date.parse(article.publishedAt))
+      ? article.publishedAt
+      : undefined,
+    type: 'article',
+  });
+  return metadata;
 }
 
 export async function generateMetadata({ params }: NewsRouteProps): Promise<Metadata> {
@@ -117,8 +115,7 @@ export default async function SingleNewsPage({ params }: NewsRouteProps) {
   const companyDescription = company ? getLocalizedString(company.description, locale) : '';
   const companyLogo = company?.logo || '';
   const companyUrl = company ? getSafeCompanyUrl(company.link) : '';
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://alomarholding.sa';
-  const canonicalUrl = `${baseUrl}/${locale}/news/${article.id}`;
+  const canonicalUrl = getSiteUrl(`/${locale}/news/${article.id}`);
   const shareUrl = encodeURIComponent(canonicalUrl);
   const shareTitle = encodeURIComponent(title);
   const homePath = `/${locale}`;

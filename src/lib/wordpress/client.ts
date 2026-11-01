@@ -1383,9 +1383,6 @@ export const wpClient = {
                 image?: { node?: { sourceUrl?: string | null } | null } | null;
               }> | null;
             }> | null;
-            labelButtonRight?: string | null;
-            labelButtonRightEn?: string | null;
-            linkButtonRight?: { url?: string | null } | null;
           } | null;
         } | null;
       }>(`{
@@ -1406,9 +1403,6 @@ export const wpClient = {
                 image { node { sourceUrl } }
               }
             }
-            labelButtonRight
-            labelButtonRightEn
-            linkButtonRight { url }
           }
         }
       }`);
@@ -1432,8 +1426,8 @@ export const wpClient = {
             },
           })),
         })),
-        cta_label: { ar: fields.labelButtonRight || '', en: fields.labelButtonRightEn || fields.labelButtonRight || '' },
-        cta_url: fields.linkButtonRight?.url || '',
+        cta_label: { ar: '', en: '' },
+        cta_url: '',
       };
     } catch (error) {
       reportCMSIssue('getHeader', error);

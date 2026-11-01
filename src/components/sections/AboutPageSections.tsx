@@ -30,7 +30,16 @@ function localizedHref(url: string, locale: 'ar' | 'en'): string {
   if (/^https?:/i.test(url)) {
     try {
       const parsed = new URL(url);
-      if (!['localhost', '127.0.0.1', 'almoar-wp.test', 'alomarholding.sa', 'www.alomarholding.sa'].includes(parsed.hostname)) return url;
+      const internalHosts = [
+        'localhost',
+        '127.0.0.1',
+        'almoar-wp.test',
+        'alomarholding.sa',
+        'www.alomarholding.sa',
+        'artlanguage.co',
+        'www.artlanguage.co',
+      ];
+      if (!internalHosts.includes(parsed.hostname)) return url;
       path = `${parsed.pathname}${parsed.search}${parsed.hash}`;
     } catch {
       return url;

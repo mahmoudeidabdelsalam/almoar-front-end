@@ -48,9 +48,9 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects }) =>
             <span>{copy?.badge[locale] || (content.previewMode ? t.projects_section.badge : '')}</span>
           </div>
 
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#101E39] tracking-tight">
-            {copy?.title[locale] || (content.previewMode ? t.projects_section.title : '')}
-          </h2>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#101E39] tracking-tight">
+            {copy?.title[locale] || t.projects_section.title}
+          </h1>
 
           <p className="text-base sm:text-lg text-[#5A677B]">
             {copy?.description[locale] || (content.previewMode ? t.projects_section.subtitle : '')}

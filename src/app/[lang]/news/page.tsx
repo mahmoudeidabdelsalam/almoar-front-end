@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { NewsArchivePage } from '@/components/sections/NewsArchivePage';
+import { getPageMetadata } from '@/lib/wordpress/page-metadata';
 import type { Locale } from '@/types';
 
 type Props = {
@@ -23,25 +24,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (lang !== 'ar' && lang !== 'en') return {};
 
   const locale: Locale = lang;
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://alomarholding.sa';
-  return {
-    title: archiveCopy[locale].title,
-    description: archiveCopy[locale].description,
-    alternates: {
-      canonical: `${baseUrl}/${locale}/news`,
-      languages: {
-        ar: `${baseUrl}/ar/news`,
-        en: `${baseUrl}/en/news`,
-      },
-    },
-    openGraph: {
-      title: archiveCopy[locale].title,
-      description: archiveCopy[locale].description,
-      url: `${baseUrl}/${locale}/news`,
-      locale: locale === 'ar' ? 'ar_SA' : 'en_US',
-      type: 'website',
-    },
-  };
+  return getPageMetadata('news', archiveCopy[locale], locale, '/news');
 }
 
 export default async function LocalizedNewsArchive({ params }: Props) {

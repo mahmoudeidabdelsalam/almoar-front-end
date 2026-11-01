@@ -1,33 +1,71 @@
 import { MetadataRoute } from 'next';
 import { wpClient } from '@/lib/wordpress/client';
+import { SITE_URL } from '@/lib/seo';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://alomarholding.sa';
-  const projects = await wpClient.getProjects('all');
-  const news = await wpClient.getNews();
-
+  const [projects, news] = await Promise.all([
+    wpClient.getProjects('all'),
+    wpClient.getNews(),
+  ]);
   const locales = ['ar', 'en'] as const;
-  const staticRoutes = ['', '/about', '/projects', '/news', '/contact-us', '/invest-with-us'];
-  const staticPages = locales.flatMap((locale) => staticRoutes.map((route) => ({
-    url: `${baseUrl}/${locale}${route}`,
-    lastModified: new Date(),
-    changeFrequency: 'weekly' as const,
-    priority: route === '' ? 1.0 : 0.8,
-  })));
+  const staticRoutes = ['', '/about', '/projects', '/news', '/contact-us', '/invest-with-us', '/our-investments'];
+  const urls = new Set<string>();
+  const entries: MetadataRoute.Sitemap = [];
 
-  const projectPages = locales.flatMap((locale) => projects.map((project) => ({
-    url: `${baseUrl}/${locale}/projects/${project.slug}`,
-    lastModified: new Date(),
-    changeFrequency: 'monthly' as const,
-    priority: 0.7,
-  })));
+  for (const route of staticRoutes) {
+    const languages = Object.fromEntries(
+      locales.map((locale) => [locale, `${SITE_URL}/${locale}${route}`]),
+    );
+    for (const locale of locales) {
+      const url = `${SITE_URL}/${locale}${route}`;
+      if (urls.has(url)) continue;
+      urls.add(url);
+      entries.push({
+        url,
+        alternates: { languages },
+        changeFrequency: 'weekly',
+        priority: route === '' ? 1 : 0.8,
+      });
+    }
+  }
 
-  const newsPages = locales.flatMap((locale) => news.map((article) => ({
-    url: `${baseUrl}/${locale}/news/${article.id}`,
-    lastModified: new Date(),
-    changeFrequency: 'monthly' as const,
-    priority: 0.6,
-  })));
+  for (const project of projects) {
+    if (!project.slug) continue;
+    const availableLocales = locales.filter((locale) => project.title[locale].trim());
+    const languages = Object.fromEntries(
+      availableLocales.map((locale) => [locale, `${SITE_URL}/${locale}/projects/${project.slug}`]),
+    );
+    for (const locale of availableLocales) {
+      const url = `${SITE_URL}/${locale}/projects/${project.slug}`;
+      if (urls.has(url)) continue;
+      urls.add(url);
+      entries.push({
+        url,
+        ...(availableLocales.length > 1 ? { alternates: { languages } } : {}),
+        changeFrequency: 'monthly',
+        priority: 0.7,
+      });
+    }
+  }
 
-  return [...staticPages, ...projectPages, ...newsPages];
+  for (const article of news) {
+    if (!Number.isInteger(article.id) || article.id <= 0) continue;
+    const availableLocales = locales.filter((locale) => article.title[locale].trim());
+    const languages = Object.fromEntries(
+      availableLocales.map((locale) => [locale, `${SITE_URL}/${locale}/news/${article.id}`]),
+    );
+    for (const locale of availableLocales) {
+      const url = `${SITE_URL}/${locale}/news/${article.id}`;
+      if (urls.has(url)) continue;
+      urls.add(url);
+      entries.push({
+        url,
+        ...(availableLocales.length > 1 ? { alternates: { languages } } : {}),
+        changeFrequency: 'monthly',
+        priority: 0.6,
+      });
+    }
+  }
+
+  return entries;
 }

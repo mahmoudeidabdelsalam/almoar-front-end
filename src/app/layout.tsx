@@ -4,6 +4,25 @@ import { Cairo, IBM_Plex_Sans_Arabic, Playfair_Display, Inter } from 'next/font/
 import './globals.css';
 import { LanguageProvider } from '@/context/LanguageContext';
 import { wpClient } from '@/lib/wordpress/client';
+import { SITE_NAME, SITE_URL } from '@/lib/seo';
+
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Alomar Holding',
+  alternateName: 'العمر القابضة',
+  url: SITE_URL,
+  logo: `${SITE_URL}/branding/alomar_logo_full.png`,
+};
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: SITE_NAME,
+  url: SITE_URL,
+  inLanguage: ['ar', 'en'],
+  publisher: { '@id': `${SITE_URL}/#organization` },
+};
 
 const cairo = Cairo({
   subsets: ['arabic', 'latin'],
@@ -40,36 +59,10 @@ export const viewport: Viewport = {
   maximumScale: 5,
 };
 
-export async function generateMetadata(): Promise<Metadata> {
-  const siteContent = await wpClient.getSiteContent();
-  const homeBanner = siteContent.pageBanners.home;
-  const siteName = siteContent.settings.site_name;
-  const title = homeBanner?.seoTitle.ar || (siteContent.previewMode
-    ? `${siteName.ar} | ${siteContent.settings.tagline.ar}`
-    : siteName.ar || undefined);
-  const description = homeBanner?.seoDescription.ar || (siteContent.previewMode
-    ? 'شركة العمر القابضة — مجموعة استثمارية وتطويرية سعودية رائدة.'
-    : undefined);
-
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://alomarholding.sa';
-  return {
-  metadataBase: new URL(baseUrl),
-  title,
-  description,
-  alternates: {
-    canonical: `${baseUrl}/ar`,
-    languages: { ar: `${baseUrl}/ar`, en: `${baseUrl}/en`, 'x-default': `${baseUrl}/ar` },
-  },
-  keywords: [
-    'العمر القابضة',
-    'Alomar Holding',
-    'استثمار عقاري',
-    'داما للتطوير العقاري',
-    'مشاريع الرياض',
-    'الخبر',
-    'رؤية السعودية 2030',
-    'استثمار جريء',
-  ],
+export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+  title: 'العمر القابضة | Alomar Holding',
+  description: 'مجموعة العمر القابضة — استثمارات وتطوير مستدام في المملكة العربية السعودية.',
   authors: [{ name: 'Alomar Holding' }],
   creator: 'Alomar Holding',
   publisher: 'Alomar Holding',
@@ -78,33 +71,15 @@ export async function generateMetadata(): Promise<Metadata> {
     apple: '/branding/alomar_logo_mark.png',
   },
   openGraph: {
-    title,
-    description,
-    url: 'https://alomarholding.sa',
-    siteName: 'Alomar Holding',
-    images: [
-      {
-        url: '/images/hero_riyadh.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'العمر القابضة - Alomar Holding',
-      },
-    ],
-    locale: 'ar_SA',
-    type: 'website',
+    siteName: SITE_NAME,
+    images: [{ url: '/images/hero_riyadh.jpg', width: 1200, height: 630, alt: 'العمر القابضة - Alomar Holding' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title,
-    description,
     images: ['/images/hero_riyadh.jpg'],
   },
-  robots: {
-    index: true,
-    follow: true,
-  },
-  };
-}
+  robots: { index: true, follow: true },
+};
 
 export default async function RootLayout({
   children,
@@ -120,6 +95,13 @@ export default async function RootLayout({
   return (
     <html lang="ar" dir="rtl" className={`${ibmPlexArabic.variable} ${cairo.variable} ${playfair.variable} ${inter.variable}`}>
       <body className="antialiased min-h-screen flex flex-col selection:bg-[#B7913D] selection:text-white">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify([
+            { ...organizationSchema, '@id': `${SITE_URL}/#organization` },
+            websiteSchema,
+          ]) }}
+        />
         <Suspense fallback={null}>
           <LanguageProvider content={siteContent} header={header} footer={footer}>
             {children}
