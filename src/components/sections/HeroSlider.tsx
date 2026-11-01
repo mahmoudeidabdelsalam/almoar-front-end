@@ -202,13 +202,7 @@ export const HeroSlider: React.FC<{ slides?: HeroSlide[] }> = ({ slides: cmsSlid
           </button>
         ))}
       </div>
-
-      <div className={`hero-slider__controls hero-slider__scroll absolute bottom-20 ${dir === 'rtl' ? 'start-5 lg:start-[72px] flex-row-reverse' : 'end-5 lg:end-[72px]'} z-20 hidden items-center gap-3 text-xs text-white/75 lg:flex`}>
-        <span>{locale === 'ar' ? 'مرّر للأسفل لاستكشاف المزيد' : 'Scroll to explore more'}</span>
-        <span className="hero-scroll-cue" aria-hidden="true"><i /></span>
-      </div>
-
-      <div className={`hero-slider__controls hero-slider__progress absolute bottom-20 ${dir === 'rtl' ? 'end-5 lg:end-[72px]' : 'start-5 lg:start-[72px]'} z-20 hidden text-white/75 lg:flex`} dir={dir} role="group" aria-label={locale === 'ar' ? `الشريحة ${current + 1} من ${slides.length}` : `Slide ${current + 1} of ${slides.length}`}>
+      <div className={`hero-slider__controls hero-slider__progress absolute bottom-20 ${dir === 'rtl' ? 'start-5 lg:start-[72px]' : 'end-5 lg:end-[72px]'} z-20 hidden text-white/75 lg:flex`} dir={dir} role="group" aria-label={locale === 'ar' ? `الشريحة ${current + 1} من ${slides.length}` : `Slide ${current + 1} of ${slides.length}`}>
         <span className="hero-slider__progress-items" dir="ltr">
           <span className="hero-slider__total">{String(slides.length).padStart(2, '0')}</span>
           <span className="hero-slider__progress-track" aria-hidden="true">
@@ -216,6 +210,10 @@ export const HeroSlider: React.FC<{ slides?: HeroSlide[] }> = ({ slides: cmsSlid
           </span>
           <span className="hero-slider__current">{String(current + 1).padStart(2, '0')}</span>
         </span>
+      </div>
+      <div className={`hero-slider__controls hero-slider__scroll absolute bottom-20 ${dir === 'rtl' ? 'end-5 lg:end-[72px] flex-row-reverse' : 'start-5 lg:start-[72px]'} z-20 hidden items-center gap-3 text-xs text-white/75 lg:flex`}>
+        <span>{locale === 'ar' ? 'مرّر للأسفل لاستكشاف المزيد' : 'Scroll to explore more'}</span>
+        <span className="hero-scroll-cue" aria-hidden="true"><i /></span>
       </div>
     </section>
   );

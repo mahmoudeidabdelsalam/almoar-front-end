@@ -154,7 +154,7 @@ export const Header: React.FC = () => {
         onMouseMove={(event) => { if (event.clientY < 80) setHidden(false); }}
         className={`header-safe-area fixed inset-x-0 top-0 z-[59] bg-white text-navy-900 border-b border-navy-900/8 ${ready ? 'transition-transform duration-300 ease-[cubic-bezier(.4,0,.2,1)]' : 'transition-none'} ${hidden ? '-translate-y-[calc(100%+40px)]' : 'translate-y-0'}`}
       >
-        <div className="mx-auto flex h-[72px] max-w-[1440px] items-center justify-between px-5 sm:px-8 lg:px-12">
+        <div className="mx-auto flex h-[72px] max-w-[1440px] items-center justify-between px-5 sm:px-8 lg:px-12 relative z-[2] bg-white">
           <button
             type="button"
             onClick={() => { setSearchOpen(false); setMenuOpen((open) => !open); setSubmenu(null); setActiveImage(menu[0]?.image || ''); }}
@@ -169,9 +169,9 @@ export const Header: React.FC = () => {
               <i />
             </span>
           </button>
-          <Link href={prefix} aria-label="Alomar Holding" onClick={closeOverlays} className="absolute start-1/2 top-1/2 -translate-x-1/2 rtl:translate-x-1/2 -translate-y-1/2">
+          <Link href={prefix} aria-label="Alomar Holding" onClick={closeOverlays} className="absolute start-1/2 top-1/2 -translate-x-1/2 rtl:translate-x-1/2 -translate-y-1/2 mt-1">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={logo} alt={locale === 'ar' ? 'شعار العمر القابضة' : 'Alomar Holding logo'} className="max-h-[58px] w-auto object-contain lg:max-h-[68px]" />
+            <img src={logo} alt={locale === 'ar' ? 'شعار العمر القابضة' : 'Alomar Holding logo'} className="min-h-[90px] w-auto object-contain lg:min-h-[80px]" />
           </Link>
           <div className={`flex items-center gap-1 sm:gap-2 ${locale === 'ar' ? 'order-2' : 'order-1'}`}>
             <button

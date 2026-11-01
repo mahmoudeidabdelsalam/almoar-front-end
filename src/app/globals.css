@@ -333,7 +333,7 @@ img, video { max-inline-size: 100%; }
   .circle-btn:hover { border-color: var(--color-gold-500); background: var(--color-gold-500); color: var(--color-navy-900); }
   .circle-btn:disabled { opacity: 0.35; pointer-events: none; }
   .circle-btn--light { color: white; }
-  .circle-btn--gold { border-color: var(--color-gold-200); background: var(--color-gold-200); color: white; }
+  .circle-btn--gold { border-color: var(--color-gold-200); background: var(--color-gold-500); color: var(--color-navy-900); }
   .circle-btn--large { width: 84px; height: 84px; }
 
   .hero-slide-control {
