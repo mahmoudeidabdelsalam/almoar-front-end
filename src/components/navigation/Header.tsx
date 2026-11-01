@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Menu, TextAlignStart, Search, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import type { HeaderMenuItem } from '@/types';
+import { safeGetItem } from '@/lib/safe-storage';
 
 const FALLBACK_LOGO = '/branding/alomar_logo_transparent.png';
 
@@ -35,6 +36,7 @@ function filterUnavailableRoutes(items: HeaderMenuItem[]): HeaderMenuItem[] {
 export const Header: React.FC = () => {
   const { locale, toggleLocale, header } = useLanguage();
   const [hidden, setHidden] = useState(false);
+  const [ready, setReady] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [activeImage, setActiveImage] = useState('');
@@ -43,6 +45,13 @@ export const Header: React.FC = () => {
   const [searchResults, setSearchResults] = useState<Array<{ id: number; title: string; url: string }>>([]);
   const [searching, setSearching] = useState(false);
   const lastScroll = useRef(0);
+
+  useEffect(() => {
+    const markReady = () => setReady(true);
+    if (safeGetItem('session', 'alomar_splash_seen')) markReady();
+    window.addEventListener('alomar-splash-change', markReady);
+    return () => window.removeEventListener('alomar-splash-change', markReady);
+  }, []);
 
   const prefix = `/${locale}`;
   const fallbackMenu: HeaderMenuItem[] = [
@@ -55,14 +64,28 @@ export const Header: React.FC = () => {
 
   useEffect(() => {
     const onScroll = () => {
+      if (!ready) return;
       const current = window.scrollY;
       if (current > lastScroll.current && current > 100 && !menuOpen && !searchOpen) setHidden(true);
       else if (current < lastScroll.current || current < 40) setHidden(false);
       lastScroll.current = current;
     };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, [menuOpen, searchOpen]);
+    const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const updateScrollListener = () => {
+      window.removeEventListener('scroll', onScroll);
+      if (motionPreference.matches) {
+        setHidden(false);
+        return;
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+    };
+    updateScrollListener();
+    motionPreference.addEventListener('change', updateScrollListener);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      motionPreference.removeEventListener('change', updateScrollListener);
+    };
+  }, [menuOpen, ready, searchOpen]);
 
   useEffect(() => {
     document.body.style.overflow = menuOpen || searchOpen ? 'hidden' : '';
@@ -128,7 +151,7 @@ export const Header: React.FC = () => {
     <>
       <header
         onMouseMove={(event) => { if (event.clientY < 80) setHidden(false); }}
-        className={`fixed inset-x-0 top-0 z-[59] bg-white text-[#101E39] border-b border-[#101E39]/8 transition-transform duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] ${hidden ? '-translate-y-full' : 'translate-y-0'}`}
+        className={`fixed inset-x-0 top-0 z-[59] bg-white text-[#101E39] border-b border-[#101E39]/8 ${ready ? 'transition-transform duration-300 ease-[cubic-bezier(.4,0,.2,1)]' : 'transition-none'} ${hidden ? '-translate-y-[calc(100%+40px)]' : 'translate-y-0'}`}
       >
         <div className="mx-auto flex h-[72px] max-w-[1440px] items-center justify-between px-5 sm:px-8 lg:px-12">
           <button
