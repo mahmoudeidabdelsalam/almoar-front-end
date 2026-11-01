@@ -68,6 +68,7 @@ export const SplashIntro: React.FC = () => {
             src="/branding/alomar_logo_mark.png"
             alt="Alomar Holding Emblem"
             fill
+            sizes="144px"
             className="object-contain"
             priority
           />
@@ -93,7 +94,7 @@ export const SplashIntro: React.FC = () => {
       </div>
 
       {/* Skip Button (تخطي) from Prototype */}
-      <div className="absolute inset-x-0 bottom-[calc(2.5rem+env(safe-area-inset-bottom))] flex justify-center">
+      <div className="absolute inset-x-0 bottom-[calc(28px+env(safe-area-inset-bottom))] flex justify-center">
         <button
           type="button"
           onClick={handleDismiss}
