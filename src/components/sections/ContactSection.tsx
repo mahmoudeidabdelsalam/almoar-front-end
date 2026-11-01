@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { ArrowLeft, ArrowRight, Globe2, Mail, MapPin, Phone } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import { GravityForm } from '@/components/sections/GravityForm';
+import { Notch } from '@/components/ui/Notch';
 import type { ContactPageContent, GravityFormDefinition, SiteContent } from '@/types';
 
 interface ContactSectionProps {
@@ -59,22 +60,7 @@ export function ContactSection({ pageContent, form }: ContactSectionProps) {
             <h1 className="text-[84px] text-[#F8F7F2] font-normal tracking-tight sm:text-5xl lg:text-[56px]">{title}</h1>
           </div>
         </div>
-        <svg width="420" height="50" viewBox="0 0 420 50" fill="none" xmlns="http://www.w3.org/2000/svg" className="pointer-events-none absolute left-1/2 bottom-0 rotate-180 z-[1] h-[30px] w-[400px] -translate-x-1/2 -mb-[4px]">
-          <g filter="url(#filter0_d_1_3221)">
-          <path d="M10 4C100 4 120 34 210 34C300 34 320 4 410 4H10Z" fill="white"/>
-          </g>
-          <defs>
-          <filter id="filter0_d_1_3221" x="0" y="0" width="420" height="50" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-          <feFlood floodOpacity="0" result="BackgroundImageFix"/>
-          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
-          <feOffset dy="6"/>
-          <feGaussianBlur stdDeviation="5"/>
-          <feColorMatrix type="matrix" values="0 0 0 0 0.06 0 0 0 0 0.12 0 0 0 0 0.22 0 0 0 0.08 0"/>
-          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_1_3221"/>
-          <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_1_3221" result="shape"/>
-          </filter>
-          </defs>
-        </svg>
+        <Notch fill="white" className="absolute start-1/2 bottom-0 z-[1] mb-[-4px] h-[30px] w-[400px] -translate-x-1/2 rotate-180" />
       </section>
 
       <section id="contact" className="bg-[#F8F7F2] px-5 pb-14 pt-16 sm:px-8 lg:px-14 lg:pb-20 lg:pt-20">

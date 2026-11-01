@@ -6,6 +6,7 @@ import { Search, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import type { HeaderMenuItem } from '@/types';
 import { safeGetItem } from '@/lib/safe-storage';
+import { Notch } from '@/components/ui/Notch';
 
 const FALLBACK_LOGO = '/branding/alomar_logo_transparent.png';
 
@@ -192,22 +193,7 @@ export const Header: React.FC = () => {
             </button>
           </div>
         </div>
-        <svg width="420" height="50" viewBox="0 0 420 50" fill="none" xmlns="http://www.w3.org/2000/svg" className="pointer-events-none absolute left-1/2 top-full z-[1] h-[30px] w-[400px] -translate-x-1/2 -mt-[4px]">
-          <g filter="url(#filter0_d_1_3221)">
-          <path d="M10 4C100 4 120 34 210 34C300 34 320 4 410 4H10Z" fill="white"/>
-          </g>
-          <defs>
-          <filter id="filter0_d_1_3221" x="0" y="0" width="420" height="50" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-          <feFlood floodOpacity="0" result="BackgroundImageFix"/>
-          <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
-          <feOffset dy="6"/>
-          <feGaussianBlur stdDeviation="5"/>
-          <feColorMatrix type="matrix" values="0 0 0 0 0.06 0 0 0 0 0.12 0 0 0 0 0.22 0 0 0 0.08 0"/>
-          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_1_3221"/>
-          <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_1_3221" result="shape"/>
-          </filter>
-          </defs>
-        </svg>
+        <Notch fill="white" className="absolute start-1/2 top-full z-[1] -mt-[4px] h-[30px] w-[400px] -translate-x-1/2" />
       </header>
 
       <div

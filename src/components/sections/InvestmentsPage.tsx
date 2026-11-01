@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import type { InvestmentsPageContent, Locale, Project } from '@/types';
 import { InvestmentPortfolio } from './InvestmentPortfolio';
+import { Notch } from '@/components/ui/Notch';
 
 interface InvestmentsPageProps {
   locale: Locale;
@@ -70,17 +71,7 @@ export function InvestmentsPage({ locale, content, projects }: InvestmentsPagePr
             </p>
           )}
         </div>
-        <svg
-          width="420"
-          height="50"
-          viewBox="0 0 420 50"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-          className="pointer-events-none absolute bottom-0 left-1/2 z-[1] mb-[-4px] h-[30px] w-[400px] -translate-x-1/2 rotate-180"
-        >
-          <path d="M10 4C100 4 120 34 210 34C300 34 320 4 410 4H10Z" fill="#F8F7F2" />
-        </svg>
+        <Notch fill="#F8F7F2" className="absolute start-1/2 bottom-0 z-[1] mb-[-4px] h-[30px] w-[400px] -translate-x-1/2 rotate-180" />
       </section>
 
       <section className="px-5 py-14 sm:px-8 lg:px-14 lg:py-20 bg-[#F8F7F2]">

@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft, ArrowRight, Globe2, Mail, Phone } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
+import { Notch } from '@/components/ui/Notch';
 import { GravityForm } from '@/components/sections/GravityForm';
 import type { ContactPageContent, GravityFormDefinition, InvestWithUsPageContent } from '@/types';
 
@@ -69,22 +70,7 @@ export function InvestWithUsSection({ form, pageContent, contactContent }: Inves
             </div>
           </div>
         </div>
-        <svg width="420" height="50" viewBox="0 0 420 50" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" className="pointer-events-none absolute bottom-0 left-1/2 z-[1] mb-[-4px] h-[30px] w-[400px] -translate-x-1/2 rotate-180">
-          <g filter="url(#invest-notch-shadow)">
-            <path d="M10 4C100 4 120 34 210 34C300 34 320 4 410 4H10Z" fill="#F8F7F2" />
-          </g>
-          <defs>
-            <filter id="invest-notch-shadow" x="0" y="0" width="420" height="50" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-              <feFlood floodOpacity="0" result="BackgroundImageFix" />
-              <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
-              <feOffset dy="6" />
-              <feGaussianBlur stdDeviation="5" />
-              <feColorMatrix type="matrix" values="0 0 0 0 0.06 0 0 0 0 0.12 0 0 0 0 0.22 0 0 0 0.08 0" />
-              <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow" />
-              <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape" />
-            </filter>
-          </defs>
-        </svg>
+        <Notch fill="#F8F7F2" className="absolute start-1/2 bottom-0 z-[1] mb-[-4px] h-[30px] w-[400px] -translate-x-1/2 rotate-180" />
       </section>
 
       {hasOpportunityContent && (
