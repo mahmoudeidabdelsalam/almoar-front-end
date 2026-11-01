@@ -132,14 +132,14 @@ export function InvestmentsPage({ locale, content, projects }: InvestmentsPagePr
                 <p className="mt-4 max-w-xl text-sm leading-7 text-white/75 mb-5">{localized(content?.ctaDescription, locale)}</p>
               )}
              {isExternalCta ? (
-              <a href={ctaUrl} className="inline-flex shrink-0 items-center gap-3 bg-gold-500 px-6 py-3 text-sm text-navy-900 transition-colors hover:bg-gold-500/80 hover:text-[#fff]">
+              <a href={ctaUrl} className="btn btn--gold shrink-0">
                 {ctaLabel}
-                {isArabic ? <ArrowLeft aria-hidden="true" size={16} /> : <ArrowRight aria-hidden="true" size={16} />}
+                {isArabic ? <ArrowLeft aria-hidden="true" /> : <ArrowRight aria-hidden="true" />}
               </a>
             ) : (
-              <Link href={ctaUrl} className="inline-flex shrink-0 items-center gap-3 rounded-full border border-gold-200 px-6 py-3 text-sm text-white transition-colors hover:bg-gold-200 hover:text-navy-900">
+              <Link href={ctaUrl} className="btn btn--line shrink-0">
                 {ctaLabel}
-                {isArabic ? <ArrowLeft aria-hidden="true" size={16} /> : <ArrowRight aria-hidden="true" size={16} />}
+                {isArabic ? <ArrowLeft aria-hidden="true" /> : <ArrowRight aria-hidden="true" />}
               </Link>
             )}
           </div>

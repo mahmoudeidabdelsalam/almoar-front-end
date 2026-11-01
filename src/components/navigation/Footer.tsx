@@ -90,11 +90,11 @@ export const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="relative bg-navy-900 text-white">
+    <footer className="pattern relative bg-navy-900 text-white">
       <button
         type="button"
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        className="absolute left-12 top-[-42px] hidden h-[84px] w-[84px] flex-col items-center cursor-pointer justify-center rounded-full bg-gold-200 text-white font-bold shadow-lg transition-colors hover:bg-gold-500 lg:flex"
+        className="circle-btn circle-btn--gold circle-btn--large absolute start-12 top-[-42px] hidden flex-col cursor-pointer font-bold shadow-lg lg:flex"
         aria-label={locale === 'ar' ? 'العودة إلى الأعلى' : 'Back to top'}
       >
         <ArrowUp className="h-4 w-4 rotate-45" />

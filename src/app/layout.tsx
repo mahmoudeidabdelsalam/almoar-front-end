@@ -6,6 +6,7 @@ import './globals.css';
 import { LanguageProvider } from '@/context/LanguageContext';
 import { wpClient } from '@/lib/wordpress/client';
 import { SITE_NAME, SITE_URL } from '@/lib/seo';
+import { ScrollRevealObserver } from '@/components/ui/ScrollRevealObserver';
 
 const organizationSchema = {
   '@context': 'https://schema.org',
@@ -108,6 +109,7 @@ export default async function RootLayout({
         />
         <Suspense fallback={null}>
           <LanguageProvider content={siteContent} header={header} footer={footer}>
+            <ScrollRevealObserver />
             {children}
           </LanguageProvider>
         </Suspense>

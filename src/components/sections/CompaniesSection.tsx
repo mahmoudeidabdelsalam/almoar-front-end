@@ -43,15 +43,19 @@ export const CompaniesSection: React.FC<CompaniesProps> = ({ projects }) => {
 
     const previousIndex = activeProjectRef.current;
     activeProjectRef.current = nextIndex;
-    setOutgoingProjectIndex(previousIndex);
+    setOutgoingProjectIndex(reducedMotion ? null : previousIndex);
     setActive(nextIndex);
 
     if (outgoingTimerRef.current !== null) window.clearTimeout(outgoingTimerRef.current);
+    if (reducedMotion) {
+      outgoingTimerRef.current = null;
+      return;
+    }
     outgoingTimerRef.current = window.setTimeout(() => {
       setOutgoingProjectIndex(null);
       outgoingTimerRef.current = null;
     }, 700);
-  }, []);
+  }, [reducedMotion]);
 
   useEffect(() => () => {
     if (outgoingTimerRef.current !== null) window.clearTimeout(outgoingTimerRef.current);
@@ -245,7 +249,7 @@ export const CompaniesSection: React.FC<CompaniesProps> = ({ projects }) => {
                 type="button"
                 onClick={() => goToSlide(Math.min(activeIndex + 1, localizedProjects.length - 1))}
                 disabled={activeIndex === localizedProjects.length - 1}
-                className="flex h-11 w-11 items-center justify-center rounded-full border border-white/50 transition-colors hover:bg-white hover:text-navy-900 disabled:cursor-not-allowed disabled:opacity-40"
+                className="circle-btn circle-btn--light"
                 aria-label={locale === 'ar' ? 'المشروع التالي' : 'Next project'}
               >
                 <DirectionalArrow direction="next" dir={dir} className="h-4 w-4" />
@@ -254,7 +258,7 @@ export const CompaniesSection: React.FC<CompaniesProps> = ({ projects }) => {
                 type="button"
                 onClick={() => goToSlide(Math.max(activeIndex - 1, 0))}
                 disabled={activeIndex === 0}
-                className="flex h-11 w-11 items-center justify-center rounded-full border border-white/50 transition-colors hover:bg-white hover:text-navy-900 disabled:cursor-not-allowed disabled:opacity-40"
+                className="circle-btn circle-btn--light"
                 aria-label={locale === 'ar' ? 'المشروع السابق' : 'Previous project'}
               >
                 <DirectionalArrow direction="previous" dir={dir} className="h-4 w-4" />

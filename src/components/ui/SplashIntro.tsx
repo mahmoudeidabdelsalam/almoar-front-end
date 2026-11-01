@@ -32,17 +32,19 @@ export const SplashIntro: React.FC = () => {
   const handleDismiss = React.useCallback(() => {
     if (dismissTimer.current !== null) return;
     setFading(true);
+    const delay = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 900;
     dismissTimer.current = window.setTimeout(() => {
       safeSetItem('session', 'alomar_splash_seen', 'true');
       window.dispatchEvent(new Event('alomar-splash-change'));
-    }, 900);
+    }, delay);
   }, []);
 
   useEffect(() => {
     if (!visible) return;
+    const delay = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 3000;
     const timer = setTimeout(() => {
       handleDismiss();
-    }, 3000);
+    }, delay);
     return () => clearTimeout(timer);
   }, [handleDismiss, visible]);
 

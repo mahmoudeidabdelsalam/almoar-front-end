@@ -152,7 +152,7 @@ export const Header: React.FC = () => {
     <>
       <header
         onMouseMove={(event) => { if (event.clientY < 80) setHidden(false); }}
-        className={`fixed inset-x-0 top-0 z-[59] bg-white text-navy-900 border-b border-navy-900/8 ${ready ? 'transition-transform duration-300 ease-[cubic-bezier(.4,0,.2,1)]' : 'transition-none'} ${hidden ? '-translate-y-[calc(100%+40px)]' : 'translate-y-0'}`}
+        className={`header-safe-area fixed inset-x-0 top-0 z-[59] bg-white text-navy-900 border-b border-navy-900/8 ${ready ? 'transition-transform duration-300 ease-[cubic-bezier(.4,0,.2,1)]' : 'transition-none'} ${hidden ? '-translate-y-[calc(100%+40px)]' : 'translate-y-0'}`}
       >
         <div className="mx-auto flex h-[72px] max-w-[1440px] items-center justify-between px-5 sm:px-8 lg:px-12">
           <button
@@ -206,7 +206,7 @@ export const Header: React.FC = () => {
       >
         <div className="site-menu__scrim absolute inset-0" />
         <div className="relative h-full">
-          <div className="site-menu__panel pattern mx-auto grid h-full max-w-[1440px] grid-cols-1 rounded-lg bg-navy-900 bg-[url('/bg-menu.png')] bg-no-repeat bg-right-bottom px-5 py-5 lg:grid-cols-[60%_40%]">
+          <div className="site-menu__panel pattern mx-auto grid h-full max-w-[1440px] grid-cols-1 rounded-lg bg-navy-900 px-5 py-5 lg:grid-cols-[60%_40%]">
             <nav className="site-menu__body h-full px-0 lg:px-[7%]" aria-label={locale === 'ar' ? 'القائمة الرئيسية' : 'Main menu'}>
               <div className="site-menu__top">
                 <div className="site-menu__crumb">

@@ -255,7 +255,7 @@ export function NewsArchiveSection({ articles, locale }: NewsArchiveSectionProps
                     disabled={currentPage === 1}
                     onClick={() => setCurrentPage((page) => page - 1)}
                     aria-label={locale === 'ar' ? 'الصفحة السابقة' : 'Previous page'}
-                    className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-navy-900/15 bg-white text-navy-900 transition-colors hover:border-gold-500 disabled:cursor-not-allowed disabled:opacity-40"
+                    className="circle-btn disabled:cursor-not-allowed"
                   >
                     {locale === 'ar' ? <ArrowRight className="h-4 w-4" /> : <ArrowLeft className="h-4 w-4" />}
                   </button>
@@ -275,7 +275,7 @@ export function NewsArchiveSection({ articles, locale }: NewsArchiveSectionProps
                     disabled={currentPage === pageCount}
                     onClick={() => setCurrentPage((page) => page + 1)}
                     aria-label={locale === 'ar' ? 'الصفحة التالية' : 'Next page'}
-                    className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-navy-900/15 bg-white text-navy-900 transition-colors hover:border-gold-500 disabled:cursor-not-allowed disabled:opacity-40"
+                    className="circle-btn disabled:cursor-not-allowed"
                   >
                     {locale === 'ar' ? <ArrowLeft className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
                   </button>

@@ -107,7 +107,7 @@ export const AboutOverview: React.FC = () => {
   const overviewImageSizes = '(max-width: 767px) min(470px, calc(100vw - 2.5rem)), (max-width: 1023px) calc((100vw - 6rem) / 2), 470px';
 
   return (
-    <section className="bg-ivory-50 py-14 sm:py-20 lg:py-24" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+    <section data-scroll-reveal className="bg-ivory-50 py-14 sm:py-20 lg:py-24" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
       <div className="mx-auto flex max-w-[1440px] flex-col justify-between gap-8 px-5 sm:px-8 md:flex-row md:items-center lg:px-0">
         <div className="order-2 w-full min-w-0 md:order-1 md:flex-1" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
           {firstDescription && <p className="mt-6 text-navy-900 text-[64px]">{firstDescription}</p>}
@@ -132,10 +132,10 @@ export const AboutStatistics: React.FC = () => {
   if (!statistics.length) return null;
 
   return (
-    <section className="mt-5" aria-label={locale === 'ar' ? 'إحصائيات العمر القابضة' : 'Alomar Holding statistics'}>
+    <section data-scroll-reveal className="mt-5" aria-label={locale === 'ar' ? 'إحصائيات العمر القابضة' : 'Alomar Holding statistics'}>
       <dl className="mx-auto grid max-w-full grid-cols-2 divide-x divide-navy-900/10 rtl:divide-x-reverse sm:grid-cols-4 items-center lg:max-w-[1440px]">
         {statistics.map((statistic, index) => (
-          <div key={`${statistic.value}-${index}`} className="group px-4 py-6 border-b-1 lg:border-b-0 lg:min-h-[240px] flex flex-col justify-center border-r border-r-navy-900/10 border-t-[3px] border-t-transparent hover:border-t-gold-500 hover:bg-navy-900 hover:text-gold-500 sm:px-6 sm:py-8">
+          <div key={`${statistic.value}-${index}`} data-reveal-item className="group px-4 py-6 border-b-1 lg:border-b-0 lg:min-h-[240px] flex flex-col justify-center border-r border-r-navy-900/10 border-t-[3px] border-t-transparent hover:border-t-gold-500 hover:bg-navy-900 hover:text-gold-500 sm:px-6 sm:py-8">
             <dt className="text-xs text-[#8A8E93] group-hover:text-[#fff] sm:text-sm">{localized(statistic.label, locale)}</dt>
             <dd className="mt-5 text-[44px] lg:text-[72px] font-medium tabular-nums text-navy-900 group-hover:text-gold-500 sm:text-4xl lg:text-[46px]">{statistic.value}</dd>
           </div>
@@ -161,7 +161,7 @@ export const AboutStrategy: React.FC = () => {
   const ArrowIcon = locale === 'ar' ? ArrowLeft : ArrowRight;
 
   return (
-    <section className="bg-navy-900 py-16 text-white sm:py-20 lg:py-24" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+    <section data-scroll-reveal className="pattern bg-navy-900 py-16 text-white sm:py-20 lg:py-24" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
       <div className="mx-auto max-w-[1216px] px-5 sm:px-8 lg:px-0">
         <div className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
           <div className="max-w-3xl">
@@ -170,8 +170,8 @@ export const AboutStrategy: React.FC = () => {
             {description && <p className="mt-4 max-w-2xl text-sm leading-7 text-white/65">{description}</p>}
           </div>
           {buttonLabel && buttonHref && (
-            <ContentLink href={buttonHref} className="inline-flex shrink-0 items-center gap-3 bg-gold-500 px-5 py-3 text-xs font-semibold text-navy-900 transition-colors hover:bg-[#D4AF57]">
-              <span>{buttonLabel}</span><ArrowIcon className="h-4 w-4" aria-hidden="true" />
+            <ContentLink href={buttonHref} className="btn btn--gold shrink-0">
+              <span>{buttonLabel}</span><ArrowIcon aria-hidden="true" />
             </ContentLink>
           )}
         </div>
@@ -217,14 +217,14 @@ export const AboutPortfolio: React.FC = () => {
   const ArrowIcon = locale === 'ar' ? ArrowLeft : ArrowRight;
 
   return (
-    <section className="bg-ivory-50 py-16 sm:py-20 lg:py-24" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+    <section data-scroll-reveal className="bg-ivory-50 py-16 sm:py-20 lg:py-24" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
       <div className="mx-auto max-w-[1216px] px-5 sm:px-8 lg:px-0">
         <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
           <div>
             {localized(portfolio.eyebrow, locale) && <p className="mb-3 text-xs text-gold-500">{localized(portfolio.eyebrow, locale)}</p>}
             {localized(portfolio.title, locale) && <h2 className="max-w-xl text-3xl font-semibold leading-tight text-navy-900 sm:text-4xl">{localized(portfolio.title, locale)}</h2>}
           </div>
-          {buttonLabel && buttonHref && <ContentLink href={buttonHref} className="inline-flex w-fit items-center gap-3 bg-navy-900 px-5 py-3 text-xs font-semibold text-white transition-colors hover:bg-[#23395C]"><span>{buttonLabel}</span><ArrowIcon className="h-4 w-4" aria-hidden="true" /></ContentLink>}
+          {buttonLabel && buttonHref && <ContentLink href={buttonHref} className="btn btn--navy"><span>{buttonLabel}</span><ArrowIcon aria-hidden="true" /></ContentLink>}
         </div>
 
         {items.length > 0 && (
@@ -235,7 +235,7 @@ export const AboutPortfolio: React.FC = () => {
                 const description = localized(item.description, locale);
                 const isOpen = openIndex === index;
                 return (
-                  <div key={`${title}-${index}`} className="border-b border-navy-900/10">
+                  <div key={`${title}-${index}`} data-reveal-item className="border-b border-navy-900/10">
                     <button
                       type="button"
                       aria-expanded={isOpen}
@@ -281,6 +281,7 @@ export const AboutCompanies: React.FC = () => {
 
   return (
     <section
+      data-scroll-reveal
       className="relative overflow-hidden bg-[#1B382D] py-16 text-white sm:py-20 lg:py-24"
       style={{ backgroundImage: "linear-gradient(rgba(27,56,45,.92), rgba(27,56,45,.92)), url('/bg-menu.png')", backgroundPosition: 'center', backgroundSize: 'auto, 420px' }}
       dir={locale === 'ar' ? 'rtl' : 'ltr'}
@@ -294,7 +295,7 @@ export const AboutCompanies: React.FC = () => {
           {items.map((company, index) => {
             const name = localized(company.name, locale);
             const card = (
-              <article className={`group relative flex min-h-[220px] flex-col justify-between overflow-hidden rounded-xl p-5 transition-transform hover:-translate-y-1 sm:min-h-[290px] ${company.image ? 'bg-white text-navy-900 lg:col-span-1' : 'border border-white/10 bg-[#10203B]/90 text-white'}`}>
+              <article data-reveal-item className={`group relative flex min-h-[220px] flex-col justify-between overflow-hidden rounded-xl p-5 transition-transform hover:-translate-y-1 sm:min-h-[290px] ${company.image ? 'bg-white text-navy-900 lg:col-span-1' : 'border border-white/10 bg-[#10203B]/90 text-white'}`}>
                 {company.image && <Image src={company.image} alt="" fill sizes="(max-width: 768px) 50vw, 25vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />}
                 {company.image && <div className="absolute inset-0 bg-gradient-to-t from-navy-900/85 via-navy-900/10 to-transparent" />}
                 <div className="relative z-10 flex h-full flex-col justify-between gap-5">
@@ -325,7 +326,7 @@ export const AboutResponsibility: React.FC = () => {
   const current = items[activeIndex % items.length];
 
   return (
-    <section className="bg-ivory-50 py-16 sm:py-20 lg:py-24" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+    <section data-scroll-reveal className="bg-ivory-50 py-16 sm:py-20 lg:py-24" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
       <div className="mx-auto max-w-[1216px] px-5 sm:px-8 lg:px-0">
         <div className="mb-8 flex items-center justify-between gap-6">
           <div>
@@ -367,7 +368,7 @@ export const AboutBoard: React.FC = () => {
   if (!members.length) return null;
 
   return (
-    <section className="bg-ivory-50 py-14 sm:py-20 lg:py-24" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+    <section data-scroll-reveal className="bg-ivory-50 py-14 sm:py-20 lg:py-24" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
       <div className="mx-auto max-w-[1216px] px-5 sm:px-8 lg:px-0">
         <div className="mb-10 text-center">
           {localized(board.eyebrow, locale) && <p className="mb-3 text-xs text-gold-500">{localized(board.eyebrow, locale)}</p>}
@@ -378,7 +379,7 @@ export const AboutBoard: React.FC = () => {
             const name = localized(member.name, locale);
             const role = localized(member.role, locale);
             return (
-              <article key={`${name}-${index}`} className="text-center">
+              <article key={`${name}-${index}`} data-reveal-item className="text-center">
                 <div className="relative mb-4 aspect-[.9] overflow-hidden rounded-t-2xl bg-[#EFEEE9]">
                   {member.image ? (
                     <Image src={member.image} alt={name || (locale === 'ar' ? 'عضو مجلس الإدارة' : 'Board member')} fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover object-top" />

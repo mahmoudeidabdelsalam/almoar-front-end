@@ -104,15 +104,13 @@ export const HeroSlider: React.FC<{ slides?: HeroSlide[] }> = ({ slides: cmsSlid
         </div>
       ))}
 
-      <div className="absolute left-5 top-1/2 z-20 hidden -translate-y-1/2 flex-col gap-3 lg:left-[72px] lg:flex">
+      <div className="absolute start-5 top-1/2 z-20 hidden -translate-y-1/2 flex-col gap-3 lg:start-[72px] lg:flex">
         {slides.map((slide, index) => (
           <button
             key={slide.id}
             type="button"
             onClick={() => setCurrent(index)}
-            className={`flex h-10 w-10 items-center justify-center rounded-full border text-xs transition-colors ${
-              index === current ? 'border-white bg-gold-500 text-white' : 'border-white/35 text-white/70 hover:border-white'
-            }`}
+            className="hero-slide-control"
             aria-label={`${locale === 'ar' ? 'عرض الشريحة' : 'Show slide'} ${index + 1}`}
             aria-current={index === current ? 'true' : undefined}
           >
@@ -122,25 +120,25 @@ export const HeroSlider: React.FC<{ slides?: HeroSlide[] }> = ({ slides: cmsSlid
       </div>
 
       <div className="relative z-10 mx-auto flex h-full max-w-[1216px] items-center px-5 sm:px-8 lg:px-0">
-        <div className={`w-full max-w-[680px] space-y-6 ${dir === 'rtl' ? 'mr-auto text-right' : 'ml-auto text-left'}`}>
+        <div key={active.id} className="hero-copy-enter ms-auto w-full max-w-[680px] space-y-6 text-start">
           <p className="text-sm font-bold text-gold-500">{locale === 'ar' ? active.badge_ar : active.badge_en}</p>
           <h1 className="text-5xl font-bold leading-[1.05] sm:text-6xl lg:text-7xl">
             {locale === 'ar' ? active.title_ar : active.title_en}
           </h1>
-          <p className="max-w-[520px] text-base leading-8 text-white/85 sm:text-lg lg:ml-auto">
+          <p className="ms-auto max-w-[520px] text-base leading-8 text-white/85 sm:text-lg">
             {locale === 'ar' ? active.desc_ar : active.desc_en}
           </p>
           <Link
             href={localizedLink(active.primary_link, locale)}
-            className="inline-flex h-[54px] items-center gap-3 rounded-sm bg-gold-200 px-7 text-sm font-bold text-navy-900 transition-colors hover:bg-white"
+            className="btn btn--gold"
           >
             <span>{locale === 'ar' ? 'اكتشف' : 'Discover'}</span>
-            <ArrowIcon className="h-4 w-4" />
+            <ArrowIcon />
           </Link>
         </div>
       </div>
 
-      <div className="absolute bottom-20 left-5 z-20 hidden items-center gap-3 text-xs text-white/75 lg:left-[72px] lg:flex">
+      <div className="absolute bottom-20 start-5 z-20 hidden items-center gap-3 text-xs text-white/75 lg:start-[72px] lg:flex">
         <span>{locale === 'ar' ? 'مرّر للأسفل لاستكشاف المزيد' : 'Scroll to explore more'}</span>
         <span className="h-8 w-5 rounded-full border border-white/50" />
       </div>
