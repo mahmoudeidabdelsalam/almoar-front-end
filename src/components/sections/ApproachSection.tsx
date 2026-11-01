@@ -25,7 +25,7 @@ export const ApproachSection: React.FC = () => {
             </p>
           </div>
           <Link
-            href="/ar/about"
+            href={`/${locale === 'ar' ? 'ar' : 'en'}/about`}
             className="inline-flex h-[54px] w-fit items-center justify-center gap-3 rounded-sm bg-[#101E39] px-7 text-sm font-bold text-white transition-colors hover:bg-[#B7913D]"
           >
             <span>{locale === 'ar' ? 'من نحن' : 'About Us'}</span>
