@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { Menu, TextAlignStart, Search, ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import type { HeaderMenuItem } from '@/types';
 import { safeGetItem } from '@/lib/safe-storage';
@@ -162,8 +162,10 @@ export const Header: React.FC = () => {
             aria-expanded={menuOpen}
           >
             <span className="hidden text-sm font-bold sm:inline">{locale === 'ar' ? 'القائمة' : 'Menu'}</span>
-            <span className="relative flex h-10 w-10 items-center justify-center transition-colors">
-              {menuOpen ? <Menu className="h-5 w-5" /> : <TextAlignStart className="h-5 w-5" />}
+            <span className={`menu-btn__icon ${menuOpen ? 'is-open' : ''}`} aria-hidden="true">
+              <i />
+              <i />
+              <i />
             </span>
           </button>
           <Link href={prefix} aria-label="Alomar Holding" onClick={closeOverlays} className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
@@ -209,78 +211,40 @@ export const Header: React.FC = () => {
       </header>
 
       <div
-        className={`fixed inset-0 z-[60] px-5 pb-5 pt-5 sm:px-8 lg:px-20 lg:pb-20 lg:pt-20 bg-black/90 ${menuOpen ? 'visible translate-y-0 opacity-100' : 'invisible -translate-y-4 opacity-0'}`}
+        className={`site-menu fixed inset-0 z-[60] px-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] pt-[calc(1.25rem+env(safe-area-inset-top))] sm:px-8 lg:px-20 lg:pb-[calc(5rem+env(safe-area-inset-bottom))] lg:pt-[calc(5rem+env(safe-area-inset-top))] ${menuOpen ? 'is-open' : ''} ${submenu ? 'is-sub' : ''}`}
         role="dialog"
         aria-modal="true"
         aria-label={locale === 'ar' ? 'القائمة الرئيسية' : 'Main navigation'}
+        aria-hidden={!menuOpen}
+        dir={locale === 'ar' ? 'rtl' : 'ltr'}
       >
-        <div className="relative h-full" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
-          <div className="mx-auto grid h-full rounded-lg max-w-[1440px] grid-cols-1 px-5 px-5 py-5 lg:grid-cols-[60%_40%] bg-[#0F1F38] bg-[url('/bg-menu.png')] bg-no-repeat bg-right-bottom transition-all duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)]">
-            <nav className="h-full px-0 lg:px-[7%]" aria-label={submenu ? (locale === 'ar' ? 'القائمة الفرعية' : 'Submenu') : (locale === 'ar' ? 'القائمة الرئيسية' : 'Main menu')}>
-              {submenu ? (
-                <div className="w-full h-full flex flex-col">
-                  <div className="flex items-center justify-between lg:left-12 lg:right-12 lg:top-[112px]">
-                    <div className="flex items-center gap-3 text-xs font-semibold text-white/55">
-                      <span>{locale === 'ar' ? 'القائمة' : 'menu'}</span>
-                      <span>/</span>
-                      <span className="text-[#C5A265]">{pickText(submenu.label, locale)}</span>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={closeOverlays}
-                      className="flex h-12 w-12 items-center justify-center rounded-full border border-white/25 text-white transition-colors hover:bg-white hover:text-[#101E39] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#B7913D]"
-                      aria-label={locale === 'ar' ? 'إغلاق القائمة' : 'Close menu'}
-                    >
-                      <X className="h-5 w-5" />
-                    </button>
-                  </div>
-                  <div className="my-auto">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSubmenu(null);
-                        setActiveImage(menu[0]?.image || '');
-                      }}
-                      className="mb-6 inline-flex items-center gap-2 text-sm font-bold text-[#BF9432] transition-colors hover:text-[#C5A265]"
-                    >
-                      {locale === 'ar' ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-                      <span>{locale === 'ar' ? 'العودة للقائمة الرئيسية' : 'Back to main menu'}</span>
-                    </button>
-                    {submenu.children.map((child, index) => (
-                      <Link
-                        key={`${pickText(child.label, locale)}-${index}`}
-                        href={withLocalePath(child.url || '#', locale)}
-                        onClick={closeOverlays}
-                        onMouseEnter={() => setActiveImage(child.image || submenu.image || '')}
-                        onFocus={() => setActiveImage(child.image || submenu.image || '')}
-                        className="group flex flex-row items-center gap-5 py-2 text-white transition-colors hover:text-[#BF9432] hover:underline lg:py-6"
-                      >
-                        <span className="flex flex-row">
-                          <span className="text-[46px] font-normal leading-tight sm:text-[38px] lg:text-[42px]">{pickText(child.label, locale)}</span>
-                          {pickText(child.category, locale) && (
-                            <span className="mt-2 text-[12px] font-semibold text-[#BF9432] mx-4">{pickText(child.category, locale)}</span>
-                          )}
-                        </span>
-                      </Link>
-                    ))}
-                  </div>
+        <div className="site-menu__scrim absolute inset-0" />
+        <div className="relative h-full">
+          <div className="site-menu__panel pattern mx-auto grid h-full max-w-[1440px] grid-cols-1 rounded-lg bg-[#0F1F38] bg-[url('/bg-menu.png')] bg-no-repeat bg-right-bottom px-5 py-5 lg:grid-cols-[60%_40%]">
+            <nav className="site-menu__body h-full px-0 lg:px-[7%]" aria-label={locale === 'ar' ? 'القائمة الرئيسية' : 'Main menu'}>
+              <div className="site-menu__top">
+                <div className="site-menu__crumb">
+                  <span>{locale === 'ar' ? 'القائمة' : 'menu'}</span>
+                  {submenu && (
+                    <>
+                      <span aria-hidden="true">/</span>
+                      <span className="crumb-sub">{pickText(submenu.label, locale)}</span>
+                    </>
+                  )}
                 </div>
-              ) : (
-                <div className="relative w-full h-full flex flex-col  gap-5 lg:gap-6">
-                  <div className="flex items-center justify-between lg:left-12 lg:right-12 lg:top-[112px]">
-                    <div className="flex items-center gap-3 text-xs font-semibold text-white/55">
-                      <span>{locale === 'ar' ? 'القائمة' : 'menu'}</span>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={closeOverlays}
-                      className="flex h-12 w-12 items-center justify-center rounded-full border border-white/25 text-white transition-colors hover:bg-white hover:text-[#101E39] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#B7913D]"
-                      aria-label={locale === 'ar' ? 'إغلاق القائمة' : 'Close menu'}
-                    >
-                      <X className="h-5 w-5" />
-                    </button>
-                  </div>
-                  <div className="my-auto">
+                <button
+                  type="button"
+                  onClick={closeOverlays}
+                  className="site-menu__close text-white"
+                  aria-label={locale === 'ar' ? 'إغلاق القائمة' : 'Close menu'}
+                >
+                  <X />
+                </button>
+              </div>
+
+              <div className="site-menu__views">
+                <div className="site-menu__view site-menu__view--main" aria-hidden={Boolean(submenu)}>
+                  <ul className="site-menu__list">
                     {menu.map((item, index) => {
                       const hasChildren = item.children?.length > 0;
                       const label = pickText(item.label, locale);
@@ -291,7 +255,7 @@ export const Header: React.FC = () => {
                         </>
                       );
                       return (
-                        <div key={`${label}-${index}`} className="mb-0">
+                        <li key={`${label}-${index}`}>
                           {hasChildren ? (
                             <button
                               type="button"
@@ -301,7 +265,7 @@ export const Header: React.FC = () => {
                               }}
                               onMouseEnter={() => setActiveImage(item.image || item.children[0]?.image || '')}
                               onFocus={() => setActiveImage(item.image || item.children[0]?.image || '')}
-                              className="group flex w-full items-center py-2 text-start text-[46px] font-normal leading-[1.1] text-[#fff] transition-colors hover:underline sm:text-[44px] lg:text-[48px]"
+                              className="site-menu__link group text-start"
                             >
                               {content}
                             </button>
@@ -311,17 +275,49 @@ export const Header: React.FC = () => {
                               onClick={closeOverlays}
                               onMouseEnter={() => setActiveImage(item.image || '')}
                               onFocus={() => setActiveImage(item.image || '')}
-                              className="group flex items-center py-2 text-start text-[46px] font-normal leading-[1.1] text-[#fff] transition-colors hover:underline sm:text-[44px] lg:text-[48px]"
+                              className="site-menu__link group"
                             >
                               {content}
                             </Link>
                           )}
-                        </div>
+                        </li>
                       );
                     })}
-                  </div>
+                  </ul>
                 </div>
-              )}
+
+                <div className="site-menu__view site-menu__view--sub" aria-hidden={!submenu}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSubmenu(null);
+                      setActiveImage(menu[0]?.image || '');
+                    }}
+                    className="site-menu__back"
+                    tabIndex={submenu ? 0 : -1}
+                  >
+                    {locale === 'ar' ? <ChevronRight /> : <ChevronLeft />}
+                    <span>{locale === 'ar' ? 'العودة للقائمة الرئيسية' : 'Back to main menu'}</span>
+                  </button>
+                  <ul className="site-menu__list site-menu__list--sub">
+                    {(submenu?.children || []).map((child, index) => (
+                      <li key={`${pickText(child.label, locale)}-${index}`}>
+                        <Link
+                          href={withLocalePath(child.url || '#', locale)}
+                          onClick={closeOverlays}
+                          onMouseEnter={() => setActiveImage(child.image || submenu?.image || '')}
+                          onFocus={() => setActiveImage(child.image || submenu?.image || '')}
+                          className="site-menu__link"
+                          tabIndex={submenu ? 0 : -1}
+                        >
+                          <span>{pickText(child.label, locale)}</span>
+                          {pickText(child.category, locale) && <small>{pickText(child.category, locale)}</small>}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
             </nav>
             <div className="relative hidden overflow-hidden rounded-[24px] lg:block">
               {activeImage ? (
