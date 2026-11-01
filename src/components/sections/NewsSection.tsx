@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
 import { formatDate } from '@/lib/i18n/getLocalized';
 import { NewsArticle } from '@/types';
-import { ArrowRight, ArrowLeft } from 'lucide-react';
+import { DirectionalArrow } from '@/components/ui/DirectionalArrow';
 import { localizedLink } from '@/lib/localized-link';
 
 interface NewsProps {
@@ -18,7 +18,6 @@ export const NewsSection: React.FC<NewsProps> = ({ articles }) => {
   const copy = content.sectionCopy.news;
   const archivePath = `/${locale}/news`;
   const localizedArticles = articles.filter((article) => article.title[locale]);
-  const ArrowIcon = dir === 'rtl' ? ArrowLeft : ArrowRight;
   const [start, setStart] = useState(0);
   if (!localizedArticles.length && !content.previewMode) return null;
   if (!localizedArticles.length) return null;
@@ -50,7 +49,7 @@ export const NewsSection: React.FC<NewsProps> = ({ articles }) => {
             className="inline-flex h-[54px] w-fit items-center justify-center gap-3 rounded-sm bg-[#101E39] px-7 text-sm font-bold text-white transition-colors hover:bg-[#B7913D]"
           >
             <span>{copy?.ctaLabel[locale] || (content.previewMode ? t.news_section.view_all_news : '')}</span>
-            <ArrowIcon className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+            <DirectionalArrow direction="next" dir={dir} className="w-4 h-4 transition-transform group-hover:translate-x-1" />
           </Link>
         </div>
 
@@ -73,7 +72,7 @@ export const NewsSection: React.FC<NewsProps> = ({ articles }) => {
                 </h3>
                 <div className="mt-4 flex items-center justify-between text-xs text-[#5A677B]">
                   <Link href={`${archivePath}/${article.id}`} className="inline-flex items-center gap-2 font-bold text-[#101E39]">
-                    <ArrowIcon className="h-4 w-4" />
+                    <DirectionalArrow direction="next" dir={dir} className="h-4 w-4" />
                     <span>{t.news_section.read_more}</span>
                   </Link>
                   <span>{article.publishedAt ? formatDate(article.publishedAt, locale) : article.date}</span>
@@ -84,10 +83,10 @@ export const NewsSection: React.FC<NewsProps> = ({ articles }) => {
 
           <div className="flex items-start gap-3 lg:flex-col">
             <button type="button" onClick={next} className="flex h-12 w-12 items-center justify-center rounded-full border border-[#101E39]/20 text-[#101E39] hover:bg-[#101E39] hover:text-white" aria-label={locale === 'ar' ? 'الأخبار التالية' : 'Next news'}>
-              <ArrowIcon className="h-4 w-4" />
+              <DirectionalArrow direction="next" dir={dir} className="h-4 w-4" />
             </button>
             <button type="button" onClick={previous} className="flex h-12 w-12 items-center justify-center rounded-full border border-[#101E39]/20 text-[#101E39] hover:bg-[#101E39] hover:text-white" aria-label={locale === 'ar' ? 'الأخبار السابقة' : 'Previous news'}>
-              <ArrowIcon className="h-4 w-4 rotate-180" />
+              <DirectionalArrow direction="previous" dir={dir} className="h-4 w-4" />
             </button>
             <span className="hidden text-xl font-bold text-[#101E39] lg:block">
               {String(start + 1).padStart(2, '0')} <span className="text-sm text-[#5A677B]">/ {String(localizedArticles.length).padStart(2, '0')}</span>

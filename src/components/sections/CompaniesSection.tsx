@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
 import type { LocalizedString, Project } from '@/types';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { DirectionalArrow } from '@/components/ui/DirectionalArrow';
 
 interface CompaniesProps {
   projects: Project[];
@@ -106,7 +106,6 @@ export const CompaniesSection: React.FC<CompaniesProps> = ({ projects }) => {
 
   const activeIndex = Math.min(active, localizedProjects.length - 1);
   const project = localizedProjects[activeIndex];
-  const ArrowIcon = dir === 'rtl' ? ArrowLeft : ArrowRight;
   const projectStats = project.statsBand;
   const statsTag = localized(projectStats?.tag);
   const statsHeadline = localized(projectStats?.headline);
@@ -209,7 +208,7 @@ export const CompaniesSection: React.FC<CompaniesProps> = ({ projects }) => {
                 className="flex h-11 w-11 items-center justify-center rounded-full border border-white/50 transition-colors hover:bg-white hover:text-[#101E39] disabled:cursor-not-allowed disabled:opacity-40"
                 aria-label={locale === 'ar' ? 'المشروع التالي' : 'Next project'}
               >
-                <ArrowIcon className="h-4 w-4 rotate-180" />
+                <DirectionalArrow direction="next" dir={dir} className="h-4 w-4" />
               </button>
               <button
                 type="button"
@@ -218,7 +217,7 @@ export const CompaniesSection: React.FC<CompaniesProps> = ({ projects }) => {
                 className="flex h-11 w-11 items-center justify-center rounded-full border border-white/50 transition-colors hover:bg-white hover:text-[#101E39] disabled:cursor-not-allowed disabled:opacity-40"
                 aria-label={locale === 'ar' ? 'المشروع السابق' : 'Previous project'}
               >
-                <ArrowIcon className="h-4 w-4" />
+                <DirectionalArrow direction="previous" dir={dir} className="h-4 w-4" />
               </button>
             </div>
           </div>
