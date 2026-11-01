@@ -169,7 +169,7 @@ export const Header: React.FC = () => {
               <i />
             </span>
           </button>
-          <Link href={prefix} aria-label="Alomar Holding" onClick={closeOverlays} className="absolute start-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+          <Link href={prefix} aria-label="Alomar Holding" onClick={closeOverlays} className="absolute start-1/2 top-1/2 -translate-x-1/2 rtl:translate-x-1/2 -translate-y-1/2">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={logo} alt={locale === 'ar' ? 'شعار العمر القابضة' : 'Alomar Holding logo'} className="max-h-[58px] w-auto object-contain lg:max-h-[68px]" />
           </Link>
@@ -193,7 +193,7 @@ export const Header: React.FC = () => {
             </button>
           </div>
         </div>
-        <Notch fill="white" className="absolute start-1/2 top-full z-[1] -mt-[4px] h-[30px] w-[400px] -translate-x-1/2" />
+        <Notch fill="white" className="absolute start-1/2 top-full z-[1] -mt-[4px] h-[30px] w-[400px] -translate-x-1/2 rtl:translate-x-1/2" />
       </header>
 
       <div
