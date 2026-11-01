@@ -29,7 +29,7 @@ export const CompaniesSection: React.FC<CompaniesProps> = ({ projects }) => {
   const [active, setActive] = useState(0);
   const [outgoingProjectIndex, setOutgoingProjectIndex] = useState<number | null>(null);
   const [stageHeight, setStageHeight] = useState(960);
-  const [reducedMotion, setReducedMotion] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(true);
   const sectionRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const progressElementRef = useRef<HTMLDivElement>(null);
@@ -167,29 +167,31 @@ export const CompaniesSection: React.FC<CompaniesProps> = ({ projects }) => {
           minHeight: `${minimumStageHeight}px`,
         }}
       >
-        {outgoingProject?.image && (
-          <Image
-            key={`outgoing-${outgoingProject.id}`}
-            src={outgoingProject.image}
-            alt=""
-            fill
-            sizes="100vw"
-            aria-hidden="true"
-            className="project-image-fade-out object-cover object-center"
-          />
-        )}
-        {project.image && (
-          <Image
-            key={project.id}
-            src={project.image}
-            alt={localized(project.title)}
-            fill
-            sizes="100vw"
-            priority={false}
-            className={`${outgoingProject ? 'project-image-fade-in' : 'animate-project-slide'} object-cover object-center`}
-          />
-        )}
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,13,26,0.58)_0%,rgba(16,30,57,0.50)_45%,rgba(16,30,57,0.78)_100%)]" />
+        <div className="absolute inset-0">
+          {outgoingProject?.image && (
+            <Image
+              key={`outgoing-${outgoingProject.id}`}
+              src={outgoingProject.image}
+              alt=""
+              fill
+              sizes="100vw"
+              aria-hidden="true"
+              className="project-image-fade-out object-cover object-center"
+            />
+          )}
+          {project.image && (
+            <Image
+              key={project.id}
+              src={project.image}
+              alt={localized(project.title)}
+              fill
+              sizes="100vw"
+              priority={false}
+              className={`${outgoingProject ? 'project-image-fade-in' : 'animate-project-slide'} object-cover object-center`}
+            />
+          )}
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,13,26,0.58)_0%,rgba(16,30,57,0.50)_45%,rgba(16,30,57,0.78)_100%)]" />
+        </div>
 
         <div
           ref={progressElementRef}
@@ -233,7 +235,7 @@ export const CompaniesSection: React.FC<CompaniesProps> = ({ projects }) => {
                 {localized({ ar: project.location, en: project.location_en || project.location })}
               </span>
             )}
-            <div className={`space-y-3 ${dir === 'rtl' ? 'text-right' : 'text-left'}`}>
+            <div className="space-y-3 text-start">
               <h2 className="max-w-[720px] text-4xl font-normal leading-tight sm:text-5xl lg:text-7xl">
                 {localized(project.title)}
               </h2>

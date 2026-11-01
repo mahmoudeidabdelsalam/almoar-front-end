@@ -8,12 +8,14 @@ import { formatDate } from '@/lib/i18n/getLocalized';
 import { NewsArticle } from '@/types';
 import { DirectionalArrow } from '@/components/ui/DirectionalArrow';
 import { localizedLink } from '@/lib/localized-link';
+import { useScrollReveal } from '@/hooks/useScrollReveal';
 
 interface NewsProps {
   articles: NewsArticle[];
 }
 
 export const NewsSection: React.FC<NewsProps> = ({ articles }) => {
+  const revealRef = useScrollReveal<HTMLElement>();
   const { locale, dir, t, content } = useLanguage();
   const copy = content.sectionCopy.news;
   const archivePath = `/${locale}/news`;
@@ -28,7 +30,7 @@ export const NewsSection: React.FC<NewsProps> = ({ articles }) => {
   const previous = () => setStart((value) => (value - 1 + localizedArticles.length) % localizedArticles.length);
   const next = () => setStart((value) => (value + 1) % localizedArticles.length);
   return (
-    <section data-scroll-reveal className="bg-white py-20 lg:h-[796px] lg:py-[112px]">
+    <section ref={revealRef} data-scroll-reveal className="bg-white py-20 lg:h-[796px] lg:py-[112px]">
       <div className="mx-auto max-w-[1216px] px-5 sm:px-8 lg:px-0">
         <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <div className="space-y-3 max-w-2xl">

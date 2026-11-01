@@ -1,12 +1,16 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import type { HeroSlide } from '@/types';
 import { localizedLink } from '@/lib/localized-link';
+import { safeGetItem } from '@/lib/safe-storage';
+
+type SlideDirection = 'next' | 'previous';
+type SlideTransition = { from: number; to: number; direction: SlideDirection };
 
 const previewSlides: HeroSlide[] = [
   {
@@ -51,14 +55,27 @@ export const HeroSlider: React.FC<{ slides?: HeroSlide[] }> = ({ slides: cmsSlid
   const { locale, dir, content } = useLanguage();
   const slides = cmsSlides?.length ? cmsSlides : content.previewMode ? previewSlides : [];
   const [current, setCurrent] = useState(0);
+  const [transition, setTransition] = useState<SlideTransition | null>(null);
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
   const [pageVisible, setPageVisible] = useState(false);
+  const [heroReady, setHeroReady] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(true);
+  const currentRef = useRef(0);
+  const busyRef = useRef(false);
+  const transitionTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
     const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const updateMotionPreference = () => setReducedMotion(motionPreference.matches);
+    const updateMotionPreference = () => {
+      const shouldReduceMotion = motionPreference.matches;
+      setReducedMotion(shouldReduceMotion);
+      if (!shouldReduceMotion) return;
+      if (transitionTimerRef.current !== null) window.clearTimeout(transitionTimerRef.current);
+      transitionTimerRef.current = null;
+      busyRef.current = false;
+      setTransition(null);
+    };
     const updatePageVisibility = () => setPageVisible(!document.hidden);
     updateMotionPreference();
     updatePageVisibility();
@@ -71,19 +88,49 @@ export const HeroSlider: React.FC<{ slides?: HeroSlide[] }> = ({ slides: cmsSlid
   }, []);
 
   useEffect(() => {
-    if (slides.length < 2 || hovered || focused || reducedMotion || !pageVisible) return;
-    const timer = window.setInterval(() => setCurrent((value) => (value + 1) % slides.length), 6500);
+    const markReady = () => setHeroReady(true);
+    if (safeGetItem('session', 'alomar_splash_seen')) markReady();
+    window.addEventListener('alomar-splash-change', markReady);
+    return () => window.removeEventListener('alomar-splash-change', markReady);
+  }, []);
+
+  const navigateToSlide = useCallback((requestedIndex: number, requestedDirection?: SlideDirection) => {
+    if (slides.length < 2 || busyRef.current) return;
+    const from = currentRef.current;
+    const to = (requestedIndex + slides.length) % slides.length;
+    if (to === from) return;
+    const direction = requestedDirection || (to > from ? 'next' : 'previous');
+    currentRef.current = to;
+    setCurrent(to);
+    if (reducedMotion) return;
+
+    busyRef.current = true;
+    setTransition({ from, to, direction });
+    if (transitionTimerRef.current !== null) window.clearTimeout(transitionTimerRef.current);
+    transitionTimerRef.current = window.setTimeout(() => {
+      setTransition(null);
+      busyRef.current = false;
+      transitionTimerRef.current = null;
+    }, 980);
+  }, [reducedMotion, slides.length]);
+
+  useEffect(() => () => {
+    if (transitionTimerRef.current !== null) window.clearTimeout(transitionTimerRef.current);
+  }, []);
+
+  useEffect(() => {
+    if (slides.length < 2 || hovered || focused || reducedMotion || !pageVisible || !heroReady) return;
+    const timer = window.setInterval(() => navigateToSlide((current + 1) % slides.length, 'next'), 5000);
     return () => window.clearInterval(timer);
-  }, [current, focused, hovered, pageVisible, reducedMotion, slides.length]);
+  }, [current, focused, heroReady, hovered, navigateToSlide, pageVisible, reducedMotion, slides.length]);
 
   if (!slides.length) return null;
 
-  const active = slides[current] || slides[0];
   const ArrowIcon = dir === 'rtl' ? ArrowLeft : ArrowRight;
 
   return (
     <section
-      className="relative h-[720px] overflow-hidden bg-navy-900 text-white lg:h-[900px]"
+      className={`hero-slider relative h-[720px] overflow-hidden bg-navy-900 text-white lg:h-[900px] ${heroReady ? 'is-ready' : ''}`}
       aria-label="Homepage hero"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -92,24 +139,55 @@ export const HeroSlider: React.FC<{ slides?: HeroSlide[] }> = ({ slides: cmsSlid
         if (!(event.relatedTarget instanceof Node) || !event.currentTarget.contains(event.relatedTarget)) setFocused(false);
       }}
     >
-      {slides.map((slide, index) => (
-        <div
-          key={slide.id}
-          className={`absolute inset-0 transition-opacity duration-1000 ${index === current ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
-          aria-hidden={index !== current}
-        >
-          <Image src={slide.image} alt={locale === 'ar' ? slide.title_ar : slide.title_en} fill priority={index === 0} sizes="100vw" className="object-cover object-center" />
-          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(6,13,26,0.78)_0%,rgba(16,30,57,0.18)_58%,rgba(16,30,57,0.08)_100%)]" />
-          <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-navy-900/85 to-transparent" />
-        </div>
-      ))}
+      {slides.map((slide, index) => {
+        const isActive = index === current;
+        const isEntering = transition?.to === index;
+        const isExiting = transition?.from === index;
+        const slideState = isEntering
+          ? `hero-slide--enter-${transition.direction}`
+          : isExiting
+            ? `hero-slide--exit-${transition.direction}`
+            : isActive ? 'hero-slide--active' : 'hero-slide--inactive';
 
-      <div className="absolute start-5 top-1/2 z-20 hidden -translate-y-1/2 flex-col gap-3 lg:start-[72px] lg:flex">
+        return (
+          <div key={slide.id} className={`hero-slide ${slideState}`} aria-hidden={!isActive}>
+            <div className="hero-slide__bg absolute inset-[-2%]">
+              <Image src={slide.image} alt={locale === 'ar' ? slide.title_ar : slide.title_en} fill priority={index === 0} sizes="100vw" className="object-cover object-center" />
+            </div>
+            <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(6,13,26,0.78)_0%,rgba(16,30,57,0.18)_58%,rgba(16,30,57,0.08)_100%)]" />
+            <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-navy-900/85 to-transparent" />
+
+            <div className="relative z-10 mx-auto flex h-full max-w-[1216px] items-center px-5 sm:px-8 lg:px-0">
+              <div className="hero-slide__content ms-auto w-full max-w-[680px] space-y-6 text-start">
+                <p className="hero-anim text-sm font-bold text-gold-500">{locale === 'ar' ? slide.badge_ar : slide.badge_en}</p>
+                {isActive ? (
+                  <h1 className="hero-anim text-5xl font-bold leading-[1.05] sm:text-6xl lg:text-7xl">
+                    {locale === 'ar' ? slide.title_ar : slide.title_en}
+                  </h1>
+                ) : (
+                  <h2 className="hero-anim text-5xl font-bold leading-[1.05] sm:text-6xl lg:text-7xl">
+                    {locale === 'ar' ? slide.title_ar : slide.title_en}
+                  </h2>
+                )}
+                <p className="hero-anim ms-auto max-w-[520px] text-base leading-8 text-white/85 sm:text-lg">
+                  {locale === 'ar' ? slide.desc_ar : slide.desc_en}
+                </p>
+                <Link href={localizedLink(slide.primary_link, locale)} className="hero-anim btn btn--gold" tabIndex={isActive ? 0 : -1}>
+                  <span>{locale === 'ar' ? 'اكتشف' : 'Discover'}</span>
+                  <ArrowIcon />
+                </Link>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+
+      <div className="hero-slider__controls absolute start-5 top-1/2 z-20 hidden -translate-y-1/2 flex-col gap-3 lg:start-[72px] lg:flex">
         {slides.map((slide, index) => (
           <button
             key={slide.id}
             type="button"
-            onClick={() => setCurrent(index)}
+            onClick={() => navigateToSlide(index)}
             className="hero-slide-control"
             aria-label={`${locale === 'ar' ? 'عرض الشريحة' : 'Show slide'} ${index + 1}`}
             aria-current={index === current ? 'true' : undefined}
@@ -119,26 +197,7 @@ export const HeroSlider: React.FC<{ slides?: HeroSlide[] }> = ({ slides: cmsSlid
         ))}
       </div>
 
-      <div className="relative z-10 mx-auto flex h-full max-w-[1216px] items-center px-5 sm:px-8 lg:px-0">
-        <div key={active.id} className="hero-copy-enter ms-auto w-full max-w-[680px] space-y-6 text-start">
-          <p className="text-sm font-bold text-gold-500">{locale === 'ar' ? active.badge_ar : active.badge_en}</p>
-          <h1 className="text-5xl font-bold leading-[1.05] sm:text-6xl lg:text-7xl">
-            {locale === 'ar' ? active.title_ar : active.title_en}
-          </h1>
-          <p className="ms-auto max-w-[520px] text-base leading-8 text-white/85 sm:text-lg">
-            {locale === 'ar' ? active.desc_ar : active.desc_en}
-          </p>
-          <Link
-            href={localizedLink(active.primary_link, locale)}
-            className="btn btn--gold"
-          >
-            <span>{locale === 'ar' ? 'اكتشف' : 'Discover'}</span>
-            <ArrowIcon />
-          </Link>
-        </div>
-      </div>
-
-      <div className="absolute bottom-20 start-5 z-20 hidden items-center gap-3 text-xs text-white/75 lg:start-[72px] lg:flex">
+      <div className="hero-slider__controls absolute bottom-20 start-5 z-20 hidden items-center gap-3 text-xs text-white/75 lg:start-[72px] lg:flex">
         <span>{locale === 'ar' ? 'مرّر للأسفل لاستكشاف المزيد' : 'Scroll to explore more'}</span>
         <span className="h-8 w-5 rounded-full border border-white/50" />
       </div>

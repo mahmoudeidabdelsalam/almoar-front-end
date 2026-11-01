@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { ArrowDownLeft, ArrowLeft, ArrowRight, ArrowUpLeft, ChevronDown, UserRound } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import type { LocalizedString } from '@/types';
+import { useScrollReveal } from '@/hooks/useScrollReveal';
 
 const overviewImageFallbacks = [
   '/images/project_dama_lazurd.jpg',
@@ -86,6 +87,7 @@ export const AboutHero: React.FC = () => {
 };
 
 export const AboutOverview: React.FC = () => {
+  const revealRef = useScrollReveal<HTMLElement>();
   const { locale, content } = useLanguage();
   const about = content.aboutPage;
   const summary = content.homeAbout;
@@ -107,7 +109,7 @@ export const AboutOverview: React.FC = () => {
   const overviewImageSizes = '(max-width: 767px) min(470px, calc(100vw - 2.5rem)), (max-width: 1023px) calc((100vw - 6rem) / 2), 470px';
 
   return (
-    <section data-scroll-reveal className="bg-ivory-50 py-14 sm:py-20 lg:py-24" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+    <section ref={revealRef} data-scroll-reveal className="bg-ivory-50 py-14 sm:py-20 lg:py-24" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
       <div className="mx-auto flex max-w-[1440px] flex-col justify-between gap-8 px-5 sm:px-8 md:flex-row md:items-center lg:px-0">
         <div className="order-2 w-full min-w-0 md:order-1 md:flex-1" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
           {firstDescription && <p className="mt-6 text-navy-900 text-[64px]">{firstDescription}</p>}
@@ -116,7 +118,7 @@ export const AboutOverview: React.FC = () => {
           </div>
         </div>
         <div className="order-1 w-full min-w-0 md:order-2 md:flex-1" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
-          <div className="relative aspect-square w-full max-w-[470px] overflow-hidden rounded-xl md:ml-auto">
+          <div className="relative aspect-square w-full max-w-[470px] overflow-hidden rounded-xl md:ms-auto">
             <Image src={secondImage} alt={secondAlt} fill sizes={overviewImageSizes} className="object-cover" />
           </div>
           {secondDescription && <p className="mt-6 max-w-[360px] text-[18px] leading-7 text-slate-700">{secondDescription}</p>}
@@ -127,12 +129,13 @@ export const AboutOverview: React.FC = () => {
 };
 
 export const AboutStatistics: React.FC = () => {
+  const revealRef = useScrollReveal<HTMLElement>();
   const { locale, content } = useLanguage();
   const statistics = content.aboutPage.statistics;
   if (!statistics.length) return null;
 
   return (
-    <section data-scroll-reveal className="mt-5" aria-label={locale === 'ar' ? 'إحصائيات العمر القابضة' : 'Alomar Holding statistics'}>
+    <section ref={revealRef} data-scroll-reveal className="mt-5" aria-label={locale === 'ar' ? 'إحصائيات العمر القابضة' : 'Alomar Holding statistics'}>
       <dl className="mx-auto grid max-w-full grid-cols-2 divide-x divide-navy-900/10 rtl:divide-x-reverse sm:grid-cols-4 items-center lg:max-w-[1440px]">
         {statistics.map((statistic, index) => (
           <div key={`${statistic.value}-${index}`} data-reveal-item className="group px-4 py-6 border-b-1 lg:border-b-0 lg:min-h-[240px] flex flex-col justify-center border-r border-r-navy-900/10 border-t-[3px] border-t-transparent hover:border-t-gold-500 hover:bg-navy-900 hover:text-gold-500 sm:px-6 sm:py-8">
@@ -146,6 +149,7 @@ export const AboutStatistics: React.FC = () => {
 };
 
 export const AboutStrategy: React.FC = () => {
+  const revealRef = useScrollReveal<HTMLElement>();
   const { locale, content } = useLanguage();
   const about = content.aboutPage;
   const strategy = about.strategy;
@@ -161,7 +165,7 @@ export const AboutStrategy: React.FC = () => {
   const ArrowIcon = locale === 'ar' ? ArrowLeft : ArrowRight;
 
   return (
-    <section data-scroll-reveal className="pattern bg-navy-900 py-16 text-white sm:py-20 lg:py-24" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+    <section ref={revealRef} data-scroll-reveal className="pattern bg-navy-900 py-16 text-white sm:py-20 lg:py-24" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
       <div className="mx-auto max-w-[1216px] px-5 sm:px-8 lg:px-0">
         <div className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
           <div className="max-w-3xl">
@@ -207,6 +211,7 @@ export const AboutStrategy: React.FC = () => {
 };
 
 export const AboutPortfolio: React.FC = () => {
+  const revealRef = useScrollReveal<HTMLElement>();
   const { locale, content } = useLanguage();
   const portfolio = content.aboutPage.portfolio;
   const items = portfolio.items.filter((item) => localized(item.title, locale) || localized(item.description, locale) || item.metric);
@@ -217,7 +222,7 @@ export const AboutPortfolio: React.FC = () => {
   const ArrowIcon = locale === 'ar' ? ArrowLeft : ArrowRight;
 
   return (
-    <section data-scroll-reveal className="bg-ivory-50 py-16 sm:py-20 lg:py-24" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+    <section ref={revealRef} data-scroll-reveal className="bg-ivory-50 py-16 sm:py-20 lg:py-24" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
       <div className="mx-auto max-w-[1216px] px-5 sm:px-8 lg:px-0">
         <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
           <div>
@@ -274,6 +279,7 @@ export const AboutPortfolio: React.FC = () => {
 };
 
 export const AboutCompanies: React.FC = () => {
+  const revealRef = useScrollReveal<HTMLElement>();
   const { locale, content } = useLanguage();
   const companies = content.aboutPage.companies;
   const items = companies.items.filter((item) => item.name.ar || item.name.en || item.logo || item.image);
@@ -281,6 +287,7 @@ export const AboutCompanies: React.FC = () => {
 
   return (
     <section
+      ref={revealRef}
       data-scroll-reveal
       className="pattern relative overflow-hidden bg-[#1B382D] py-16 text-white sm:py-20 lg:py-24"
       dir={locale === 'ar' ? 'rtl' : 'ltr'}
@@ -317,6 +324,7 @@ export const AboutCompanies: React.FC = () => {
 };
 
 export const AboutResponsibility: React.FC = () => {
+  const revealRef = useScrollReveal<HTMLElement>();
   const { locale, content } = useLanguage();
   const responsibility = content.aboutPage.responsibility;
   const items = responsibility.items.filter((item) => localized(item.title, locale) || localized(item.description, locale) || item.image);
@@ -325,7 +333,7 @@ export const AboutResponsibility: React.FC = () => {
   const current = items[activeIndex % items.length];
 
   return (
-    <section data-scroll-reveal className="bg-ivory-50 py-16 sm:py-20 lg:py-24" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+    <section ref={revealRef} data-scroll-reveal className="bg-ivory-50 py-16 sm:py-20 lg:py-24" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
       <div className="mx-auto max-w-[1216px] px-5 sm:px-8 lg:px-0">
         <div className="mb-8 flex items-center justify-between gap-6">
           <div>
@@ -361,13 +369,14 @@ export const AboutResponsibility: React.FC = () => {
 };
 
 export const AboutBoard: React.FC = () => {
+  const revealRef = useScrollReveal<HTMLElement>();
   const { locale, content } = useLanguage();
   const board = content.aboutPage.board;
   const members = board.members.filter((member) => localized(member.name, locale) || localized(member.role, locale) || member.image);
   if (!members.length) return null;
 
   return (
-    <section data-scroll-reveal className="bg-ivory-50 py-14 sm:py-20 lg:py-24" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+    <section ref={revealRef} data-scroll-reveal className="bg-ivory-50 py-14 sm:py-20 lg:py-24" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
       <div className="mx-auto max-w-[1216px] px-5 sm:px-8 lg:px-0">
         <div className="mb-10 text-center">
           {localized(board.eyebrow, locale) && <p className="mb-3 text-xs text-gold-500">{localized(board.eyebrow, locale)}</p>}
@@ -382,7 +391,7 @@ export const AboutBoard: React.FC = () => {
                 <div className="relative mb-4 aspect-[.9] overflow-hidden rounded-t-2xl bg-[#EFEEE9]">
                   {member.image ? (
                     <Image src={member.image} alt={name || (locale === 'ar' ? 'عضو مجلس الإدارة' : 'Board member')} fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover object-top" />
-                  ) : <UserRound className="absolute bottom-4 left-1/2 h-2/3 w-2/3 -translate-x-1/2 text-[#C8CDD2]" strokeWidth={1} aria-hidden="true" />}
+                  ) : <UserRound className="absolute bottom-4 start-1/2 h-2/3 w-2/3 -translate-x-1/2 text-[#C8CDD2]" strokeWidth={1} aria-hidden="true" />}
                 </div>
                 {name && <h3 className="text-sm font-semibold text-navy-900">{name}</h3>}
                 {role && <p className="mt-1 text-[10px] leading-4 text-[#667080]">{role}</p>}
@@ -396,13 +405,14 @@ export const AboutBoard: React.FC = () => {
 };
 
 export const AboutNavigationLinks: React.FC = () => {
+  const revealRef = useScrollReveal<HTMLElement>();
   const { locale, content } = useLanguage();
   const links = content.aboutPage.navigationLinks.filter((item) => localized(item.label, locale) && item.url);
   if (!links.length) return null;
   const direction = locale === 'ar' ? <ArrowUpLeft className="h-4 w-4" /> : <ArrowDownLeft className="h-4 w-4" />;
 
   return (
-    <nav className="bg-ivory-50 pb-14 sm:pb-20" aria-label={locale === 'ar' ? 'روابط ذات صلة' : 'Related pages'} dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+    <nav ref={revealRef} data-scroll-reveal className="bg-ivory-50 pb-14 sm:pb-20" aria-label={locale === 'ar' ? 'روابط ذات صلة' : 'Related pages'} dir={locale === 'ar' ? 'rtl' : 'ltr'}>
       <div className="mx-auto grid max-w-[1216px] gap-3 px-5 sm:grid-cols-2 sm:px-8 lg:px-0">
         {links.map((item, index) => (
           <ContentLink key={`${item.url}-${index}`} href={localizedHref(item.url, locale)} className="group relative flex min-h-[88px] items-center justify-between overflow-hidden rounded-xl border border-navy-900/15 bg-white p-5 text-navy-900 transition-colors hover:border-gold-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold-500">
