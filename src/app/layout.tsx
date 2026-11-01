@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Suspense } from 'react';
 import { Cairo, IBM_Plex_Sans_Arabic, Playfair_Display, Inter } from 'next/font/google';
+import Script from 'next/script';
 import './globals.css';
 import { LanguageProvider } from '@/context/LanguageContext';
 import { wpClient } from '@/lib/wordpress/client';
@@ -93,8 +94,11 @@ export default async function RootLayout({
   ]);
 
   return (
-    <html lang="ar" dir="rtl" className={`${ibmPlexArabic.variable} ${cairo.variable} ${playfair.variable} ${inter.variable}`}>
+    <html lang="ar" dir="rtl" suppressHydrationWarning className={`${ibmPlexArabic.variable} ${cairo.variable} ${playfair.variable} ${inter.variable}`}>
       <body className="antialiased min-h-screen flex flex-col selection:bg-[#B7913D] selection:text-white">
+        <Script id="locale-direction" strategy="beforeInteractive">
+          {`const segment = window.location.pathname.split('/')[1]; const locale = segment === 'en' ? 'en' : 'ar'; document.documentElement.lang = locale; document.documentElement.dir = locale === 'ar' ? 'rtl' : 'ltr';`}
+        </Script>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify([

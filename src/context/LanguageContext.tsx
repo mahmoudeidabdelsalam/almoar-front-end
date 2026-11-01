@@ -54,6 +54,8 @@ export const LanguageProvider: React.FC<{
 
   const setLocale = (newLoc: Locale) => {
     safeSetItem('local', 'alomar_locale', newLoc);
+    document.documentElement.lang = newLoc;
+    document.documentElement.dir = newLoc === 'ar' ? 'rtl' : 'ltr';
     window.dispatchEvent(new Event('alomar-locale-change'));
     const segments = pathname.split('/').filter(Boolean);
     if (segments[0] === 'ar' || segments[0] === 'en') {
