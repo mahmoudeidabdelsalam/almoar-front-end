@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { Search, ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { Search, Globe, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import type { HeaderMenuItem } from '@/types';
 import { safeGetItem } from '@/lib/safe-storage';
@@ -171,16 +171,17 @@ export const Header: React.FC = () => {
           </button>
           <Link href={prefix} aria-label="Alomar Holding" onClick={closeOverlays} className="absolute start-1/2 top-1/2 -translate-x-1/2 rtl:translate-x-1/2 -translate-y-1/2 mt-1">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={logo} alt={locale === 'ar' ? 'شعار العمر القابضة' : 'Alomar Holding logo'} className="min-h-[90px] w-auto object-contain lg:min-h-[80px]" />
+            <img src={logo} alt={locale === 'ar' ? 'شعار العمر القابضة' : 'Alomar Holding logo'} className="h-[60px] w-auto object-contain lg:h-[80px]" />
           </Link>
           <div className={`flex items-center gap-1 sm:gap-2 ${locale === 'ar' ? 'order-2' : 'order-1'}`}>
             <button
               type="button"
               onClick={toggleLocale}
-              className="flex h-10 items-center gap-1  px-3 text-xs font-bold transition-colors hover:bg-navy-900 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500"
+              className="flex h-10 items-center gap-2 px-2 text-xs font-bold transition-colors hover:bg-navy-900 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500 sm:px-3"
               aria-label={locale === 'ar' ? 'Switch to English' : 'التبديل إلى العربية'}
             >
-              <span>{locale === 'ar' ? 'English' : 'عربي'}</span>
+              <span className="hidden sm:inline">{locale === 'ar' ? 'English' : 'عربي'}</span>
+              <Globe className="h-5 w-5" aria-hidden="true" />
             </button>
             <button
               type="button"

@@ -5,6 +5,7 @@ import { HeroSlider } from '@/components/sections/HeroSlider';
 import { CompaniesSection } from '@/components/sections/CompaniesSection';
 import { NewsSection } from '@/components/sections/NewsSection';
 import { ApproachSection } from '@/components/sections/ApproachSection';
+import { SectorsSection } from '@/components/sections/SectorsSection';
 import { wpClient } from '@/lib/wordpress/client';
 import { Suspense } from 'react';
 
@@ -30,6 +31,7 @@ async function HomeContent() {
       <HeroSlider slides={siteContent.heroSlides} />
       <CompaniesSection projects={projects} />
       <ApproachSection />
+      <SectorsSection />
       <NewsSection articles={news} />
     </>
   );

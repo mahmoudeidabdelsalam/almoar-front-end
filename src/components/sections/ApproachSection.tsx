@@ -15,7 +15,7 @@ export const ApproachSection: React.FC = () => {
   if (!approach.title[locale] && !approach.descriptionOne[locale]) return null;
 
   return (
-    <section ref={revealRef} data-scroll-reveal className="bg-ivory-50 py-24 lg:h-[408px] lg:py-0">
+    <section ref={revealRef} data-scroll-reveal className="bg-white py-24 lg:h-[408px] lg:py-0">
       <div className="mx-auto flex h-full max-w-[1216px] items-center px-5 sm:px-8 lg:px-0">
         <div className="flex w-full flex-col justify-between gap-8 lg:flex-row lg:items-center">
           <div className="space-y-7">

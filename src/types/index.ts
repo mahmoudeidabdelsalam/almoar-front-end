@@ -77,6 +77,25 @@ export interface ContentPillar {
   description: LocalizedString;
 }
 
+export interface HomeSector {
+  title: LocalizedString;
+  description: LocalizedString;
+  tags: HomeSectorTag[];
+  logo: string;
+}
+
+export interface HomeSectorTag {
+  label: LocalizedString;
+  url: string;
+}
+
+export interface HomeSectorsContent {
+  badge: LocalizedString;
+  title: LocalizedString;
+  description: LocalizedString;
+  items: HomeSector[];
+}
+
 export interface HomeAboutContent {
   badge: LocalizedString;
   title: LocalizedString;
@@ -84,6 +103,7 @@ export interface HomeAboutContent {
   descriptionTwo: LocalizedString;
   image: string;
   pillars: ContentPillar[];
+  sectors: HomeSectorsContent;
 }
 
 export interface AboutPageContent {

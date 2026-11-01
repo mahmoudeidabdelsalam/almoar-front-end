@@ -163,6 +163,9 @@ type GraphQLVariables = Record<string, string | number | boolean | null>;
 
 class GraphQLResponseError extends Error {}
 
+let warnedAboutMissingSectorsSchema = false;
+let warnedAboutMissingSectorTagsSchema = false;
+
 function reportCMSIssue(operation: string, error: unknown): void {
   const message = error instanceof Error ? error.message : String(error);
   const log = process.env.NODE_ENV === 'development' ? console.warn : console.error;
@@ -369,6 +372,12 @@ export const wpClient = {
         descriptionTwo: { ar: '', en: '' },
         image: '',
         pillars: [],
+        sectors: {
+          badge: { ar: '', en: '' },
+          title: { ar: '', en: '' },
+          description: { ar: '', en: '' },
+          items: [],
+        },
       },
       aboutPage: {
         chairmanImage: '',
@@ -509,6 +518,26 @@ export const wpClient = {
             descriptionTwoEn?: string | null;
             imageUrl?: string | null;
             pillars?: Array<{ icon?: string | null; titleAr?: string | null; titleEn?: string | null; descriptionAr?: string | null; descriptionEn?: string | null }> | null;
+            sectors?: {
+              badgeAr?: string | null;
+              badgeEn?: string | null;
+              titleAr?: string | null;
+              titleEn?: string | null;
+              descriptionAr?: string | null;
+              descriptionEn?: string | null;
+              items?: Array<{
+                titleAr?: string | null;
+                titleEn?: string | null;
+                descriptionAr?: string | null;
+                descriptionEn?: string | null;
+                tags?: Array<{
+                  labelAr?: string | null;
+                  labelEn?: string | null;
+                  url?: string | null;
+                }> | null;
+                logoUrl?: string | null;
+              }> | null;
+            } | null;
           } | null;
           aboutPage?: {
             chairmanImageUrl?: string | null;
@@ -670,6 +699,120 @@ export const wpClient = {
         }
         return emptyContent;
       }
+      if (cms.homeAbout) {
+        try {
+          const sectorsData = await fetchGraphQL<{
+            alomarSiteContent?: {
+              homeAbout?: {
+                sectors?: {
+                  badgeAr?: string | null;
+                  badgeEn?: string | null;
+                  titleAr?: string | null;
+                  titleEn?: string | null;
+                  descriptionAr?: string | null;
+                  descriptionEn?: string | null;
+                  items?: Array<{
+                    titleAr?: string | null;
+                    titleEn?: string | null;
+                    descriptionAr?: string | null;
+                    descriptionEn?: string | null;
+                    tags?: Array<{
+                      labelAr?: string | null;
+                      labelEn?: string | null;
+                      url?: string | null;
+                    }> | null;
+                    logoUrl?: string | null;
+                  }> | null;
+                } | null;
+              } | null;
+            } | null;
+          }>(`{
+            alomarSiteContent {
+              homeAbout {
+                sectors {
+                  badgeAr badgeEn titleAr titleEn descriptionAr descriptionEn
+                  items {
+                    titleAr titleEn descriptionAr descriptionEn logoUrl
+                    tags { labelAr labelEn url }
+                  }
+                }
+              }
+            }
+          }`);
+          cms.homeAbout.sectors = sectorsData.alomarSiteContent?.homeAbout?.sectors;
+        } catch (error) {
+          if (!(error instanceof GraphQLResponseError)) {
+            throw error;
+          }
+
+          if (error.message.includes('Cannot query field "tags" on type "AlomarHomeSector"')) {
+            const legacySectorsData = await fetchGraphQL<{
+              alomarSiteContent?: {
+                homeAbout?: {
+                  sectors?: {
+                    badgeAr?: string | null;
+                    badgeEn?: string | null;
+                    titleAr?: string | null;
+                    titleEn?: string | null;
+                    descriptionAr?: string | null;
+                    descriptionEn?: string | null;
+                    items?: Array<{
+                      titleAr?: string | null;
+                      titleEn?: string | null;
+                      descriptionAr?: string | null;
+                      descriptionEn?: string | null;
+                      buttonLabelAr?: string | null;
+                      buttonLabelEn?: string | null;
+                      buttonUrl?: string | null;
+                      logoUrl?: string | null;
+                    }> | null;
+                  } | null;
+                } | null;
+              } | null;
+            }>(`{
+              alomarSiteContent {
+                homeAbout {
+                  sectors {
+                    badgeAr badgeEn titleAr titleEn descriptionAr descriptionEn
+                    items { titleAr titleEn descriptionAr descriptionEn buttonLabelAr buttonLabelEn buttonUrl logoUrl }
+                  }
+                }
+              }
+            }`);
+            const legacySectors = legacySectorsData.alomarSiteContent?.homeAbout?.sectors;
+            if (legacySectors) {
+              cms.homeAbout.sectors = {
+                ...legacySectors,
+                items: (legacySectors.items || []).map((item) => ({
+                  titleAr: item.titleAr,
+                  titleEn: item.titleEn,
+                  descriptionAr: item.descriptionAr,
+                  descriptionEn: item.descriptionEn,
+                  logoUrl: item.logoUrl,
+                  tags: item.buttonLabelAr || item.buttonLabelEn
+                    ? [{
+                        labelAr: item.buttonLabelAr,
+                        labelEn: item.buttonLabelEn,
+                        url: item.buttonUrl,
+                      }]
+                    : [],
+                })),
+              };
+            }
+            if (!warnedAboutMissingSectorTagsSchema) {
+              console.warn('[WordPress CMS] Sector tags are unavailable in the backend GraphQL schema; showing legacy sector links.');
+              warnedAboutMissingSectorTagsSchema = true;
+            }
+          } else if (error.message.includes('Cannot query field "sectors" on type "AlomarHomeAbout"')) {
+            if (!warnedAboutMissingSectorsSchema) {
+              console.warn('[WordPress CMS] Homepage sectors are unavailable until the backend GraphQL schema is updated.');
+              warnedAboutMissingSectorsSchema = true;
+            }
+          } else {
+            throw error;
+          }
+        }
+      }
       const rawSettings = cms.settings;
       const validStatistics = rawSettings?.statistics?.filter((stat) =>
         Boolean(stat.key && stat.number && stat.labelAr && stat.labelEn)
@@ -756,6 +899,20 @@ export const wpClient = {
           descriptionTwo: { ar: cms.homeAbout?.descriptionTwoAr || '', en: cms.homeAbout?.descriptionTwoEn || '' },
           image: cms.homeAbout?.imageUrl || '',
           pillars: mapPillars(cms.homeAbout?.pillars),
+          sectors: {
+            badge: { ar: cms.homeAbout?.sectors?.badgeAr || '', en: cms.homeAbout?.sectors?.badgeEn || '' },
+            title: { ar: cms.homeAbout?.sectors?.titleAr || '', en: cms.homeAbout?.sectors?.titleEn || '' },
+            description: { ar: cms.homeAbout?.sectors?.descriptionAr || '', en: cms.homeAbout?.sectors?.descriptionEn || '' },
+            items: (cms.homeAbout?.sectors?.items || []).map((item) => ({
+              title: { ar: item.titleAr || '', en: item.titleEn || '' },
+              description: { ar: item.descriptionAr || '', en: item.descriptionEn || '' },
+              tags: (item.tags || []).map((tag) => ({
+                label: { ar: tag.labelAr || '', en: tag.labelEn || '' },
+                url: tag.url || '',
+              })),
+              logo: item.logoUrl || '',
+            })),
+          },
         },
         aboutPage: {
           chairmanImage: cms.aboutPage?.chairmanImageUrl || '',

@@ -30,7 +30,7 @@ export const NewsSection: React.FC<NewsProps> = ({ articles }) => {
   const previous = () => setStart((value) => (value - 1 + localizedArticles.length) % localizedArticles.length);
   const next = () => setStart((value) => (value + 1) % localizedArticles.length);
   return (
-    <section ref={revealRef} data-scroll-reveal className="bg-white py-20 lg:h-[796px] lg:py-[112px]">
+    <section ref={revealRef} id="sectors" data-scroll-reveal className="py-20 lg:h-[796px] lg:py-[112px]">
       <div className="mx-auto max-w-[1216px] px-5 sm:px-8 lg:px-0">
         <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <div className="space-y-3 max-w-2xl">
