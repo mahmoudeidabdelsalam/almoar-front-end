@@ -1,5 +1,27 @@
 @import "tailwindcss";
 
+@theme {
+  --color-gold-500: #BF9432;
+  --color-gold-600: #A07A22;
+  --color-gold-200: #E9D9B0;
+  --color-gold-50: #F7F0DE;
+  --color-navy-900: #0F1F38;
+  --color-navy-800: #1A2B47;
+  --color-slate-700: #2A3B4D;
+  --color-slate-500: #56657A;
+  --color-slate-200: #C8CDD4;
+  --color-green-900: #1A3328;
+  --color-green-700: #2B4A3C;
+  --color-ivory-50: #F8F7F2;
+  --color-ivory-100: #F2F0EB;
+  --color-stone-500: #8C8984;
+  --color-ink: #13100F;
+  --color-oud: #3B2A12;
+  --ease-out: cubic-bezier(.33, 1, .68, 1);
+  --ease-expo: cubic-bezier(.16, 1, .3, 1);
+  --ease-io: cubic-bezier(.77, 0, .18, 1);
+}
+
 @layer base {
   :root {
     --container: 1216px;
@@ -15,25 +37,39 @@
     --radius-md: 16px;
     --radius-lg: 24px;
     --motion-duration: 600ms;
-    --motion-easing: cubic-bezier(0.2, 0.8, 0.2, 1);
+    --motion-easing: var(--ease-out);
     --breakpoint-mobile: 640px;
     --breakpoint-tablet: 768px;
     --breakpoint-desktop: 1024px;
-    --color-navy: #101E39;
-    --color-navy-dark: #0A1426;
+    --color-navy: var(--color-navy-900);
+    --color-navy-dark: var(--color-navy-900);
     --color-navy-deep: #060D1A;
-    --color-navy-light: #1A2E56;
+    --color-navy-light: var(--color-navy-800);
     
-    --color-emerald: #1B4332;
-    --color-emerald-dark: #122E22;
-    --color-emerald-light: #245A43;
+    --color-emerald: var(--color-green-900);
+    --color-emerald-dark: var(--color-green-900);
+    --color-emerald-light: var(--color-green-700);
     
-    --color-gold: #B7913D;
-    --color-gold-light: #D4AF37;
-    --color-gold-warm: #C5A265;
+    --color-gold: var(--color-gold-500);
+    --color-gold-light: var(--color-gold-500);
+    --color-gold-warm: var(--color-gold-200);
     
-    --color-sand: #F8F9F4;
+    --color-sand: var(--color-ivory-50);
     --color-sand-subtle: #F1F3EB;
+    --gold-500: var(--color-gold-500);
+    --gold-600: var(--color-gold-600);
+    --gold-200: var(--color-gold-200);
+    --gold-50: var(--color-gold-50);
+    --navy-900: var(--color-navy-900);
+    --navy-800: var(--color-navy-800);
+    --slate-700: var(--color-slate-700);
+    --slate-500: var(--color-slate-500);
+    --slate-200: var(--color-slate-200);
+    --green-900: var(--color-green-900);
+    --green-700: var(--color-green-700);
+    --ivory-50: var(--color-ivory-50);
+    --ivory-100: var(--color-ivory-100);
+    --stone-500: var(--color-stone-500);
     
     --font-arabic: 'IBM Plex Sans Arabic', 'Cairo', system-ui, -apple-system, sans-serif;
     --font-serif: 'Playfair Display', Georgia, serif;
@@ -48,8 +84,8 @@
   }
 
   body {
-    background-color: #F8F9F4;
-    color: #101E39;
+    background-color: var(--color-ivory-50);
+    color: var(--color-navy-900);
     font-family: var(--font-arabic);
     overflow-x: hidden;
   }
