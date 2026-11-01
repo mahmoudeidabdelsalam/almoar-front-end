@@ -18,18 +18,24 @@ function getSplashSnapshot(): boolean {
   return !safeGetItem('session', 'alomar_splash_seen');
 }
 
+function getServerSplashSnapshot(): boolean {
+  return true;
+}
+
 export const SplashIntro: React.FC = () => {
   const { locale, t, content } = useLanguage();
   const introSlide = content.heroSlides[0];
-  const visible = useSyncExternalStore(subscribeToSplash, getSplashSnapshot, () => false);
+  const visible = useSyncExternalStore(subscribeToSplash, getSplashSnapshot, getServerSplashSnapshot);
   const [fading, setFading] = useState(false);
+  const dismissTimer = React.useRef<number | null>(null);
 
   const handleDismiss = React.useCallback(() => {
+    if (dismissTimer.current !== null) return;
     setFading(true);
-    setTimeout(() => {
+    dismissTimer.current = window.setTimeout(() => {
       safeSetItem('session', 'alomar_splash_seen', 'true');
       window.dispatchEvent(new Event('alomar-splash-change'));
-    }, 600);
+    }, 900);
   }, []);
 
   useEffect(() => {
@@ -40,18 +46,20 @@ export const SplashIntro: React.FC = () => {
     return () => clearTimeout(timer);
   }, [handleDismiss, visible]);
 
+  useEffect(() => () => {
+    if (dismissTimer.current !== null) window.clearTimeout(dismissTimer.current);
+  }, []);
+
   if (!visible) return null;
 
   return (
     <div
-      className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#090D14] text-white transition-opacity duration-700 ${
-        fading ? 'opacity-0 pointer-events-none' : 'opacity-100'
-      }`}
+      className={`splash-intro text-white ${fading ? 'is-done' : ''}`}
       role="dialog"
       aria-modal="true"
       aria-label="Brand Introduction"
     >
-      <div className="flex flex-col items-center text-center px-4 space-y-6 animate-in zoom-in-95 duration-700">
+      <div className="splash-intro__content flex flex-col items-center space-y-6 px-4 text-center">
         {/* Golden Emblem */}
         <div className="relative w-28 h-28 md:w-36 md:h-36 drop-shadow-[0_10px_25px_rgba(183,145,61,0.25)]">
           <Image
@@ -83,7 +91,7 @@ export const SplashIntro: React.FC = () => {
       </div>
 
       {/* Skip Button (تخطي) from Prototype */}
-      <div className="absolute bottom-10 inset-x-0 flex justify-center">
+      <div className="absolute inset-x-0 bottom-[calc(2.5rem+env(safe-area-inset-bottom))] flex justify-center">
         <button
           type="button"
           onClick={handleDismiss}
