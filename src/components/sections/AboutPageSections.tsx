@@ -92,23 +92,32 @@ export const AboutOverview: React.FC = () => {
   const title = localized(about.overview.heading, locale) || (locale === 'ar' ? 'استثمار برؤية واضحة' : 'Investing with a Clear Vision');
   const firstDescription = localized(about.overview.descriptionOne, locale) || localized(summary.descriptionOne, locale);
   const secondDescription = localized(about.overview.descriptionTwo, locale) || localized(summary.descriptionTwo, locale);
-  const firstImage = about.overview.imageOne.url || overviewImageFallbacks[0];
+  const firstImageUrl = about.overview.imageOne.url;
+  const isRiyadhHorizonImage = firstImageUrl.includes('أفق-الرياض.png')
+    || /%D8%A3%D9%81%D9%82-%D8%A7%D9%84%D8%B1%D9%8A%D8%A7%D8%B6\.png/i.test(firstImageUrl);
+  const firstImage = isRiyadhHorizonImage
+    ? '/images/riyadh-horizon.png'
+    : firstImageUrl || overviewImageFallbacks[0];
   const secondImage = about.overview.imageTwo.url || overviewImageFallbacks[1];
-  const firstAlt = localized(about.overview.imageOne.alt, locale) || (locale === 'ar' ? 'مشروع سكني ضمن محفظة العمر القابضة' : 'Residential development in Alomar Holding’s portfolio');
+  const firstAltFromCms = localized(about.overview.imageOne.alt, locale).trim();
+  const firstAlt = firstAltFromCms && firstAltFromCms.length <= 120
+    ? firstAltFromCms
+    : locale === 'ar' ? 'مشروع أفق الرياض' : 'Riyadh Horizon development';
   const secondAlt = localized(about.overview.imageTwo.alt, locale) || (locale === 'ar' ? 'مشروع عمراني ضمن محفظة العمر القابضة' : 'Development project in Alomar Holding’s portfolio');
+  const overviewImageSizes = '(max-width: 767px) min(470px, calc(100vw - 2.5rem)), (max-width: 1023px) calc((100vw - 6rem) / 2), 470px';
 
   return (
     <section className="bg-[#F8F9F4] py-14 sm:py-20 lg:py-24" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
-      <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-0 flex justify-between gap-8 md:flex-row md:items-center">
-        <div className="order-2 md:order-1 min-w-[470px]" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+      <div className="mx-auto flex max-w-[1440px] flex-col justify-between gap-8 px-5 sm:px-8 md:flex-row md:items-center lg:px-0">
+        <div className="order-2 w-full min-w-0 md:order-1 md:flex-1" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
           {firstDescription && <p className="mt-6 text-[#0F1F38] text-[64px]">{firstDescription}</p>}
-          <div className="relative w-full max-w-[470px] h-[470px] overflow-hidden rounded-xl md:mt-20">
-            <Image src={firstImage} alt={firstAlt} fill priority sizes="(max-width: 478px) 100vw, 38vw" className="object-cover" />
+          <div className="relative aspect-square w-full max-w-[470px] overflow-hidden rounded-xl md:mt-20">
+            <Image src={firstImage} alt={firstAlt} fill priority  className="object-cover" />
           </div>
         </div>
-        <div className="order-1 md:order-2 min-w-[470px]" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
-          <div className="relative w-full max-w-[470px] h-[470px] overflow-hidden rounded-xl md:ml-auto">
-            <Image src={secondImage} alt={secondAlt} fill sizes="(max-width: 470px) 100vw, 38vw" className="object-cover" />
+        <div className="order-1 w-full min-w-0 md:order-2 md:flex-1" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+          <div className="relative aspect-square w-full max-w-[470px] overflow-hidden rounded-xl md:ml-auto">
+            <Image src={secondImage} alt={secondAlt} fill sizes={overviewImageSizes} className="object-cover" />
           </div>
           {secondDescription && <p className="mt-6 max-w-[360px] text-[18px] leading-7 text-[#2A3B4D]">{secondDescription}</p>}
         </div>
@@ -126,9 +135,9 @@ export const AboutStatistics: React.FC = () => {
     <section className="mt-5" aria-label={locale === 'ar' ? 'إحصائيات العمر القابضة' : 'Alomar Holding statistics'}>
       <dl className="mx-auto grid max-w-full grid-cols-2 divide-x divide-[#101E39]/10 rtl:divide-x-reverse sm:grid-cols-4 items-center lg:max-w-[1440px]">
         {statistics.map((statistic, index) => (
-          <div key={`${statistic.value}-${index}`} className="group px-4 py-6 min-h-[240px] flex flex-col justify-center border-r border-r-[#101E39]/10 border-t-[3px] border-t-transparent hover:border-t-[#BF9432] hover:bg-[#0F1F38] hover:text-[#BF9432] sm:px-6 sm:py-8">
+          <div key={`${statistic.value}-${index}`} className="group px-4 py-6 border-b-1 lg:border-b-0 lg:min-h-[240px] flex flex-col justify-center border-r border-r-[#101E39]/10 border-t-[3px] border-t-transparent hover:border-t-[#BF9432] hover:bg-[#0F1F38] hover:text-[#BF9432] sm:px-6 sm:py-8">
             <dt className="text-xs text-[#8A8E93] group-hover:text-[#fff] sm:text-sm">{localized(statistic.label, locale)}</dt>
-            <dd className="mt-5 text-[72px] font-medium tabular-nums text-[#101E39] group-hover:text-[#BF9432] sm:text-4xl lg:text-[46px]">{statistic.value}</dd>
+            <dd className="mt-5 text-[44px] lg:text-[72px] font-medium tabular-nums text-[#101E39] group-hover:text-[#BF9432] sm:text-4xl lg:text-[46px]">{statistic.value}</dd>
           </div>
         ))}
       </dl>

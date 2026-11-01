@@ -111,9 +111,9 @@ export function InvestmentsPage({ locale, content, projects }: InvestmentsPagePr
       <section className="mt-5 bg-white" aria-label={locale === 'ar' ? 'إحصائيات العمر القابضة' : 'Alomar Holding statistics'}>
         <dl className="mx-auto grid max-w-full grid-cols-2 divide-x divide-[#101E39]/10 rtl:divide-x-reverse sm:grid-cols-4 items-center lg:max-w-[1440px]">
           {content.statistics.map((statistic, index) => (
-            <div key={`${statistic.value}-${index}`} className="group px-4 py-6 min-h-[240px] flex flex-col justify-center border-r border-r-[#101E39]/10 border-t-[3px] border-t-transparent hover:border-t-[#BF9432] hover:bg-[#0F1F38] hover:text-[#BF9432] sm:px-6 sm:py-8">
+            <div key={`${statistic.value}-${index}`} className="group px-4 py-6 border-b-1 lg:border-b-0 lg:min-h-[240px] flex flex-col justify-center border-r border-r-[#101E39]/10 border-t-[3px] border-t-transparent hover:border-t-[#BF9432] hover:bg-[#0F1F38] hover:text-[#BF9432] sm:px-6 sm:py-8">
               <dt className="text-xs text-[#8A8E93] group-hover:text-[#fff] sm:text-sm">{localized(statistic.label, locale)}</dt>
-              <dd className="mt-5 text-[72px] font-medium tabular-nums text-[#101E39] group-hover:text-[#BF9432] sm:text-4xl lg:text-[46px]">{statistic.value}</dd>
+              <dd className="mt-5 text-[44px] lg:text-[72px] font-medium tabular-nums text-[#101E39] group-hover:text-[#BF9432] sm:text-4xl lg:text-[46px]">{statistic.value}</dd>
             </div>
           ))}
         </dl>
