@@ -49,7 +49,7 @@ export const ChairmanMessage: React.FC = () => {
               className="object-cover object-top"
             />}
           </div>
-          <div className="absolute -bottom-4 right-4 bg-navy-900 text-white px-5 py-3 rounded-xl border border-white/10 shadow-lg">
+          <div className="absolute -bottom-4 end-4 bg-navy-900 text-white px-5 py-3 rounded-xl border border-white/10 shadow-lg">
             <span className="text-xs text-gold-500 font-bold block">{about.chairmanRole[locale] || text.role}</span>
             <span className="text-sm font-bold">{about.chairmanName[locale] || text.name}</span>
           </div>

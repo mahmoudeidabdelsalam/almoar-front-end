@@ -114,7 +114,7 @@ export function ContactSection({ pageContent, form }: ContactSectionProps) {
               <div aria-hidden="true" className="absolute inset-0 opacity-30">
                 <div className="absolute -left-8 top-8 h-64 w-64 rotate-45 border-[18px] border-slate-700" />
                 <div className="absolute -right-12 bottom-5 h-52 w-52 rotate-45 border-[16px] border-slate-700" />
-                <div className="absolute left-1/2 top-1/2 h-[140%] w-[18px] -translate-x-1/2 -translate-y-1/2 rotate-45 bg-slate-700" />
+                <div className="absolute start-1/2 top-1/2 h-[140%] w-[18px] -translate-x-1/2 -translate-y-1/2 rotate-45 bg-slate-700" />
               </div>
               {address && <p className="relative z-10 max-w-[85%] text-sm leading-6 text-white/85">{address}</p>}
               <div className="relative z-10 flex items-end justify-between gap-3">

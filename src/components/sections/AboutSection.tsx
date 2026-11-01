@@ -77,7 +77,7 @@ export const AboutSection: React.FC = () => {
 
             {/* Floating Experience Badge */}
             {content.previewMode && (
-              <div className="absolute -bottom-6 -right-4 sm:-bottom-8 sm:right-6 bg-navy-900 text-white p-5 sm:p-6 rounded-2xl shadow-xl border border-white/10 max-w-[240px]">
+              <div className="absolute -bottom-6 -end-4 sm:-bottom-8 sm:end-6 bg-navy-900 text-white p-5 sm:p-6 rounded-2xl shadow-xl border border-white/10 max-w-[240px]">
                 <span className="text-gold-500 text-xs font-bold uppercase tracking-wider block mb-1">
                   {locale === 'ar' ? 'العمر القابضة' : 'Alomar Holding'}
                 </span>

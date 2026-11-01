@@ -153,7 +153,7 @@ export function NewsArchiveSection({ articles, locale }: NewsArchiveSectionProps
             </div>
             <label className="relative block w-full lg:max-w-[360px]">
               <span className="sr-only">{text.searchLabel}</span>
-              <Search aria-hidden="true" className={`absolute top-1/2 h-5 w-5 -translate-y-1/2 text-[#667085] ${locale === 'ar' ? 'right-4' : 'left-4'}`} />
+              <Search aria-hidden="true" className="absolute top-1/2 start-4 h-5 w-5 -translate-y-1/2 text-[#667085]" />
               <input
                 type="search"
                 value={query}
@@ -162,7 +162,7 @@ export function NewsArchiveSection({ articles, locale }: NewsArchiveSectionProps
                   setCurrentPage(1);
                 }}
                 placeholder={text.search}
-                className={`h-12 w-full rounded-sm border border-navy-900/15 bg-white text-sm text-navy-900 outline-none transition focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 ${locale === 'ar' ? 'pr-12 pl-4' : 'pl-12 pr-4'}`}
+                className="h-12 w-full rounded-sm border border-navy-900/15 bg-white ps-12 pe-4 text-start text-sm text-navy-900 outline-none transition focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20"
               />
             </label>
           </div>
@@ -218,7 +218,7 @@ export function NewsArchiveSection({ articles, locale }: NewsArchiveSectionProps
                     <div className="absolute inset-0 bg-gradient-to-br from-navy-900 to-[#1B4332]" aria-hidden="true" />
                   )}
                 </Link>
-                <div className={`flex flex-col justify-center px-6 py-8 sm:px-9 sm:py-10 lg:px-12 ${locale === 'ar' ? 'text-right' : 'text-left'}`} dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+                <div                 className="flex flex-col justify-center px-6 py-8 text-start sm:px-9 sm:py-10 lg:px-12" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
                   <div className="flex items-center justify-between gap-3 text-xs text-[#667085]">
                     <span className="font-bold text-gold-500">{getLocalizedString(featuredArticle.category, locale)}</span>
                     <time dateTime={featuredArticle.publishedAt || undefined}>

@@ -48,7 +48,7 @@ export const Vision2030Banner: React.FC = () => {
   return (
     <section className="py-20 lg:py-28 emerald-pattern-bg text-white relative overflow-hidden">
       {/* Decorative Golden Ambient Light */}
-      <div className="absolute top-0 right-1/4 w-80 h-80 bg-gold-500/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-0 end-1/4 w-80 h-80 bg-gold-500/15 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-3xl space-y-4 mb-14">

@@ -128,7 +128,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects }) =>
 
                 {/* Status Badge */}
                 {localizedValue(project.status, project.status_en) && (
-                  <div className="absolute top-4 right-4">
+                  <div className="absolute top-4 end-4">
                   <span className="px-3 py-1 rounded-full text-xs font-bold text-white bg-navy-900/80 backdrop-blur-md border border-white/20">
                     {localizedValue(project.status, project.status_en)}
                   </span>
@@ -137,7 +137,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects }) =>
 
                 {/* Location Badge */}
                 {localizedValue(project.location, project.location_en) && (
-                  <div className="absolute bottom-4 right-4 flex items-center gap-1.5 text-white/95 text-xs font-semibold drop-shadow-md">
+                  <div className="absolute bottom-4 end-4 flex items-center gap-1.5 text-white/95 text-xs font-semibold drop-shadow-md">
                   <MapPin className="w-3.5 h-3.5 text-gold-500" />
                     <span>{localizedValue(project.location, project.location_en)}</span>
                   </div>
