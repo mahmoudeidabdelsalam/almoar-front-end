@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowDownLeft, ArrowLeft, ArrowRight, ArrowUpLeft, Plus, UserRound } from 'lucide-react';
@@ -430,11 +430,49 @@ export const AboutResponsibility: React.FC = () => {
   const responsibility = content.aboutPage.responsibility;
   const items = responsibility.items.filter((item) => localized(item.title, locale) || localized(item.description, locale) || item.image);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [transition, setTransition] = useState<{ from: number; to: number; direction: 'next' | 'previous' } | null>(null);
+  useEffect(() => {
+    if (!transition) return;
+    const timeout = window.setTimeout(() => {
+      setActiveIndex(transition.to);
+      setTransition(null);
+    }, 750);
+    return () => window.clearTimeout(timeout);
+  }, [transition]);
   if (!items.length) return null;
-  const current = items[activeIndex % items.length];
+  const shownIndex = transition?.to ?? activeIndex % items.length;
+  const preview = items[(shownIndex + 1) % items.length];
+  const changeSlide = (direction: 'next' | 'previous') => {
+    if (transition || items.length < 2) return;
+    const from = activeIndex % items.length;
+    const to = direction === 'next'
+      ? (from + 1) % items.length
+      : (from - 1 + items.length) % items.length;
+    setTransition({ from, to, direction });
+  };
+  const renderSlide = (index: number, className: string) => {
+    const item = items[index];
+    const title = localized(item.title, locale);
+    const description = localized(item.description, locale);
+    return (
+      <div key={index} className={`about-responsibility__slide ${item.image ? 'has-image' : ''} ${className}`} aria-hidden={className.includes('is-exiting') || undefined}>
+        {item.image && (
+          <div className="about-responsibility__image-window">
+            <div className="about-responsibility__image about-image-frame">
+              <Image src={item.image} alt={title} fill sizes="(max-width: 767px) 100vw, 45vw" className="object-cover" />
+            </div>
+          </div>
+        )}
+        <div className="about-responsibility__copy" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+          {title && <h3 className="text-2xl font-semibold text-navy-900">{title}</h3>}
+          {description && <p className="mt-4 text-sm leading-7 text-[#667080]">{description}</p>}
+        </div>
+      </div>
+    );
+  };
 
   return (
-    <section ref={revealRef} data-scroll-reveal className="bg-ivory-50 px-5 py-20 sm:px-8 sm:py-24 lg:px-0 lg:py-28" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+    <section ref={revealRef} data-scroll-reveal className="bg-ivory-50 px-5 py-20 sm:px-8 sm:py-24 lg:px-0 lg:py-28 overflow-hidden" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
       <div className="mx-auto max-w-[1046px]">
         <div className="mb-10 flex items-center justify-between gap-6 sm:mb-14">
           <div>
@@ -443,26 +481,30 @@ export const AboutResponsibility: React.FC = () => {
           </div>
           {items.length > 1 && (
             <div className="flex gap-2">
-              <button type="button" onClick={() => setActiveIndex((activeIndex - 1 + items.length) % items.length)} className="flex h-9 w-9 items-center justify-center rounded-full border border-navy-900/15 text-navy-900 hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold-500" aria-label={locale === 'ar' ? 'المبادرة السابقة' : 'Previous initiative'}>
+              <button type="button" onClick={() => changeSlide('previous')} disabled={Boolean(transition)} className="flex h-9 w-9 items-center justify-center rounded-full border border-navy-900/15 text-navy-900 hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold-500 disabled:pointer-events-none disabled:opacity-40" aria-label={locale === 'ar' ? 'المبادرة السابقة' : 'Previous initiative'}>
                 {locale === 'ar' ? <ArrowRight className="h-4 w-4" /> : <ArrowLeft className="h-4 w-4" />}
               </button>
-              <span className="self-center text-xs tabular-nums text-[#667080]">{String(activeIndex + 1).padStart(2, '0')} / {String(items.length).padStart(2, '0')}</span>
-              <button type="button" onClick={() => setActiveIndex((activeIndex + 1) % items.length)} className="flex h-9 w-9 items-center justify-center rounded-full border border-navy-900/15 text-navy-900 hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold-500" aria-label={locale === 'ar' ? 'المبادرة التالية' : 'Next initiative'}>
+              <span className="self-center text-xs tabular-nums text-[#667080]">{String(shownIndex + 1).padStart(2, '0')} / {String(items.length).padStart(2, '0')}</span>
+              <button type="button" onClick={() => changeSlide('next')} disabled={Boolean(transition)} className="flex h-9 w-9 items-center justify-center rounded-full border border-navy-900/15 text-navy-900 hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold-500 disabled:pointer-events-none disabled:opacity-40" aria-label={locale === 'ar' ? 'المبادرة التالية' : 'Next initiative'}>
                 {locale === 'ar' ? <ArrowLeft className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
               </button>
             </div>
           )}
         </div>
-        <div className={`grid items-center gap-8 lg:gap-14 ${current.image ? 'md:grid-cols-2' : ''}`} dir="ltr">
-          {current.image && (
-            <div className="about-image-frame relative aspect-[1.45] overflow-hidden rounded-xl">
-              <Image src={current.image} alt={localized(current.title, locale)} fill sizes="(max-width: 768px) 100vw, 45vw" className="object-cover transition-transform duration-700 hover:scale-105" />
+        <div className="about-responsibility__stage" dir="ltr">
+          {transition
+            ? (
+              <>
+                {renderSlide(transition.from, `is-exiting ${transition.direction}`)}
+                {renderSlide(transition.to, `is-entering ${transition.direction}`)}
+              </>
+            )
+            : renderSlide(shownIndex, 'is-current')}
+          {items.length > 1 && preview.image && (
+            <div className="about-responsibility__preview overflow-hidden rounded-xl" aria-hidden="true">
+              <Image src={preview.image} alt="" fill sizes="300px" className="object-cover" />
             </div>
           )}
-          <div dir={locale === 'ar' ? 'rtl' : 'ltr'}>
-            {localized(current.title, locale) && <h3 className="text-2xl font-semibold text-navy-900">{localized(current.title, locale)}</h3>}
-            {localized(current.description, locale) && <p className="mt-4 text-sm leading-7 text-[#667080]">{localized(current.description, locale)}</p>}
-          </div>
         </div>
       </div>
     </section>
