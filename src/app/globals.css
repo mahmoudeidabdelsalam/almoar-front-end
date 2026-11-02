@@ -771,6 +771,18 @@ img, video { max-inline-size: 100%; }
     height: 380px;
   }
 
+  .about-responsibility__copy h3 small {
+    position: absolute;
+    inset-block: -25px;
+    inset-inline-start: 0;
+    color: #bf9432;
+    font-size: 14px;
+  }
+
+  .about-responsibility__copy h3 {
+    position: relative;
+  }
+
   .about-responsibility__slide.is-entering.next .about-responsibility__image {
     animation: responsibility-image-enter-next 750ms var(--ease-expo) both;
   }

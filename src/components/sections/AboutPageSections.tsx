@@ -464,7 +464,7 @@ export const AboutResponsibility: React.FC = () => {
           </div>
         )}
         <div className="about-responsibility__copy" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
-          {title && <h3 className="text-2xl font-semibold text-navy-900">{title}</h3>}
+          {title && <h3 className="text-2xl font-semibold text-navy-900" dangerouslySetInnerHTML={{ __html: title }} />}
           {description && <p className="mt-4 text-sm leading-7 text-[#667080]">{description}</p>}
         </div>
       </div>
