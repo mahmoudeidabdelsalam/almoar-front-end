@@ -4,6 +4,7 @@ import {
   NewsArticle,
   HeroSlide,
   SiteContent,
+  PageBannerContent,
   HeaderContent,
   FooterContent,
   ContactPageContent,
@@ -630,6 +631,9 @@ export const wpClient = {
           } | null;
           footer?: { companyDescriptionAr?: string | null; companyDescriptionEn?: string | null; visionBadgeAr?: string | null; visionBadgeEn?: string | null } | null;
         } | null;
+        aboutPageNode?: {
+          featuredImage?: { node?: { sourceUrl?: string | null } | null } | null;
+        } | null;
         homePageContent?: Array<{
           image?: string | null;
           badgeAr?: string | null;
@@ -687,6 +691,9 @@ export const wpClient = {
             footerLineAr footerLineEn ctaLabelAr ctaLabelEn ctaUrl
           }
           footer { companyDescriptionAr companyDescriptionEn visionBadgeAr visionBadgeEn }
+        }
+        aboutPageNode: page(id: "/about-us/", idType: URI) {
+          featuredImage { node { sourceUrl } }
         }
         homePageContent { image badgeAr badgeEn titleAr titleEn descAr descEn primaryLink secondaryLink }
       }`);
@@ -825,6 +832,32 @@ export const wpClient = {
             label_en: stat.labelEn || '',
           }))
         : PREVIEW_MODE ? mockSettings.statistics : [];
+      const pageBanners: Record<string, PageBannerContent> = Object.fromEntries(
+        (cms.pageBanners || []).filter((item) => item.pageKey).map((item) => [item.pageKey as string, {
+          pageKey: item.pageKey || '',
+          badge: { ar: item.badgeAr || '', en: item.badgeEn || '' },
+          title: { ar: item.titleAr || '', en: item.titleEn || '' },
+          description: { ar: item.descriptionAr || '', en: item.descriptionEn || '' },
+          image: item.imageUrl || '',
+          seoTitle: { ar: item.seoTitleAr || '', en: item.seoTitleEn || '' },
+          seoDescription: { ar: item.seoDescriptionAr || '', en: item.seoDescriptionEn || '' },
+        }])
+      );
+      const aboutFeaturedImage = data.aboutPageNode?.featuredImage?.node?.sourceUrl || '';
+      if (aboutFeaturedImage) {
+        pageBanners.about = {
+          ...(pageBanners.about || {
+            pageKey: 'about',
+            badge: { ar: '', en: '' },
+            title: { ar: '', en: '' },
+            description: { ar: '', en: '' },
+            image: '',
+            seoTitle: { ar: '', en: '' },
+            seoDescription: { ar: '', en: '' },
+          }),
+          image: aboutFeaturedImage,
+        };
+      }
       const mapPillars = (items: Array<{ icon?: string | null; titleAr?: string | null; titleEn?: string | null; descriptionAr?: string | null; descriptionEn?: string | null }> | null | undefined) =>
         (items || []).map((item) => ({
           icon: item.icon || '',
@@ -875,15 +908,7 @@ export const wpClient = {
           primary_link: slide.primaryLink || '/projects',
           secondary_link: slide.secondaryLink || '/projects',
         })),
-        pageBanners: Object.fromEntries((cms.pageBanners || []).filter((item) => item.pageKey).map((item) => [item.pageKey as string, {
-          pageKey: item.pageKey || '',
-          badge: { ar: item.badgeAr || '', en: item.badgeEn || '' },
-          title: { ar: item.titleAr || '', en: item.titleEn || '' },
-          description: { ar: item.descriptionAr || '', en: item.descriptionEn || '' },
-          image: item.imageUrl || '',
-          seoTitle: { ar: item.seoTitleAr || '', en: item.seoTitleEn || '' },
-          seoDescription: { ar: item.seoDescriptionAr || '', en: item.seoDescriptionEn || '' },
-        }])),
+        pageBanners,
         sectionCopy: Object.fromEntries((cms.sectionCopy || []).filter((item) => item.sectionKey).map((item) => [item.sectionKey as string, {
           sectionKey: item.sectionKey || '',
           badge: { ar: item.badgeAr || '', en: item.badgeEn || '' },
