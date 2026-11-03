@@ -39,7 +39,7 @@ function ProjectCompaniesBand({ project, locale }: { project: Project; locale: L
         </Link>
       </div>
       {items.length > 0 && (
-        <div className="grid grid-cols-3 items-center gap-3 sm:grid-cols-4 md:grid-cols-7 mx-auto max-w-[1440px]">
+        <div className="grid grid-cols-3 items-center gap-3 sm:grid-cols-4 md:grid-cols-6 mx-auto max-w-[1440px]">
           {items.map((item, index) => {
             const alt = item.logo.alt || `${headline || project.title[locale]} company logo ${index + 1}`;
             const logo = (
@@ -208,7 +208,13 @@ export default async function SingleProjectPage({ params }: Props) {
   const projectsPath = `/${locale}/projects`;
   const statsTag = localizedText(project.statsBand?.tag, locale);
   const statsHeadline = localizedText(project.statsBand?.headline, locale);
-  const stats = project.statsBand?.items.filter((item) => /[0-9٠-٩]/.test(localizedText(item.head, locale))) || [];
+  const statsItems = project.statsBand?.items || [];
+  const hasNumericStats = statsItems.some((item) => /[0-9٠-٩]/.test(localizedText(item.head, locale)));
+  const stats = statsItems.filter((item) =>
+    hasNumericStats
+      ? /[0-9٠-٩]/.test(localizedText(item.head, locale))
+      : Boolean(localizedText(item.head, locale) || localizedText(item.text, locale)),
+  );
   const benefitsTag = localizedText(project.experienceBand?.tag, locale);
   const benefitsTitle = localizedText(project.experienceBand?.headline, locale);
   const benefits = project.experienceBand?.items.filter((item) => localizedText(item.head, locale) || localizedText(item.text, locale)) || [];
@@ -326,11 +332,13 @@ export default async function SingleProjectPage({ params }: Props) {
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-7">
                 {benefits.map((item, index) => {
                   const head = localizedText(item.head, locale);
+                  const text = localizedText(item.text, locale);
                   return (
                     <article key={`${head}-${index}`} className="project-page__benefit-card flex min-h-[180px] flex-col items-end gap-5 rounded-2xl border border-navy-900/15 bg-white p-6 sm:min-h-[210px] sm:p-8 lg:min-h-[230px]">
                       <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gold-50 text-gold-600 sm:h-[60px] sm:w-[60px]"><Check className="h-5 w-5 sm:h-6 sm:w-6" aria-hidden="true" /></span>
-                      <div className="">
+                      <div>
                         {head && <h3 className="text-xl font-medium leading-[1.5] text-navy-900 sm:text-2xl lg:text-[28px]">{head}</h3>}
+                        {text && <p className="mt-2 text-sm leading-6 text-[#5A677B] sm:text-base">{text}</p>}
                       </div>
                     </article>
                   );

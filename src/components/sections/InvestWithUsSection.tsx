@@ -70,7 +70,7 @@ export function InvestWithUsSection({ form, pageContent, contactContent }: Inves
             </div>
           </div>
         </div>
-        <Notch fill="var(--color-ivory-50)" className="absolute start-1/2 bottom-0 z-[1] mb-[-4px] h-[30px] w-[400px] -translate-x-1/2 rotate-180" />
+        <Notch fill="var(--color-ivory-50)" className="absolute start-1/2 bottom-0 z-[1] mb-[-4px] h-[30px] w-[400px] -translate-x-1/2 rtl:translate-x-1/2 rotate-180" />
       </section>
 
       {hasOpportunityContent && (

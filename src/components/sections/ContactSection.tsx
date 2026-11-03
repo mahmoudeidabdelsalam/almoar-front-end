@@ -60,7 +60,7 @@ export function ContactSection({ pageContent, form }: ContactSectionProps) {
             <h1 className="text-[84px] text-ivory-50 font-normal tracking-tight sm:text-5xl lg:text-[56px]">{title}</h1>
           </div>
         </div>
-        <Notch fill="white" className="absolute start-1/2 bottom-0 z-[1] mb-[-4px] h-[30px] w-[400px] -translate-x-1/2 rotate-180" />
+        <Notch fill="white" className="absolute start-1/2 bottom-0 z-[1] mb-[-4px] h-[30px] w-[400px] -translate-x-1/2 rtl:translate-x-1/2 rotate-180" />
       </section>
 
       <section id="contact" className="bg-ivory-50 px-5 pb-14 pt-16 sm:px-8 lg:px-14 lg:pb-20 lg:pt-20">

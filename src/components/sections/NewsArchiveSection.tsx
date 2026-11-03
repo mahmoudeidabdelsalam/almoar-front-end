@@ -141,7 +141,7 @@ export function NewsArchiveSection({ articles, locale }: NewsArchiveSectionProps
             <h1 className="text-[84px] text-ivory-50 font-normal tracking-tight sm:text-5xl lg:text-[56px]">{text.heading}</h1>
           </div>
         </div>
-        <Notch fill="white" className="absolute start-1/2 bottom-0 z-[1] mb-[-4px] h-[30px] w-[400px] -translate-x-1/2 rotate-180" />
+        <Notch fill="white" className="absolute start-1/2 bottom-0 z-[1] mb-[-4px] h-[30px] w-[400px] -translate-x-1/2 rtl:translate-x-1/2 rotate-180" />
       </section>
 
       <section className="bg-ivory-50 px-5 py-12 sm:px-8 sm:py-16 lg:py-20">
