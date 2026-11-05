@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 import type { InvestmentsPageContent, Locale, Project } from '@/types';
 import { InvestmentPortfolio } from './InvestmentPortfolio';
 import { Notch } from '@/components/ui/Notch';
+import { RelatedPages } from '@/components/ui/RelatedPages';
 
 interface InvestmentsPageProps {
   locale: Locale;
@@ -148,36 +149,16 @@ export function InvestmentsPage({ locale, content, projects }: InvestmentsPagePr
       </section>
 
       {navigationLinks.length > 0 && (
-        <section className="bg-ivory-50 px-5 py-10 sm:px-8 lg:px-14 lg:py-14">
-          <div className="mx-auto grid max-w-[1216px] gap-4 sm:grid-cols-2">
-            {navigationLinks.map((item, index) => {
-              const url = localizedUrl(item.url, locale);
-              if (!url) return null;
-              const label = localized(item.label, locale);
-              const description = localized(item.description, locale);
-              const external = /^(https?:|mailto:|tel:)/i.test(url);
-              const card = (
-                <div className="group relative flex min-h-40 flex-col justify-end overflow-hidden rounded-xl p-6 text-navy-900 border border-[#D7D9DC] bg-white transition hover:-translate-y-1 hover:border-[#C79A32] hover:shadow-lg">
-                  {item.image && (
-                    <>
-                      <Image src={item.image} alt="" fill sizes="(max-width: 640px) 100vw, 50vw" className="object-cover opacity-35 transition-transform duration-500 group-hover:scale-105" />
-                      <span aria-hidden="true" className="absolute inset-0 bg-navy-900/45" />
-                    </>
-                  )}
-                  <span className="relative z-10 text-lg font-medium">{label}</span>
-                  {description && <span className="relative z-10 mt-2 text-sm text-white/75">{description}</span>}
-                  <span className="relative z-10 mt-4 flex items-center gap-2 text-xs text-navy-900">
-                    {isArabic ? 'اكتشف المزيد' : 'Discover more'}
-                    {isArabic ? <ArrowLeft aria-hidden="true" size={14} /> : <ArrowRight aria-hidden="true" size={14} />}
-                  </span>
-                </div>
-              );
-              return external
-                ? <a key={`${url}-${index}`} href={url} className="block rounded-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500">{card}</a>
-                : <Link key={`${url}-${index}`} href={url} className="block rounded-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500">{card}</Link>;
-            })}
-          </div>
-        </section>
+        <RelatedPages
+          locale={locale}
+          links={navigationLinks.map((item) => ({
+            href: localizedUrl(item.url, locale),
+            label: localized(item.label, locale),
+            image: item.image,
+          }))}
+          className="bg-ivory-50 px-5 py-10 sm:px-8 lg:px-14 lg:py-14"
+          gridClassName="mx-auto grid max-w-[1216px] gap-4 sm:grid-cols-2"
+        />
       )}
     </div>
   );

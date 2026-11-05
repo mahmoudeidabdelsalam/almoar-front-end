@@ -95,7 +95,7 @@ export default async function RootLayout({
   ]);
 
   return (
-    <html lang="ar" dir="rtl" suppressHydrationWarning className={`${ibmPlexArabic.variable} ${cairo.variable} ${playfair.variable} ${inter.variable}`}>
+    <html lang="ar" dir="rtl" data-scroll-behavior="smooth" suppressHydrationWarning className={`${ibmPlexArabic.variable} ${cairo.variable} ${playfair.variable} ${inter.variable}`}>
       <body className="antialiased min-h-screen flex flex-col selection:bg-gold-500 selection:text-white">
         <Script id="locale-direction" strategy="beforeInteractive">
           {`const segment = window.location.pathname.split('/')[1]; const locale = segment === 'en' ? 'en' : 'ar'; document.documentElement.lang = locale; document.documentElement.dir = locale === 'ar' ? 'rtl' : 'ltr';`}

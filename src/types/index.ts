@@ -332,6 +332,7 @@ export interface Project {
   featured?: boolean;
   highlights?: LocalizedString[];
   logo?: { url: string; alt: string };
+  websiteUrl?: string;
   statsBand?: ProjectTextBand;
   makeBand?: ProjectTextBand;
   companiesBand?: ProjectCompaniesBand;

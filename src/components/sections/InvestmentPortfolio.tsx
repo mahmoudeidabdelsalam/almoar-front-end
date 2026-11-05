@@ -122,14 +122,14 @@ export function InvestmentPortfolio({
                     className="flex flex-1 flex-col focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-gold-500"
                     aria-label={`${isArabic ? 'عرض' : 'View'} ${title}`}
                   >
-                    <div className="relative flex h-[124px] items-center justify-center bg-[#F0EFEA]">
+                    <div className="relative flex h-[160px] items-center justify-center bg-[#f8f7f3]">
                       {image ? (
                         <Image
                           src={image}
                           alt={project.logo?.alt || title}
                           fill
                           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                          className={project.logo ? 'object-contain p-8' : 'object-contain p-5'}
+                          className={project.logo ? 'object-contain p-2' : 'object-contain p-0'}
                         />
                       ) : (
                         <span className="text-sm font-semibold text-navy-900/70">{title}</span>

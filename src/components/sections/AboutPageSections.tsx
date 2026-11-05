@@ -7,6 +7,7 @@ import { ArrowDownLeft, ArrowLeft, ArrowRight, ArrowUpLeft, Plus, UserRound } fr
 import { useLanguage } from '@/context/LanguageContext';
 import type { LocalizedString } from '@/types';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
+import { RelatedPages } from '@/components/ui/RelatedPages';
 
 const overviewImageFallbacks = [
   '/images/project_dama_lazurd.jpg',
@@ -118,7 +119,7 @@ export const AboutOverview: React.FC = () => {
 
   return (
     <section ref={revealRef} data-scroll-reveal className="bg-ivory-50 px-5 py-16 sm:px-8 sm:py-20 lg:px-0 lg:py-28" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
-      <div className="mx-auto flex max-w-[1046px] w-full flex-col md:flex-row justify-between lg:gap-[120px]">
+      <div className="mx-auto flex max-w-[1216px] w-full flex-col md:flex-row justify-between lg:gap-[120px]">
         <div className="min-w-0 max-w-[470px] mb-5 md:mt-0 lg:max-w-[490px]">
           <h2 data-reveal-item className="mb-3 lg:mb-12 min-w-full text-4xl font-semibold leading-[1.2] text-navy-900 sm:text-5xl lg:mb-12 lg:text-[58px]">
             {title}
@@ -159,7 +160,7 @@ export const AboutStatistics: React.FC = () => {
         {statistics.map((statistic, index) => (
           <div key={`${statistic.value}-${index}`} data-reveal-item className="group flex min-h-[146px] flex-col justify-between border-b border-navy-900/15 px-5 py-6 transition-colors duration-300 hover:bg-navy-900 sm:min-h-[210px] sm:border-b-0 sm:border-s sm:px-8 sm:py-7 lg:px-9">
             <dt className="text-xs leading-5 text-slate-500 transition-colors group-hover:text-white/70 sm:text-sm">{localized(statistic.label, locale)}</dt>
-            <dd className="mt-6 text-[42px] lg:text-[60px] text-end font-medium leading-none tabular-nums text-navy-900 transition-colors group-hover:text-gold-500 sm:text-5xl">{statistic.value}</dd>
+            <dd className="mt-6 text-[42px] lg:text-[60px] font-medium leading-none tabular-nums text-navy-900 transition-colors group-hover:text-gold-500 sm:text-5xl">{statistic.value}</dd>
           </div>
         ))}
       </dl>
@@ -273,7 +274,7 @@ export const AboutPortfolio: React.FC = () => {
 
   return (
     <section ref={revealRef} data-scroll-reveal className="bg-ivory-50 px-5 py-20 sm:px-8 sm:py-24 lg:px-0 lg:py-28" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
-      <div className="mx-auto max-w-[1046px]">
+      <div className="mx-auto max-w-[1216px]">
         <div className="mb-10 flex flex-col lg:flex-row items-end justify-between gap-6 sm:flex-row sm:gap-8 lg:mb-14">
             <div>
               {localized(portfolio.eyebrow, locale) && <p className="mb-3 text-xs text-gold-500">{localized(portfolio.eyebrow, locale)}</p>}
@@ -473,7 +474,7 @@ export const AboutResponsibility: React.FC = () => {
 
   return (
     <section ref={revealRef} data-scroll-reveal className="bg-ivory-50 px-5 py-20 sm:px-8 sm:py-24 lg:px-0 lg:py-28 overflow-hidden" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
-      <div className="mx-auto max-w-[1046px]">
+      <div className="mx-auto max-w-[1216px]">
         <div className="mb-10 flex items-center justify-between gap-6 sm:mb-14">
           <div>
             {localized(responsibility.eyebrow, locale) && <p className="mb-3 text-xs text-gold-500">{localized(responsibility.eyebrow, locale)}</p>}
@@ -520,7 +521,7 @@ export const AboutBoard: React.FC = () => {
 
   return (
     <section ref={revealRef} data-scroll-reveal className="bg-ivory-50 px-5 py-20 sm:px-8 sm:py-24 lg:px-0 lg:py-28" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
-      <div className="mx-auto max-w-[1046px]">
+      <div className="mx-auto max-w-[1216px]">
         <div className="mb-10 text-center sm:mb-14">
           {localized(board.eyebrow, locale) && <p className="mb-3 text-xs text-gold-500">{localized(board.eyebrow, locale)}</p>}
           {localized(board.title, locale) && <h2 className="text-4xl font-semibold text-navy-900 sm:text-5xl lg:text-[58px]">{localized(board.title, locale)}</h2>}
@@ -552,23 +553,17 @@ export const AboutNavigationLinks: React.FC = () => {
   const { locale, content } = useLanguage();
   const links = content.aboutPage.navigationLinks.filter((item) => localized(item.label, locale) && item.url);
   if (!links.length) return null;
-  const direction = locale === 'ar' ? <ArrowUpLeft className="h-4 w-4" /> : <ArrowDownLeft className="h-4 w-4" />;
-
   return (
-    <nav ref={revealRef} data-scroll-reveal className="bg-ivory-50 pb-14 sm:pb-20" aria-label={locale === 'ar' ? 'روابط ذات صلة' : 'Related pages'} dir={locale === 'ar' ? 'rtl' : 'ltr'}>
-      <div className="mx-auto grid max-w-[1046px] gap-4 px-5 sm:grid-cols-2 sm:px-8 lg:px-0">
-        {links.map((item, index) => (
-          <ContentLink key={`${item.url}-${index}`} href={localizedHref(item.url, locale)} className="group relative flex min-h-[116px] items-center justify-between gap-5 overflow-hidden rounded-xl border border-navy-900/15 bg-white px-6 py-5 text-navy-900 transition-colors hover:border-gold-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold-500 sm:min-h-[130px] sm:px-8">
-            {item.image && <Image src={item.image} alt="" fill sizes="180px" className="object-cover opacity-[0.04] transition-opacity group-hover:opacity-[0.1]" />}
-            <span className="relative z-10">
-              <span className="mb-2 block text-[10px] text-stone-500 sm:text-xs">{locale === 'ar' ? 'الاستمرار بالقراءة' : 'Continue reading'}</span>
-              <span className="block text-xl font-semibold leading-7 text-navy-900 sm:text-xl my-2">{locale === 'ar' ? 'الذهاب إلى' : 'Go to'}</span>
-              <span className="text-lg font-semibold leading-7 sm:text-2xl text-gold-600">{localized(item.label, locale)}</span>
-            </span>
-            <span className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-slate-200 text-slate-500 transition-colors group-hover:border-gold-500 group-hover:bg-gold-500 group-hover:text-navy-900" aria-hidden="true">{direction}</span>
-          </ContentLink>
-        ))}
-      </div>
-    </nav>
+    <RelatedPages
+      navRef={revealRef}
+      locale={locale}
+      links={links.map((item) => ({
+        href: localizedHref(item.url, locale),
+        label: localized(item.label, locale),
+        image: item.image,
+      }))}
+      className="bg-ivory-50 pb-14 sm:pb-20"
+      gridClassName="mx-auto grid max-w-[1216px] gap-4 px-5 sm:grid-cols-2 sm:px-8 lg:px-0"
+    />
   );
 };

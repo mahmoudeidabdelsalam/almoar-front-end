@@ -6,6 +6,7 @@ import { ArrowLeft, ArrowRight, Globe2, Mail, Phone } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import { Notch } from '@/components/ui/Notch';
 import { GravityForm } from '@/components/sections/GravityForm';
+import { RelatedPages } from '@/components/ui/RelatedPages';
 import type { ContactPageContent, GravityFormDefinition, InvestWithUsPageContent } from '@/types';
 
 interface InvestWithUsSectionProps {
@@ -75,7 +76,7 @@ export function InvestWithUsSection({ form, pageContent, contactContent }: Inves
 
       {hasOpportunityContent && (
         <section className="bg-ivory-50 px-5 pb-14 pt-16 sm:px-8 lg:px-14 lg:pb-20 lg:pt-20">
-          <div className="mx-auto max-w-[1280px] flex flex-row gap-10 sm:gap-12 lg:gap-14">
+          <div className="mx-auto max-w-[1280px] flex flex-col lg:flex-row gap-10 sm:gap-12 lg:gap-14">
             {(opportunityHeading || opportunityDescription) && (
               <header className="mb-8 text-sm text-[#7D8490] sm:mb-10">
                 <p className="mb-2 text-[12px] font-normal text-gold-600">{processHeading}</p>
@@ -85,7 +86,7 @@ export function InvestWithUsSection({ form, pageContent, contactContent }: Inves
             )}
 
             {steps.length > 0 && (
-              <ol className="flex flex-1 flex-col gap-4 sm:gap-5 lg:gap-6 min-w-[540px] rounded-lg border border-[#D7DAE0] bg-white p-5 transition hover:border-gold-500">
+              <ol className="flex flex-1 flex-col gap-4 sm:gap-5 lg:gap-6 lg:min-w-[540px] rounded-lg border border-[#D7DAE0] bg-white p-5 transition hover:border-gold-500">
                 {steps.map((step, index) => (
                   <li key={`${step.title.ar}-${index}`} className="flex flex-row items-start gap-6 sm:p-6">
                     <span className="flex h-[52px] w-[52px] items-center justify-center rounded-full text-sm bg-[#F7F0DE] font-medium text-gold-600">{String(index + 1).padStart(2, '0')}</span>
@@ -126,11 +127,6 @@ export function InvestWithUsSection({ form, pageContent, contactContent }: Inves
                   <h3 className="mt-2 text-xl font-medium">{contactHeading || (locale === 'ar' ? 'تواصل معنا' : 'Get in touch')}</h3>
                   {contactDescription && <p className="mt-3 text-sm leading-6 text-white/80">{contactDescription}</p>}
                 </div>
-                <div aria-hidden="true" className="absolute inset-0 opacity-30">
-                  <div className="absolute -left-8 top-8 h-64 w-64 rotate-45 border-[18px] border-slate-700" />
-                  <div className="absolute -right-12 bottom-5 h-52 w-52 rotate-45 border-[16px] border-slate-700" />
-                  <div className="absolute start-1/2 top-1/2 h-[140%] w-[18px] -translate-x-1/2 -translate-y-1/2 rotate-45 bg-slate-700" />
-                </div>
                 {contactItems.length > 0 && (
                   <ul className="relative z-10 mt-8 space-y-3">
                     {contactItems.map(({ href, value, icon: Icon, label, ltr }) => (
@@ -153,18 +149,15 @@ export function InvestWithUsSection({ form, pageContent, contactContent }: Inves
         </section>
       )}
 
-      <nav aria-label={locale === 'ar' ? 'صفحات ذات صلة' : 'Related pages'} className="bg-ivory-50 px-5 py-12 sm:px-8 lg:px-14">
-        <div className="mx-auto grid max-w-[1280px] gap-3 sm:grid-cols-2">
-          <Link href={`${prefix}/about`} className="flex min-h-[78px] items-center justify-between rounded-lg border border-[#D7DAE0] bg-white px-5 py-4 text-sm transition hover:border-gold-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500">
-            {dir === 'rtl' ? <ArrowRight aria-hidden="true" size={17} /> : <ArrowLeft aria-hidden="true" size={17} />}
-            <span className="text-end"><span className="block text-[9px] text-[#818896]">{locale === 'ar' ? 'اكتشف مسيرتنا' : 'Discover our story'}</span><span className="mt-1 block font-medium text-navy-800">{t.nav.about}</span></span>
-          </Link>
-          <Link href={`${prefix}/contact-us`} className="flex min-h-[78px] items-center justify-between rounded-lg border border-gold-500 bg-white px-5 py-4 text-sm transition hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500">
-            <span className="text-end"><span className="block text-[9px] text-[#818896]">{locale === 'ar' ? 'تواصل معنا' : 'Get in touch'}</span><span className="mt-1 block font-medium text-navy-800">{t.nav.contact}</span></span>
-            {dir === 'rtl' ? <ArrowLeft aria-hidden="true" size={17} /> : <ArrowRight aria-hidden="true" size={17} />}
-          </Link>
-        </div>
-      </nav>
+      <RelatedPages
+        locale={locale}
+        links={[
+          { href: `${prefix}/about`, label: t.nav.about },
+          { href: `${prefix}/contact-us`, label: t.nav.contact },
+        ]}
+        className="bg-ivory-50 px-5 py-12 sm:px-8 lg:px-14"
+        gridClassName="mx-auto grid max-w-[1280px] gap-3 sm:grid-cols-2"
+      />
     </div>
   );
 }

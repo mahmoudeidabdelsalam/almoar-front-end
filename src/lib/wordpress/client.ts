@@ -81,6 +81,7 @@ type GraphQLNode = {
     contentEn?: string | null;
     featured?: boolean | null;
     projectLogo?: GraphQLMediaConnection;
+    projectWebsite?: string | null;
     statsTag?: string | null;
     statsTagEn?: string | null;
     statsHeadline?: string | null;
@@ -166,6 +167,7 @@ class GraphQLResponseError extends Error {}
 
 let warnedAboutMissingSectorsSchema = false;
 let warnedAboutMissingSectorTagsSchema = false;
+let projectWebsiteGraphQLSupported: boolean | undefined;
 
 function reportCMSIssue(operation: string, error: unknown): void {
   const message = error instanceof Error ? error.message : String(error);
@@ -1363,7 +1365,7 @@ export const wpClient = {
 
     try {
       if (WP_GRAPHQL_URL) {
-        const data = await fetchGraphQL<{
+        const fetchProjects = (includeProjectWebsite: boolean) => fetchGraphQL<{
           projects?: { nodes?: GraphQLNode[] | null };
         }>(`{
           projects(first: 50) {
@@ -1380,6 +1382,7 @@ export const wpClient = {
                 contentAr contentEn
                 featured
                 projectLogo { node { sourceUrl altText } }
+                ${includeProjectWebsite ? 'projectWebsite' : ''}
                 statsTag statsTagEn statsHeadline statsHeadlineEn
                 statsItems { statHead statHeadEn statText statTextEn }
                 makeTag makeTagEn makeHeadline makeHeadlineEn
@@ -1402,6 +1405,22 @@ export const wpClient = {
             }
           }
         }`);
+        let data;
+        if (projectWebsiteGraphQLSupported === false) {
+          data = await fetchProjects(false);
+        } else {
+          try {
+            data = await fetchProjects(true);
+            projectWebsiteGraphQLSupported = true;
+          } catch (error) {
+            if (!(error instanceof GraphQLResponseError) || !error.message.includes('Cannot query field "projectWebsite"')) {
+              throw error;
+            }
+            projectWebsiteGraphQLSupported = false;
+            console.warn('[WordPress CMS] Project Website is not exposed by the GraphQL schema yet; project logos will remain unlinked until the WordPress update is active.');
+            data = await fetchProjects(false);
+          }
+        }
 
         const mapped = (data.projects?.nodes ?? []).map((node) => {
           const details = node.projectDetails;
@@ -1451,6 +1470,7 @@ export const wpClient = {
               const logo = mapProjectImage(details?.projectLogo);
               return logo ? { ...logo, alt: logo.alt || `${title} logo` } : undefined;
             })(),
+            websiteUrl: details?.projectWebsite || undefined,
             statsBand: details ? mapProjectTextBand(
               details.statsTag,
               details.statsTagEn,

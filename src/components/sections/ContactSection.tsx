@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowRight, Globe2, Mail, MapPin, Phone } from 'lucide-react
 import { useLanguage } from '@/context/LanguageContext';
 import { GravityForm } from '@/components/sections/GravityForm';
 import { Notch } from '@/components/ui/Notch';
+import { RelatedPages } from '@/components/ui/RelatedPages';
 import type { ContactPageContent, GravityFormDefinition, SiteContent } from '@/types';
 
 interface ContactSectionProps {
@@ -106,40 +107,43 @@ export function ContactSection({ pageContent, form }: ContactSectionProps) {
                 </div>
               )}
             </div>
-            <aside className="contact-map-pattern relative flex min-h-[260px] flex-col justify-between overflow-hidden rounded-xl bg-[#10213D] p-5 text-white md:col-span-4 md:min-h-[350px] md:p-6">
-              <div className="relative z-10">
-                <p className="text-[10px] font-medium text-gold-500">{pageContent?.badge[locale] || t.contact_section.badge}</p>
-                <h3 className="mt-2 text-xl font-medium">{location}</h3>
+            <aside dir={dir} className="contact-map-pattern relative flex aspect-[2/3] min-h-[480px] flex-col overflow-hidden rounded-2xl bg-[#10213D] p-8 text-white md:col-span-4 md:min-h-[590px]">
+              <div className="relative z-10d">
+                <p className="text-[10px] font-medium text-gold-500">{locale === 'ar' ? 'موقعنا' : 'Our location'}</p>
+                <h3 className="mt-3 text-[28px] font-normal leading-tight sm:text-[32px]">{location}</h3>
               </div>
-              <div aria-hidden="true" className="absolute inset-0 opacity-30">
-                <div className="absolute -left-8 top-8 h-64 w-64 rotate-45 border-[18px] border-slate-700" />
-                <div className="absolute -right-12 bottom-5 h-52 w-52 rotate-45 border-[16px] border-slate-700" />
-                <div className="absolute start-1/2 top-1/2 h-[140%] w-[18px] -translate-x-1/2 -translate-y-1/2 rotate-45 bg-slate-700" />
-              </div>
-              {address && <p className="relative z-10 max-w-[85%] text-sm leading-6 text-white/85">{address}</p>}
-              <div className="relative z-10 flex items-end justify-between gap-3">
-                {mapUrl && <a href={mapUrl} target="_blank" rel="noopener noreferrer" aria-label={t.contact_section.map} className="flex h-11 w-11 items-center justify-center rounded-full bg-gold-500 text-[#10213D] transition hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
+              {mapUrl ? (
+                <a href={mapUrl} target="_blank" rel="noopener noreferrer" aria-label={t.contact_section.map} className="absolute start-[18%] top-[40%] z-10 flex h-24 w-24 items-center justify-center rounded-full bg-[#C99B2E] text-[#10213D] transition hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">
                   <MapPin aria-hidden="true" size={18} />
-                </a>}
-                <span className="text-[10px] text-white/55">{locale === 'ar' ? 'المملكة العربية السعودية' : 'Kingdom of Saudi Arabia'}</span>
+                </a>
+              ) : (
+                <span aria-hidden="true" className="absolute start-[18%] top-[40%] z-10 flex h-24 w-24 items-center justify-center rounded-full bg-[#C99B2E] text-[#10213D]">
+                  <MapPin size={18} />
+                </span>
+              )}
+              <div className="relative z-10 mt-auto rounded-2xl bg-[#F8F7F2] px-5 py-5 text-navy-900 sm:px-7">
+                <p className="text-[18px] leading-7 sm:text-[21px]">{address || (locale === 'ar' ? 'المملكة العربية السعودية' : 'Kingdom of Saudi Arabia')}</p>
+                {mapUrl && (
+                  <a href={mapUrl} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-2 text-[12px] text-[#A77C22] transition hover:text-[#806017] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500">
+                    {dir === 'rtl' ? <ArrowLeft aria-hidden="true" size={15} /> : <ArrowRight aria-hidden="true" size={15} />}
+                    <span>{locale === 'ar' ? 'عرض على الخريطة' : 'View on map'}</span>
+                  </a>
+                )}
               </div>
             </aside>
           </div>
         </div>
       </section>
 
-      <nav aria-label={locale === 'ar' ? 'صفحات ذات صلة' : 'Related pages'} className="bg-ivory-50 px-5 pb-14 pt-2 sm:px-8 lg:px-14">
-        <div className="mx-auto grid max-w-[1280px] gap-3 sm:grid-cols-2">
-          <Link href={`${prefix}/invest-with-us`} className="flex min-h-[78px] items-center justify-between rounded-lg border border-[#D7DAE0] bg-white px-5 py-4 text-sm transition hover:border-gold-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500">
-            <ArrowLeft aria-hidden="true" size={17} className={dir === 'rtl' ? 'rotate-180' : ''} />
-            <span className="text-end"><span className="block text-[9px] text-[#818896]">{locale === 'ar' ? 'الاستثمار والشراكات' : 'Investment & Partnerships'}</span><span className="mt-1 block font-medium text-navy-800">{locale === 'ar' ? 'الذهاب إلى استثماراتنا' : 'Invest with us'}</span></span>
-          </Link>
-          <Link href={`${prefix}/about`} className="flex min-h-[78px] items-center justify-between rounded-lg border border-gold-500 bg-white px-5 py-4 text-sm transition hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500">
-            <span className="text-end"><span className="block text-[9px] text-[#818896]">{locale === 'ar' ? 'اكتشف مسيرتنا' : 'Discover our story'}</span><span className="mt-1 block font-medium text-navy-800">{t.nav.about}</span></span>
-            <ArrowRight aria-hidden="true" size={17} className={dir === 'rtl' ? 'rotate-180' : ''} />
-          </Link>
-        </div>
-      </nav>
+      <RelatedPages
+        locale={locale}
+        links={[
+          { href: `${prefix}/invest-with-us`, label: locale === 'ar' ? 'استثمر معنا' : 'Invest with us' },
+          { href: `${prefix}/about`, label: t.nav.about },
+        ]}
+        className="bg-ivory-50 px-5 pb-14 pt-2 sm:px-8 lg:px-14"
+        gridClassName="mx-auto grid max-w-[1280px] gap-3 sm:grid-cols-2"
+      />
     </>
   );
 }

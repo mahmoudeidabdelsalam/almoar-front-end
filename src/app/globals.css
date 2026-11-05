@@ -187,101 +187,108 @@ img, video { max-inline-size: 100%; }
   font-size: clamp(2.5rem, 3vw, 56px);
 }
 
-.project-page__related-card {
+.related-page-card {
   position: relative;
   display: flex;
-  min-height: 234px;
+  min-height: 150px;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
+  gap: 20px;
   overflow: hidden;
-  border: 2px solid rgba(15, 31, 56, 0.2);
-  border-radius: 32px;
+  border: 1px solid #d7d9dc;
+  border-radius: 16px;
   background: #fff;
-  padding: 32px 48px;
-  transition: border-color 250ms var(--ease-out), box-shadow 250ms var(--ease-out), transform 250ms var(--ease-out);
+  padding: 20px 28px;
+  color: var(--color-navy-900);
+  text-decoration: none;
+  transition: border-color 250ms var(--ease-out), box-shadow 250ms var(--ease-out);
 }
 
-.project-page__related-card:hover,
-.project-page__related-card:focus-visible {
+.related-page-card:hover,
+.related-page-card:focus-visible {
   border-color: var(--color-gold-500);
-  box-shadow: 0 12px 30px rgba(15, 31, 56, 0.08);
+  box-shadow: 0 8px 22px rgba(15, 31, 56, 0.06);
 }
 
-.project-page__related-copy {
+.related-page-card:focus-visible {
+  outline: 2px solid var(--color-gold-500);
+  outline-offset: 3px;
+}
+
+.related-page-card__copy {
   position: relative;
   z-index: 2;
   display: flex;
   min-width: 0;
   flex: 1;
   flex-direction: column;
-  text-align: right;
+  transition: transform 450ms var(--ease-out);
 }
 
-.project-page__related-eyebrow {
-  margin-bottom: 12px;
+.related-page-card--has-image:hover .related-page-card__copy,
+.related-page-card--has-image:focus-visible .related-page-card__copy {
+  transform: translateX(-140px);
+}
+
+.related-page-card__eyebrow {
+  margin-bottom: 4px;
   color: #99958e;
-  font-size: 18px;
+  font-size: 11px;
 }
 
-.project-page__related-title {
+.related-page-card__title {
   color: var(--color-navy-900);
-  font-size: clamp(24px, 2.2vw, 40px);
-  line-height: 1.4;
+  font-size: 20px;
+  line-height: 1.45;
 }
 
-.project-page__related-destination {
+.related-page-card__destination {
   color: #a77c20;
-  font-size: clamp(28px, 2.5vw, 48px);
-  line-height: 1.4;
+  font-size: 24px;
+  line-height: 1.35;
   transition: color 250ms var(--ease-out);
 }
 
-.project-page__related-card:hover .project-page__related-destination,
-.project-page__related-card:focus-visible .project-page__related-destination {
+.related-page-card:hover .related-page-card__destination,
+.related-page-card:focus-visible .related-page-card__destination {
   color: var(--color-gold-600);
 }
 
-.project-page__related-image {
+.related-page-card__image {
   position: absolute;
-  right: 48px;
+  right: 24px;
   z-index: 1;
-  width: 204px;
-  height: 154px;
+  top: 50%;
+  width: 130px;
+  height: 100px;
   overflow: hidden;
-  border-radius: 24px;
+  border-radius: 12px;
   opacity: 0;
-  transform: translateX(12px) scale(0.96);
+  transform: translate(12px, -50%) scale(0.96);
   transition: opacity 350ms var(--ease-out), transform 500ms var(--ease-out);
 }
 
-.project-page__related-card--investments .project-page__related-copy {
-  margin-right: 246px;
-}
-
-.project-page__related-card--investments:hover .project-page__related-image,
-.project-page__related-card--investments:focus-visible .project-page__related-image {
+.related-page-card--has-image:hover .related-page-card__image,
+.related-page-card--has-image:focus-visible .related-page-card__image {
   opacity: 1;
-  transform: translateX(0) scale(1);
+  transform: translate(0, -50%) scale(1);
 }
 
-.project-page__related-arrow {
+.related-page-card__arrow {
   display: grid;
-  width: 8%;
-  max-width: 96px;
-  height: auto;
-  aspect-ratio: 1;
-  flex: 0 0 8%;
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
   place-items: center;
   border-radius: 50%;
-  border: 2px solid rgba(15, 31, 56, 0.2);
+  border: 1px solid #d7d9dc;
   background: #fff;
   color: #92918e;
   transition: background-color 250ms var(--ease-out), color 250ms var(--ease-out);
 }
 
-.project-page__related-card:hover .project-page__related-arrow,
-.project-page__related-card:focus-visible .project-page__related-arrow {
+.related-page-card:hover .related-page-card__arrow,
+.related-page-card:focus-visible .related-page-card__arrow {
   border-color: var(--color-navy-900);
   background: var(--color-navy-900);
   color: #fff;
@@ -377,10 +384,10 @@ img, video { max-inline-size: 100%; }
   z-index: 0;
   inset: 0;
   content: "";
-  opacity: 0.22;
-  background-image:
-    repeating-linear-gradient(45deg, transparent 0 22px, rgba(102, 127, 163, 0.38) 23px 30px, transparent 31px 54px),
-    repeating-linear-gradient(-45deg, transparent 0 32px, rgba(102, 127, 163, 0.22) 33px 40px, transparent 41px 66px);
+  opacity: 0.62;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='152' height='180' viewBox='0 0 152 180'%3E%3Cg fill='none' stroke='%23263a55' stroke-width='12' stroke-linecap='square'%3E%3Cpath d='M76 0v180M0 42h76M76 42 32 -2M76 42l44 -44M0 96h76M76 96 32 52M76 96l44 -44M0 150h76M76 150 32 106M76 150l44 -44M76 0l44 44M76 54 32 98M76 54l44 44M76 108 32 152M76 108l44 44'/%3E%3C/g%3E%3C/svg%3E");
+  background-position: -35px 0;
+  background-repeat: repeat;
   pointer-events: none;
 }
 
@@ -1122,50 +1129,6 @@ img, video { max-inline-size: 100%; }
       min-height: 160px;
     }
 
-    .project-page__related-card {
-      min-height: 190px;
-      gap: 12px;
-      border-radius: 24px;
-      padding: 22px;
-    }
-
-    .project-page__related-eyebrow {
-      margin-bottom: 8px;
-      font-size: 13px;
-    }
-
-    .project-page__related-title {
-      font-size: 20px;
-    }
-
-    .project-page__related-destination {
-      font-size: 24px;
-    }
-
-    .project-page__related-image {
-      right: 20px;
-      width: 36%;
-      height: 140px;
-      border-radius: 16px;
-      opacity: 1;
-      transform: none;
-    }
-
-    .project-page__related-card--investments .project-page__related-copy {
-      margin-right: 40%;
-    }
-
-    .project-page__related-arrow {
-      width: 52px;
-      height: 52px;
-      flex-basis: 52px;
-    }
-
-    .project-page__related-arrow svg {
-      width: 20px;
-      height: 20px;
-    }
-
     .about-responsibility__stage {
       min-height: 500px;
     }
@@ -1579,78 +1542,42 @@ img, video { max-inline-size: 100%; }
     min-height: 160px;
   }
 
-  .project-page__related-card {
-    min-height: 190px;
-    gap: 12px;
-    border-radius: 24px;
-    padding: 22px;
-  }
-
-  .project-page__related-eyebrow {
-    margin-bottom: 8px;
-    font-size: 13px;
-  }
-
-  .project-page__related-title {
-    font-size: 20px;
-  }
-
-  .project-page__related-destination {
-    font-size: 24px;
-  }
-
-  .project-page__related-image {
-    right: 20px;
-    width: 36%;
-    height: 140px;
-    border-radius: 16px;
-    opacity: 1;
-    transform: none;
-  }
-
-  .project-page__related-card--investments .project-page__related-copy {
-    margin-right: 40%;
-  }
-
-  .project-page__related-arrow {
-    width: 52px;
-    height: 52px;
-    flex-basis: 52px;
-  }
-
-  .project-page__related-arrow svg {
-    width: 20px;
-    height: 20px;
-  }
 }
 
-@media (max-width: 767px) {
-  .project-page__related-card--investments {
-    min-height: 0;
-    flex-direction: column;
-    align-items: stretch;
-    padding: 16px;
+@media (max-width: 640px) {
+  .related-page-card {
+    min-height: 124px;
+    gap: 12px;
+    padding: 16px 18px;
   }
 
-  .project-page__related-card--investments .project-page__related-image {
-    position: relative;
-    top: auto;
-    right: auto;
-    width: 100%;
-    height: 160px;
-    opacity: 1;
-    transform: none;
+  .related-page-card--has-image:hover .related-page-card__copy,
+  .related-page-card--has-image:focus-visible .related-page-card__copy {
+    transform: translateX(-96px);
   }
 
-  .project-page__related-card--investments .project-page__related-copy {
-    margin: 0;
-    padding: 12px 4px 4px;
+  .related-page-card__eyebrow {
+    font-size: 10px;
   }
 
-  .project-page__related-card--investments .project-page__related-arrow {
-    position: absolute;
-    left: 28px;
-    top: 28px;
-    z-index: 3;
+  .related-page-card__title {
+    font-size: 17px;
+  }
+
+  .related-page-card__destination {
+    font-size: 19px;
+  }
+
+  .related-page-card__image {
+    right: 16px;
+    width: 88px;
+    height: 72px;
+    border-radius: 10px;
+  }
+
+  .related-page-card__arrow {
+    width: 40px;
+    height: 40px;
+    flex-basis: 40px;
   }
 }

@@ -28,7 +28,7 @@ function ProjectCompaniesBand({ project, locale }: { project: Project; locale: L
 
   return (
     <section className="project-companies w-full px-5 py-16 sm:px-8 sm:py-20 lg:py-24">
-      <div className="mb-5 flex items-end justify-between gap-6 mx-auto max-w-[1440px]">
+      <div className="mb-5 flex items-end justify-between gap-6 mx-auto max-w-[1216px]">
         <div>
           {tag && <p className="mb-2 text-xs font-medium text-gold-600">{tag}</p>}
           {headline && <h2 className="text-xl font-semibold text-navy-900 sm:text-2xl">{headline}</h2>}
@@ -39,7 +39,7 @@ function ProjectCompaniesBand({ project, locale }: { project: Project; locale: L
         </Link>
       </div>
       {items.length > 0 && (
-        <div className="grid grid-cols-3 items-center gap-3 sm:grid-cols-4 md:grid-cols-6 mx-auto max-w-[1440px]">
+        <div className="grid grid-cols-3 items-center gap-3 sm:grid-cols-4 md:grid-cols-6 mx-auto max-w-[1216px]">
           {items.map((item, index) => {
             const alt = item.logo.alt || `${headline || project.title[locale]} company logo ${index + 1}`;
             const logo = (
@@ -88,7 +88,7 @@ function ProjectKeyProjectsBand({ project, locale }: { project: Project; locale:
 
   return (
     <section className="project-key-projects">
-      <div className="mx-auto max-w-[1440px] px-5 py-16 sm:px-8 sm:py-20 lg:py-24">
+      <div className="mx-auto max-w-[1216px] px-5 py-16 sm:px-8 sm:py-20 lg:py-24">
       {(tag || headline) && (
         <div className="mb-7">
           {tag && <p className="mb-2 text-xs font-medium text-gold-600">{tag}</p>}
@@ -191,6 +191,12 @@ export default async function SingleProjectPage({ params }: Props) {
   const projectTitle = localizedText(project.title, locale);
   const projectExcerpt = localizedText(project.excerpt, locale);
   const projectContent = localizedText(project.content, locale);
+  const projectWebsite = /^https?:\/\//i.test(project.websiteUrl || '') ? project.websiteUrl : undefined;
+  const projectLogo = project.logo ? (
+    <div className="flex h-[96px] w-[335px] shrink-0 items-center justify-center bg-[#f8f7f3] rounded-xl p-2">
+      <Image src={project.logo.url} alt={project.logo.alt || `${projectTitle} logo`} width={190} height={90} className="max-h-full w-full object-contain" />
+    </div>
+  ) : null;
   const projectCategoryValue = locale === 'ar'
     ? project.categoryTerms?.[0]?.name.ar || project.category
     : project.categoryTerms?.[0]?.name.en || project.category_en || project.category;
@@ -230,7 +236,7 @@ export default async function SingleProjectPage({ params }: Props) {
       <Header />
       <main className="project-page flex-1 bg-ivory-50" dir={direction}>
         <section className="project-page__hero relative overflow-hidden bg-navy-900 text-white">
-          <div className="project-page__hero-inner mx-auto flex w-full max-w-[1440px] flex-col justify-between px-5 pb-36 pt-28 sm:px-8 lg:px-8 2xl:px-0">
+          <div className="project-page__hero-inner mx-auto flex w-full max-w-[1216px] flex-col justify-between px-5 pb-36 pt-28 sm:px-8 lg:px-8 2xl:px-0">
             <div className="flex items-center justify-between gap-6 text-xs sm:text-sm" dir="ltr">
               <Link href={projectsPath} className="font-semibold transition-colors hover:text-gold-200">
                 {locale === 'ar' ? 'العودة لكافة المشاريع' : 'Back to all projects'}
@@ -245,20 +251,21 @@ export default async function SingleProjectPage({ params }: Props) {
               </nav>
             </div>
             <div className="mt-14 flex items-end justify-between gap-8 sm:mt-16" dir="ltr">
-              <div className="project-page__brand-card flex min-h-[112px] w-full max-w-[480px] shrink-0 items-center justify-between gap-6 rounded-2xl bg-ivory-50 px-6 py-5 sm:min-h-[132px] sm:px-8">
-                <div className="min-w-0 flex-1" dir={direction}>
-                  {projectCategory && <p className="mb-2 text-sm font-medium text-gold-600">{projectCategory}</p>}
-                  <p className="text-sm font-medium text-navy-900 sm:text-base">
-                    {locale === 'ar' ? 'شركة سعودية' : 'Saudi company'}
-                    {projectLocation && <><span className="mx-2 text-navy-900/25">·</span>{projectLocation}</>}
-                  </p>
-                </div>
+              <div className="project-page__brand-card">
                 {project.logo && (
                   <>
-                    <span className="h-16 w-px shrink-0 bg-navy-900/20" aria-hidden="true" />
-                    <div className="flex h-[70px] w-[130px] shrink-0 items-center justify-center bg-white p-2 sm:h-[78px] sm:w-[140px]">
-                      <Image src={project.logo.url} alt={project.logo.alt || `${projectTitle} logo`} width={190} height={90} className="max-h-full w-full object-contain" />
-                    </div>
+                    <span className="shrink-0 bg-navy-900/20" aria-hidden="true" />
+                    {projectWebsite ? (
+                      <a
+                        href={projectWebsite}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={locale === 'ar' ? `زيارة الموقع الإلكتروني لـ ${projectTitle}` : `Visit ${projectTitle} website`}
+                        className="rounded-sm transition-opacity hover:opacity-80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500"
+                      >
+                        {projectLogo}
+                      </a>
+                    ) : projectLogo}
                   </>
                 )}
               </div>
@@ -274,7 +281,7 @@ export default async function SingleProjectPage({ params }: Props) {
         </section>
 
         <section className="project-page__overview px-5 py-16 sm:px-8 sm:py-20 lg:py-24">
-          <div className="mx-auto grid mx-auto flex w-full max-w-[1440px] items-center gap-10 md:grid-cols-2 lg:gap-20" dir="ltr">
+          <div className="mx-auto grid mx-auto flex w-full max-w-[1216px] items-center gap-10 md:grid-cols-2 lg:gap-20" dir="ltr">
             <div className="project-page__overview-image relative aspect-[0.88] overflow-hidden rounded-2xl bg-navy-900/10">
               {project.image ? (
                 <Image src={project.image} alt={projectTitle} fill sizes="(max-width: 767px) 100vw, 42vw" className="object-cover" priority />
@@ -299,7 +306,7 @@ export default async function SingleProjectPage({ params }: Props) {
 
         {(statsTag || statsHeadline || stats.length > 0) && (
           <section className="project-page__stats bg-navy-900 text-white">
-            <div className="mx-auto flex flex-col w-full max-w-[1440px] px-5 py-16 sm:px-8 sm:py-20 lg:py-24">
+            <div className="mx-auto flex flex-col w-full max-w-[1216px] px-5 py-16 sm:px-8 sm:py-20 lg:py-24">
               <div className="mb-8">
                 {statsTag && <p className="mb-8 text-xs font-medium text-gold-500">{statsTag}</p>}
                 {statsHeadline && <h2 className="text-4xl font-medium sm:text-5xl lg:text-[56px]">{statsHeadline}</h2>}
@@ -324,7 +331,7 @@ export default async function SingleProjectPage({ params }: Props) {
 
         {benefits.length > 0 && (
           <section className="project-page__benefits px-5 py-16 sm:px-8 sm:py-20 lg:py-24">
-            <div className="mx-auto max-w-[1440px]">
+            <div className="mx-auto max-w-[1216px]">
               <div className="mb-7">
                 {benefitsTag && <p className="mb-2 text-xs font-medium text-gold-600">{benefitsTag}</p>}
                 {benefitsTitle && <h2 className="text-3xl font-semibold text-navy-900 sm:text-4xl">{benefitsTitle}</h2>}
@@ -351,27 +358,30 @@ export default async function SingleProjectPage({ params }: Props) {
         <div className="space-y-14 px-5 pb-16 sm:px-8 sm:pb-20">
           <ProjectKeyProjectsBand project={project} locale={locale} />
           <ProjectCompaniesBand project={project} locale={locale} />
-          <nav className="project-page__related mx-auto grid w-full max-w-[1440px] gap-5 lg:grid-cols-2 lg:gap-8" aria-label={locale === 'ar' ? 'روابط ذات صلة' : 'Related links'}>
-            <Link href={`/${locale}/our-investments`} className="project-page__related-card project-page__related-card--investments group" dir={direction}>
+          <nav className="project-page__related mx-auto grid w-full max-w-[1216px] gap-5 lg:grid-cols-2 lg:gap-8" aria-label={locale === 'ar' ? 'روابط ذات صلة' : 'Related links'}>
+            <Link href={`/${locale}/our-investments`} className={`related-page-card group${relatedProjectImage ? ' related-page-card--has-image' : ''}`} dir={direction}>
               {relatedProjectImage && (
-                <span className="project-page__related-image" aria-hidden="true">
-                  <Image src={relatedProjectImage} alt="" fill sizes="(max-width: 1023px) 100vw, 40vw" className="object-cover" />
+                <span className="related-page-card__image" aria-hidden="true">
+                  <Image src={relatedProjectImage} alt="" fill sizes="130px" className="object-cover" />
                 </span>
               )}
-              <span className="project-page__related-copy">
-                <span className="project-page__related-eyebrow">{locale === 'ar' ? 'الاستمرار بالقراءة' : 'Continue reading'}</span>
-                <span className="project-page__related-title">{locale === 'ar' ? 'الذهاب إلى' : 'Go to'}</span>
-                <span className="project-page__related-destination">{locale === 'ar' ? 'استثماراتنا' : 'Our investments'}</span>
+              <span className="related-page-card__copy">
+                <span className="related-page-card__eyebrow">{locale === 'ar' ? 'الاستمرار بالقراءة' : 'Continue reading'}</span>
+                <span className="related-page-card__title">{locale === 'ar' ? 'الذهاب إلى' : 'Go to'}</span>
+                <span className="related-page-card__destination">{locale === 'ar' ? 'استثماراتنا' : 'Our investments'}</span>
               </span>
-              <span className="project-page__related-arrow" aria-hidden="true"><ArrowLeft className="h-7 w-7" /></span>
+              <span className="related-page-card__arrow" aria-hidden="true"><ArrowLeft className="h-5 w-5" /></span>
             </Link>
-            <Link href={`/${locale}/news`} className="project-page__related-card project-page__related-card--media group" dir={direction}>
-              <span className="project-page__related-copy">
-                <span className="project-page__related-eyebrow">{locale === 'ar' ? 'الاستمرار بالقراءة' : 'Continue reading'}</span>
-                <span className="project-page__related-title">{locale === 'ar' ? 'الذهاب إلى' : 'Go to'}</span>
-                <span className="project-page__related-destination">{locale === 'ar' ? 'المركز الإعلامي' : 'Media center'}</span>
+            <Link href={`/${locale}/news`} className="related-page-card related-page-card--has-image group" dir={direction}>
+              <span className="related-page-card__image" aria-hidden="true">
+                <Image src="/images/hero_riyadh.jpg" alt="" fill sizes="130px" className="object-cover" />
               </span>
-              <span className="project-page__related-arrow" aria-hidden="true"><ArrowLeft className="h-7 w-7" /></span>
+              <span className="related-page-card__copy">
+                <span className="related-page-card__eyebrow">{locale === 'ar' ? 'الاستمرار بالقراءة' : 'Continue reading'}</span>
+                <span className="related-page-card__title">{locale === 'ar' ? 'الذهاب إلى' : 'Go to'}</span>
+                <span className="related-page-card__destination">{locale === 'ar' ? 'المركز الإعلامي' : 'Media center'}</span>
+              </span>
+              <span className="related-page-card__arrow" aria-hidden="true"><ArrowLeft className="h-5 w-5" /></span>
             </Link>
           </nav>
         </div>
