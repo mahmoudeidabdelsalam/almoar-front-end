@@ -18,25 +18,29 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects }) =>
   const localized = (value: { ar: string; en: string }) =>
     localizedValue(value.ar, value.en);
   const copy = content.sectionCopy.projects;
-  const [filter, setFilter] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState('all');
   if (!projects.length && !content.previewMode) return null;
 
   const ArrowIcon = dir === 'rtl' ? ArrowLeft : ArrowRight;
-
-  const filteredProjects = projects.filter((project) => {
-    if (filter === 'all') return true;
-    if (filter === 'residential') {
-      return project.category.includes('سكني') || project.category_en?.toLowerCase().includes('residential');
-    }
-    if (filter === 'commercial') {
-      return project.category.includes('تجاري') || project.category_en?.toLowerCase().includes('commercial');
-    }
-    if (filter === 'mixed') {
-      return project.category.includes('متعدد') || project.category_en?.toLowerCase().includes('mixed');
-    }
-    return true;
-  });
-  const localizedProjects = filteredProjects.filter((project) => localized(project.title));
+  const projectCategories = (project: Project) => project.categoryTerms?.length
+    ? project.categoryTerms
+    : project.category || project.category_en
+      ? [{
+          slug: project.category_en || project.category,
+          name: { ar: project.category, en: project.category_en || project.category },
+        }]
+      : [];
+  const categories = Array.from(
+    new Map(
+      projects.flatMap(projectCategories)
+        .filter((category) => category.slug)
+        .map((category) => [category.slug, category]),
+    ).values(),
+  );
+  const localizedProjects = projects
+    .filter((project) => selectedCategory === 'all'
+      || projectCategories(project).some((category) => category.slug === selectedCategory))
+    .filter((project) => localized(project.title));
 
   return (
     <section className="py-20 lg:py-28 bg-ivory-50 relative">
@@ -56,140 +60,117 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects }) =>
             {copy?.description[locale] || (content.previewMode ? t.projects_section.subtitle : '')}
           </p>
 
-          {/* Filter Tabs */}
-          <div className="inline-flex p-1.5 rounded-full bg-white border border-navy-900/10 shadow-sm mt-6 flex-wrap justify-center gap-1">
-            <button
-              type="button"
-              onClick={() => setFilter('all')}
-              className={`px-5 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all ${
-                filter === 'all'
-                  ? 'bg-navy-900 text-white shadow-md'
-                  : 'text-[#5A677B] hover:text-navy-900'
-              }`}
-            >
-              {t.projects_section.filter_all}
-            </button>
-            <button
-              type="button"
-              onClick={() => setFilter('residential')}
-              className={`px-5 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all ${
-                filter === 'residential'
-                  ? 'bg-navy-900 text-white shadow-md'
-                  : 'text-[#5A677B] hover:text-navy-900'
-              }`}
-            >
-              {t.projects_section.filter_residential}
-            </button>
-            <button
-              type="button"
-              onClick={() => setFilter('commercial')}
-              className={`px-5 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all ${
-                filter === 'commercial'
-                  ? 'bg-navy-900 text-white shadow-md'
-                  : 'text-[#5A677B] hover:text-navy-900'
-              }`}
-            >
-              {t.projects_section.filter_commercial}
-            </button>
-            <button
-              type="button"
-              onClick={() => setFilter('mixed')}
-              className={`px-5 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all ${
-                filter === 'mixed'
-                  ? 'bg-navy-900 text-white shadow-md'
-                  : 'text-[#5A677B] hover:text-navy-900'
-              }`}
-            >
-              {t.projects_section.filter_mixed}
-            </button>
-          </div>
+          <p className="shrink-0 text-xs text-[#737B86]" aria-live="polite">
+            {locale === 'ar' ? `عرض ${localizedProjects.length} مشروع` : `Showing ${localizedProjects.length} projects`}
+          </p>
         </div>
 
-        {/* Projects Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {localizedProjects.map((project) => (
-            <div
-              key={project.id}
-              className="bg-white rounded-2xl overflow-hidden border border-navy-900/10 shadow-md luxury-card flex flex-col group"
+        {categories.length > 0 && (
+          <div className="mb-8 flex flex-wrap gap-2" role="group" aria-label={locale === 'ar' ? 'تصفية حسب التصنيف' : 'Filter by category'}>
+            <button
+              type="button"
+              onClick={() => setSelectedCategory('all')}
+              aria-pressed={selectedCategory === 'all'}
+              className={`rounded-full border px-4 py-2 text-xs transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500 ${
+                selectedCategory === 'all'
+                  ? 'border-navy-900 bg-navy-900 text-white'
+                  : 'border-[#D7D9DC] bg-transparent text-[#566174] hover:border-navy-900'
+              }`}
             >
-              {/* Image Container with Badges */}
-              <div className="relative h-64 overflow-hidden">
-                {project.image ? (
-                  <Image
-                    src={project.image}
-                    alt={localized(project.title)}
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-108"
-                  />
-                ) : (
-                  <div className="absolute inset-0 bg-gradient-to-br from-navy-900 to-[#1B4332]" aria-hidden="true" />
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80" />
+              {locale === 'ar' ? 'الكل' : 'All'}
+            </button>
+            {categories.map((category) => (
+              <button
+                type="button"
+                key={category.slug}
+                onClick={() => setSelectedCategory(category.slug)}
+                aria-pressed={selectedCategory === category.slug}
+                className={`rounded-full border px-4 py-2 text-xs transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500 ${
+                  selectedCategory === category.slug
+                    ? 'border-navy-900 bg-navy-900 text-white'
+                    : 'border-[#D7D9DC] bg-transparent text-[#566174] hover:border-navy-900'
+                }`}
+              >
+                {localized(category.name)}
+              </button>
+            ))}
+          </div>
+        )}
 
-                {/* Status Badge */}
-                {localizedValue(project.status, project.status_en) && (
-                  <div className="absolute top-4 end-4">
-                  <span className="px-3 py-1 rounded-full text-xs font-bold text-white bg-navy-900/80 backdrop-blur-md border border-white/20">
-                    {localizedValue(project.status, project.status_en)}
-                  </span>
-                  </div>
-                )}
-
-                {/* Location Badge */}
-                {localizedValue(project.location, project.location_en) && (
-                  <div className="absolute bottom-4 end-4 flex items-center gap-1.5 text-white/95 text-xs font-semibold drop-shadow-md">
-                  <MapPin className="w-3.5 h-3.5 text-gold-500" />
-                    <span>{localizedValue(project.location, project.location_en)}</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Card Body */}
-              <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
-                <div className="space-y-2">
-                  {localizedValue(project.category, project.category_en) && (
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-gold-500">
-                      {localizedValue(project.category, project.category_en)}
+        {localizedProjects.length > 0 ? (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {localizedProjects.map((project) => (
+            <article
+              key={project.id}
+              className="group flex min-h-[330px] flex-col overflow-hidden rounded-xl border border-[#D8DADF] bg-white transition duration-300 hover:-translate-y-1 hover:border-[#C79A32] hover:shadow-lg"
+            >
+              <Link
+                href={`/projects/${project.slug}`}
+                className="flex flex-1 flex-col focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-gold-500"
+                aria-label={`${locale === 'ar' ? 'عرض' : 'View'} ${localized(project.title)}`}
+              >
+                <div className="relative flex h-[160px] items-center justify-center bg-[#f8f7f3]">
+                  {project.logo?.url || project.image ? (
+                    <Image
+                      src={project.logo?.url || project.image}
+                      alt={project.logo?.alt || localized(project.title)}
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                      className={project.logo ? 'object-contain p-2' : 'object-contain p-0'}
+                    />
+                  ) : (
+                    <span className="text-sm font-semibold text-navy-900/70">{localized(project.title)}</span>
+                  )}
+                </div>
+                <div className="flex flex-1 flex-col p-5">
+                  {projectCategories(project)[0] && (
+                    <span className="mb-2 text-[10px] font-medium text-gold-600">
+                      {localized(projectCategories(project)[0].name)}
                     </span>
                   )}
-                  <h3 className="text-xl font-bold text-navy-900 group-hover:text-gold-500 transition-colors leading-snug">
+                  <h2 className="text-base font-medium text-navy-900 transition-colors group-hover:text-gold-600">
                     {localized(project.title)}
-                  </h3>
+                  </h2>
                   {localized(project.excerpt) && (
-                    <p className="text-sm text-[#5A677B] leading-relaxed line-clamp-2">
-                      {localized(project.excerpt)}
-                    </p>
+                    <p className="mt-2 line-clamp-3 text-xs leading-6 text-[#68717E]">{localized(project.excerpt)}</p>
                   )}
-                </div>
-
-                {/* Key Specs */}
-                <div className="pt-4 border-t border-navy-900/10 flex items-center justify-between text-xs text-[#5A677B]">
-                  {project.units_count && (
-                    <div className="flex items-center gap-1.5">
-                      <Layers className="w-3.5 h-3.5 text-navy-900" />
-                      <span>{project.units_count}</span>
-                    </div>
-                  )}
-                  <div className="flex items-center gap-1.5 font-medium">
-                    <Calendar className="w-3.5 h-3.5 text-navy-900" />
-                    <span>{project.completion_year}</span>
+                  <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-[11px] text-[#737B86]">
+                    {localizedValue(project.location, project.location_en) && (
+                      <span className="inline-flex items-center gap-1">
+                        <MapPin aria-hidden="true" size={12} />
+                        {localizedValue(project.location, project.location_en)}
+                      </span>
+                    )}
+                    {localizedValue(project.status, project.status_en) && (
+                      <span>{localizedValue(project.status, project.status_en)}</span>
+                    )}
+                    {project.units_count && (
+                      <span className="inline-flex items-center gap-1">
+                        <Layers aria-hidden="true" size={12} />
+                        {project.units_count}
+                      </span>
+                    )}
+                    {project.completion_year && (
+                      <span className="inline-flex items-center gap-1">
+                        <Calendar aria-hidden="true" size={12} />
+                        {project.completion_year}
+                      </span>
+                    )}
                   </div>
+                  <span className="mt-auto flex items-center gap-2 pt-5 text-[11px] font-medium text-gold-600">
+                    {t.projects_section.view_project}
+                    <ArrowIcon aria-hidden="true" size={14} />
+                  </span>
                 </div>
-
-                {/* Action Link */}
-                <div className="pt-2">
-                  <Link
-                    href={`/projects/${project.slug}`}
-                    className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold text-navy-900 bg-ivory-50 hover:bg-navy-900 hover:text-white transition-all duration-300"
-                  >
-                    <span>{t.projects_section.view_project}</span>
-                    <ArrowIcon className="w-3.5 h-3.5" />
-                  </Link>
-                </div>
-              </div>
-            </div>
+              </Link>
+            </article>
           ))}
         </div>
+        ) : (
+          <p className="rounded-xl border border-[#D8DADF] bg-white px-6 py-10 text-center text-sm text-[#68717E]">
+            {locale === 'ar' ? 'لا توجد مشاريع ضمن هذا التصنيف.' : 'There are no projects in this category.'}
+          </p>
+        )}
 
         {/* View All Projects CTA */}
         <div className="text-center mt-12">
