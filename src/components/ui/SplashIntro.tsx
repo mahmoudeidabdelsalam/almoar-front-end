@@ -23,8 +23,7 @@ function getServerSplashSnapshot(): boolean {
 }
 
 export const SplashIntro: React.FC = () => {
-  const { locale, t, content } = useLanguage();
-  const introSlide = content.heroSlides[0];
+  const { locale, t } = useLanguage();
   const visible = useSyncExternalStore(subscribeToSplash, getSplashSnapshot, getServerSplashSnapshot);
   const [fading, setFading] = useState(false);
   const dismissTimer = React.useRef<number | null>(null);
@@ -57,43 +56,21 @@ export const SplashIntro: React.FC = () => {
   return (
     <div
       className={`splash-intro text-white ${fading ? 'is-done' : ''}`}
-      role="dialog"
-      aria-modal="true"
-      aria-label="Brand Introduction"
+      role="status"
+      aria-label={locale === 'ar' ? 'جاري التحميل' : 'Loading'}
     >
-      <div className="splash-intro__content flex flex-col items-center space-y-6 px-4 text-center">
-        {/* Golden Emblem */}
-        <div className="relative w-28 h-28 md:w-36 md:h-36 drop-shadow-[0_10px_25px_rgba(183,145,61,0.25)]">
-          <Image
-            src="/branding/alomar_logo_mark.png"
-            alt="Alomar Holding Emblem"
-            fill
-            sizes="144px"
-            className="object-contain"
-            priority
-          />
-        </div>
-
-        {/* Brand Typography */}
-        <div className="space-y-2">
-          <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-white">
-            {locale === 'ar' ? content.settings.site_name.ar : content.settings.site_name.en}
-          </h1>
-          <p className="text-gold-500 text-sm md:text-base font-semibold tracking-widest uppercase">
-            {locale === 'ar' ? content.settings.tagline.ar : content.settings.tagline.en}
-          </p>
-        </div>
-
-        {/* Elegant divider */}
-        <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-gold-500 to-transparent my-2" />
-
-        {/* Subtitle */}
-        <p className="text-white/60 text-xs md:text-sm max-w-md leading-relaxed">
-          {(locale === 'ar' ? introSlide?.desc_ar : introSlide?.desc_en) || t.hero.subtitle}
-        </p>
+      <div className="splash-intro__content relative h-full w-full">
+        <Image
+          src="/branding/loader.gif"
+          alt=""
+          fill
+          sizes="100vw"
+          className="object-cover"
+          unoptimized
+          priority
+        />
       </div>
 
-      {/* Skip Button (تخطي) from Prototype */}
       <div className="absolute inset-x-0 bottom-[calc(28px+env(safe-area-inset-bottom))] flex justify-center">
         <button
           type="button"

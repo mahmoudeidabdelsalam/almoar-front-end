@@ -72,9 +72,9 @@
     --ivory-100: var(--color-ivory-100);
     --stone-500: var(--color-stone-500);
     
-    --font-arabic: 'IBM Plex Sans Arabic', 'Cairo', system-ui, -apple-system, sans-serif;
-    --font-serif: 'Playfair Display', Georgia, serif;
-    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-latin: "GT Sectra Display", Georgia, serif;
+    --font-sans: var(--font-arabic), sans-serif;
+    --font-serif: var(--font-latin);
   }
 
   html {
@@ -88,22 +88,157 @@
     background-color: var(--color-ivory-50);
     color: var(--color-navy-900);
     font-family: var(--font-arabic);
+    font-size: 16px;
+    line-height: 1.75;
     overflow-x: hidden;
   }
 
-  /* Directional Font Harmony */
   [dir="ltr"] body {
-    font-family: var(--font-sans);
+    font-family: var(--font-arabic);
   }
 
+  h1,
+  h2,
+  h3,
+  h4,
+  button,
+  input,
+  select,
+  textarea {
+    font-family: var(--font-arabic);
+  }
+
+  [dir="ltr"] h1,
+  [dir="ltr"] h2,
+  [dir="ltr"] h3,
+  [dir="ltr"] h4,
   [dir="ltr"] .font-display {
-    font-family: var(--font-serif);
+    font-family: var(--font-latin);
+  }
+}
+
+.type-ar-display {
+    font-family: var(--font-arabic);
+    font-size: clamp(3rem, 5vw, 4.5rem);
+    font-weight: 700;
+    line-height: 1.18;
+  }
+
+  .type-ar-h1 {
+    font-family: var(--font-arabic);
+    font-size: clamp(2.5rem, 4vw, 3.5rem);
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  .type-ar-h2 {
+    font-family: var(--font-arabic);
+    font-size: clamp(2rem, 3vw, 2.5rem);
+    font-weight: 700;
+    line-height: 1.3;
+  }
+
+  .type-ar-h3 {
+    font-family: var(--font-arabic);
+    font-size: clamp(1.5rem, 2.2vw, 1.75rem);
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  .type-ar-h4 {
+    font-family: var(--font-arabic);
+    font-size: clamp(1.25rem, 1.7vw, 1.375rem);
+    font-weight: 500;
+    line-height: 1.45;
+  }
+
+  .type-ar-body-l {
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1.75;
+  }
+
+  .type-ar-body-m {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.75;
+  }
+
+  .type-ar-body-s {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.7;
+  }
+
+  .type-ar-label-l {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  .type-ar-label {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  .type-ar-caption {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  .type-en-display {
+    font-family: var(--font-latin);
+    font-size: clamp(3rem, 5vw, 4.5rem);
+    font-weight: 400;
+    line-height: 1.05;
+  }
+
+  .type-en-display-italic {
+    font-family: var(--font-latin);
+    font-size: clamp(3rem, 5vw, 4.5rem);
+    font-style: italic;
+    font-weight: 700;
+    line-height: 1.05;
+  }
+
+  .type-en-heading {
+    font-family: var(--font-latin);
+    font-size: clamp(2rem, 3vw, 2.5rem);
+    font-weight: 400;
+    line-height: 1.15;
+  }
+
+  .type-overline {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    line-height: 1.4;
+  }
+
+  [dir="rtl"] .type-overline {
+    font-family: var(--font-arabic);
+    font-size: 14px;
+    letter-spacing: normal;
+    line-height: 1.4;
+  }
+
+  [dir="ltr"] .type-overline {
+    font-family: var(--font-latin);
   }
 
   [dir="rtl"] .font-display {
     font-family: var(--font-arabic);
     font-weight: 700;
   }
+
+  [dir="ltr"] .font-display {
+    font-family: var(--font-latin);
+  }
+
+bdi {
+  unicode-bidi: isolate;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -502,7 +637,7 @@ img, video { max-inline-size: 100%; }
     border-radius: 50%;
     color: var(--color-gold-500);
     font-size: 12px;
-    font-family: var(--font-serif);
+    font-family: var(--font-latin);
     transition: width 0.35s var(--ease-out), height 0.35s var(--ease-out), color 0.35s, background 0.35s, border-color 0.35s;
   }
 
@@ -534,7 +669,7 @@ img, video { max-inline-size: 100%; }
 
   .hero-slider.is-ready .hero-slider__controls { opacity: 1; }
 
-  .hero-slider__progress { font-family: var(--font-serif); font-size: 14px; }
+  .hero-slider__progress { font-family: var(--font-latin); font-size: 14px; }
   .hero-slider__progress-items { display: flex; align-items: center; gap: 16px; direction: ltr; }
   .hero-slider__progress-track { position: relative; width: 160px; height: 1px; overflow: hidden; background: rgb(248 247 242 / 35%); direction: ltr; }
   .hero-slider__progress-track i { position: absolute; inset-block: 0; inset-inline-start: 0; width: 100%; transform: scaleX(0); transform-origin: left; background: var(--color-gold-500); animation: hero-line-progress 5s linear both; }
@@ -1580,4 +1715,71 @@ img, video { max-inline-size: 100%; }
     height: 40px;
     flex-basis: 40px;
   }
+}
+
+html[lang="ar"] h1 {
+  font-family: var(--font-arabic);
+  font-size: clamp(2.5rem, 4vw, 3.5rem);
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+html[lang="ar"] h1.type-ar-display {
+  font-size: clamp(3rem, 5vw, 4.5rem);
+  line-height: 1.18;
+}
+
+html[lang="ar"] h2.type-ar-display {
+  font-size: clamp(3rem, 5vw, 4.5rem);
+  line-height: 1.18;
+}
+
+html[lang="ar"] h2 {
+  font-family: var(--font-arabic);
+  font-size: clamp(2rem, 3vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+html[lang="ar"] h3 {
+  font-family: var(--font-arabic);
+  font-size: clamp(1.5rem, 2.2vw, 1.75rem);
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+html[lang="ar"] h4 {
+  font-family: var(--font-arabic);
+  font-size: clamp(1.25rem, 1.7vw, 1.375rem);
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+html[lang="en"] h1 {
+  font-family: var(--font-latin);
+  font-size: clamp(3rem, 5vw, 4.5rem);
+  font-weight: 400;
+  line-height: 1.05;
+}
+
+html[lang="en"] h1.type-en-display-italic {
+  font-style: italic;
+  font-weight: 700;
+}
+
+html[lang="en"] h2.type-en-display {
+  font-size: clamp(3rem, 5vw, 4.5rem);
+  line-height: 1.05;
+}
+
+html[lang="en"] h2 {
+  font-family: var(--font-latin);
+  font-size: clamp(2rem, 3vw, 2.5rem);
+  font-weight: 400;
+  line-height: 1.15;
+}
+
+html[lang="en"] h3,
+html[lang="en"] h4 {
+  font-family: var(--font-latin);
 }

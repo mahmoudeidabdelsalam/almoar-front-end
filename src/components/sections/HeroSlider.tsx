@@ -157,13 +157,13 @@ export const HeroSlider: React.FC<{ slides?: HeroSlide[] }> = ({ slides: cmsSlid
 
             <div className="relative z-10 mx-auto flex h-full max-w-[1216px] items-center px-5 sm:px-8 lg:px-12">
               <div className="hero-slide__content me-auto w-full max-w-[680px] space-y-6 text-start">
-                <p className="hero-anim text-sm font-bold text-gold-500">{locale === 'ar' ? slide.badge_ar : slide.badge_en}</p>
+                <p className="hero-anim type-overline text-sm font-bold text-gold-500">{locale === 'ar' ? slide.badge_ar : slide.badge_en}</p>
                 {isActive ? (
-                  <h1 className="hero-anim text-5xl font-bold leading-[1.05] sm:text-6xl lg:text-7xl">
+                  <h1 className={`hero-anim ${locale === 'ar' ? 'type-ar-display' : 'type-en-display'}`}>
                     {locale === 'ar' ? slide.title_ar : slide.title_en}
                   </h1>
                 ) : (
-                  <h2 className="hero-anim text-5xl font-bold leading-[1.05] sm:text-6xl lg:text-7xl">
+                  <h2 className={`hero-anim ${locale === 'ar' ? 'type-ar-display' : 'type-en-display'}`}>
                     {locale === 'ar' ? slide.title_ar : slide.title_en}
                   </h2>
                 )}

@@ -122,7 +122,7 @@ export function InvestmentsPage({ locale, content, projects }: InvestmentsPagePr
 
       <section className="bg-[#19382D]">
         <div 
-          className="mx-auto flex max-w-[1440px] flex-col items-start gap-8 md:flex-row md:items-center md:justify-between"
+          className="mx-auto flex max-w-[1440px] flex-col items-start gap-8 md:flex-row md:items-center md:justify-between overflow-hidden"
           >
           <div className="max-w-2xl px-5 py-4 text-white">
             {localized(content?.ctaEyebrow, locale) && (

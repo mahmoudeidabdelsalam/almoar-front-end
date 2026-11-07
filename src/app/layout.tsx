@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Suspense } from 'react';
-import { Cairo, IBM_Plex_Sans_Arabic, Playfair_Display, Inter } from 'next/font/google';
+import localFont from 'next/font/local';
 import Script from 'next/script';
 import './globals.css';
 import { LanguageProvider } from '@/context/LanguageContext';
@@ -26,31 +26,15 @@ const websiteSchema = {
   publisher: { '@id': `${SITE_URL}/#organization` },
 };
 
-const cairo = Cairo({
-  subsets: ['arabic', 'latin'],
-  weight: ['400', '500', '600', '700', '800'],
-  variable: '--font-cairo',
-  display: 'swap',
-});
-
-const ibmPlexArabic = IBM_Plex_Sans_Arabic({
-  subsets: ['arabic', 'latin'],
-  weight: ['400', '500', '600', '700'],
+const thmanyahSans = localFont({
+  src: [
+    { path: '../../public/fonts/thmanyahsans-Light.woff2', weight: '300', style: 'normal' },
+    { path: '../../public/fonts/thmanyahsans-Regular.woff2', weight: '400', style: 'normal' },
+    { path: '../../public/fonts/thmanyahsans-Medium.woff2', weight: '500', style: 'normal' },
+    { path: '../../public/fonts/thmanyahsans-Bold.woff2', weight: '700', style: 'normal' },
+    { path: '../../public/fonts/thmanyahsans-Black.woff2', weight: '900', style: 'normal' },
+  ],
   variable: '--font-arabic',
-  display: 'swap',
-});
-
-const playfair = Playfair_Display({
-  subsets: ['latin'],
-  weight: ['600', '700', '800'],
-  variable: '--font-serif',
-  display: 'swap',
-});
-
-const inter = Inter({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-sans',
   display: 'swap',
 });
 
@@ -95,7 +79,7 @@ export default async function RootLayout({
   ]);
 
   return (
-    <html lang="ar" dir="rtl" data-scroll-behavior="smooth" suppressHydrationWarning className={`${ibmPlexArabic.variable} ${cairo.variable} ${playfair.variable} ${inter.variable}`}>
+    <html lang="ar" dir="rtl" data-scroll-behavior="smooth" suppressHydrationWarning className={thmanyahSans.variable}>
       <body className="antialiased min-h-screen flex flex-col selection:bg-gold-500 selection:text-white">
         <Script id="locale-direction" strategy="beforeInteractive">
           {`const segment = window.location.pathname.split('/')[1]; const locale = segment === 'en' ? 'en' : 'ar'; document.documentElement.lang = locale; document.documentElement.dir = locale === 'ar' ? 'rtl' : 'ltr';`}
