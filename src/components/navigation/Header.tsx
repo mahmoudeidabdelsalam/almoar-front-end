@@ -198,7 +198,7 @@ export const Header: React.FC = () => {
       </header>
 
       <div
-        className={`site-menu fixed inset-0 z-[60] px-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] pt-[calc(1.25rem+env(safe-area-inset-top))] sm:px-8 lg:px-20 lg:pb-[calc(5rem+env(safe-area-inset-bottom))] lg:pt-[calc(5rem+env(safe-area-inset-top))] ${menuOpen ? 'is-open' : ''} ${submenu ? 'is-sub' : ''}`}
+        className={`site-menu fixed inset-0 z-[60] px-5 py-5 ${menuOpen ? 'is-open' : ''} ${submenu ? 'is-sub' : ''}`}
         role="dialog"
         aria-modal="true"
         aria-label={locale === 'ar' ? 'القائمة الرئيسية' : 'Main navigation'}
@@ -207,7 +207,7 @@ export const Header: React.FC = () => {
       >
         <div className="site-menu__scrim absolute inset-0" />
         <div className="relative h-full">
-          <div className="site-menu__panel pattern mx-auto grid h-full max-w-[1440px] grid-cols-1 rounded-lg bg-navy-900 px-5 py-5 lg:grid-cols-[60%_40%]">
+          <div className="site-menu__panel pattern mx-auto grid h-full grid-cols-1 rounded-lg bg-navy-900 px-5 py-5 lg:grid-cols-[60%_40%]">
             <nav className="site-menu__body h-full px-0 lg:px-[7%]" aria-label={locale === 'ar' ? 'القائمة الرئيسية' : 'Main menu'}>
               <div className="site-menu__top">
                 <div className="site-menu__crumb">
