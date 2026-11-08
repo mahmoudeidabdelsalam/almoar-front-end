@@ -207,7 +207,7 @@ export const Header: React.FC = () => {
       >
         <div className="site-menu__scrim absolute inset-0" />
         <div className="relative h-full">
-          <div className="site-menu__panel pattern mx-auto grid h-full grid-cols-1 rounded-lg bg-navy-900 px-5 py-5 lg:grid-cols-[60%_40%]">
+          <div className="site-menu__panel pattern-2 mx-auto grid h-full grid-cols-1 rounded-lg bg-navy-900 px-5 py-5 lg:grid-cols-[60%_40%]">
             <nav className="site-menu__body h-full px-0 lg:px-[7%]" aria-label={locale === 'ar' ? 'القائمة الرئيسية' : 'Main menu'}>
               <div className="site-menu__top">
                 <div className="site-menu__crumb">

@@ -787,11 +787,17 @@ img, video { max-inline-size: 100%; }
   .hero-anim:nth-child(3) { transition-delay: 0.16s; }
   .hero-anim:nth-child(4) { transition-delay: 0.24s; }
 
-  .pattern {
+  .pattern-2 {
     background-image: url("/brand-pattern-2.png");
     background-size: 60% 100%;
     background-position: right top;
     background-repeat: no-repeat;
+  }
+
+  .pattern {
+    background-image: url("/brand-pattern.svg");
+    background-size: 300px 300px;
+    background-repeat: repeat;
   }
 
   .about-companies__backdrop {
