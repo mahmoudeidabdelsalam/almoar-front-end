@@ -366,7 +366,7 @@ export const AboutCompanies: React.FC = () => {
       className="about-companies relative overflow-hidden bg-[#F7F6F1] pb-16 pt-14 text-white sm:pb-20 sm:pt-16 lg:pb-24"
       dir={locale === 'ar' ? 'rtl' : 'ltr'}
     >
-      <div aria-hidden="true" className="about-companies__backdrop pattern absolute inset-x-0 top-0" />
+      <div aria-hidden="true" className="about-companies__backdrop pattern-3 absolute inset-x-0 top-0" />
       <div className="relative z-10 mx-auto max-w-[1216px] px-5 sm:px-8 lg:px-0">
         <div className="mb-8 flex min-h-[205px] items-center justify-between gap-8 sm:mb-10 md:min-h-[235px]">
           <div className="max-w-2xl">

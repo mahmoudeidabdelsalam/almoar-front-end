@@ -794,6 +794,13 @@ img, video { max-inline-size: 100%; }
     background-repeat: no-repeat;
   }
 
+  .pattern-3 {
+    background-image: url("/tree-pattern.png");
+    background-size: contain;
+    background-position: left center;
+    background-repeat: no-repeat;
+  }
+
   .pattern {
     background-image: url("/brand-pattern.svg");
     background-size: 300px 300px;
@@ -802,7 +809,7 @@ img, video { max-inline-size: 100%; }
 
   .about-companies__backdrop {
     height: 420px;
-    background-color: #17372b;
+    background-color: #1A3328;
   }
 
   .about-companies__grid {

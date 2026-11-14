@@ -90,7 +90,7 @@ export const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="pattern relative bg-navy-900 text-white">
+    <footer className="relative bg-navy-900 text-white">
       <button
         type="button"
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
@@ -109,8 +109,8 @@ export const Footer: React.FC = () => {
 
         {columns.slice(0, 2).map((column, columnIndex) => (
           <div key={`${column.title.ar}-${columnIndex}`}>
-            <h2 className="text-[12px] font-normal text-gold-500">{locale === 'ar' ? column.title.ar : column.title.en}</h2>
-            <ul className="mt-8 space-y-4 text-[28px] font-normal text-white">
+            <p className="text-[18px] font-normal text-gold-500">{locale === 'ar' ? column.title.ar : column.title.en}</p>
+            <ul className="mt-4 space-y-4 text-[16px] font-normal text-white">
               {column.links.map((link, linkIndex) => {
                 const href = localizedUrl(link.url);
                 const external = /^(https?:|mailto:|tel:)/i.test(href);
