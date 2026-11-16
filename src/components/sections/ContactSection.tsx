@@ -129,7 +129,7 @@ export function ContactSection({ pageContent, form }: ContactSectionProps) {
                 </div>
               )}
             </div>
-            <aside dir={dir} className="relative isolate flex aspect-[2/3] min-h-[480px] flex-col overflow-hidden rounded-2xl bg-[#10213D] p-0 text-white md:col-span-4 md:min-h-[590px]">
+            <aside dir={dir} className="relative isolate flex aspect-[2/3] min-h-[480px] flex-col overflow-hidden rounded-2xl bg-[#10213D] p-0 text-white md:col-span-4 md:min-h-[705px]">
               <div className="absolute inset-0 z-0">
                 {mapEmbedUrl ? (
                   <iframe
