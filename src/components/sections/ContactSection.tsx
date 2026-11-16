@@ -37,6 +37,28 @@ export function ContactSection({ pageContent, form }: ContactSectionProps) {
       ? `https://maps.google.com/?q=${pageContent.coordinates.lat},${pageContent.coordinates.lng}`
       : ''
   );
+  const mapEmbedUrl = (() => {
+    const mapQuery = pageContent?.coordinates.lat && pageContent.coordinates.lng
+      ? `${pageContent.coordinates.lat},${pageContent.coordinates.lng}`
+      : address;
+    const fallback = mapQuery
+      ? `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&z=15&output=embed`
+      : '';
+
+    if (!pageContent?.mapUrl) return fallback;
+
+    const normalizedUrl = pageContent.mapUrl.trim();
+    if (!normalizedUrl) return fallback;
+
+    try {
+      const url = new URL(normalizedUrl);
+      if (url.hostname === 'maps.app.goo.gl' || url.hostname.endsWith('.goo.gl')) return fallback;
+      url.searchParams.set('output', 'embed');
+      return url.toString();
+    } catch {
+      return fallback;
+    }
+  })();
   const title = pageContent?.title[locale] || t.nav.contact;
   const heading = pageContent?.heading[locale] || t.contact_section.contact_heading;
   const formTitle = pageContent?.formTitle[locale] || (locale === 'ar' ? 'أرسل لنا رسالة' : 'Send us a message');
@@ -107,24 +129,36 @@ export function ContactSection({ pageContent, form }: ContactSectionProps) {
                 </div>
               )}
             </div>
-            <aside dir={dir} className="contact-map-pattern relative flex aspect-[2/3] min-h-[480px] flex-col overflow-hidden rounded-2xl bg-[#10213D] p-8 text-white md:col-span-4 md:min-h-[590px]">
-              <div className="relative z-10d">
+            <aside dir={dir} className="relative isolate flex aspect-[2/3] min-h-[480px] flex-col overflow-hidden rounded-2xl bg-[#10213D] p-0 text-white md:col-span-4 md:min-h-[590px]">
+              <div className="absolute inset-0 z-0">
+                {mapEmbedUrl ? (
+                  <iframe
+                    title={location || 'Location map'}
+                    src={mapEmbedUrl}
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    allowFullScreen
+                    className="h-full w-full border-0 grayscale contrast-125"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center bg-[#0F1F3D] text-[#E7D7A0]">
+                    <div className="flex items-center gap-2 text-sm font-medium">
+                      <MapPin aria-hidden="true" size={18} />
+                      <span>{locale === 'ar' ? 'خريطة الموقع' : 'Location map'}</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+              <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-[1] bg-[linear-gradient(180deg,rgba(16,33,61,0.42),rgba(16,33,61,0.12)_42%,rgba(16,33,61,0.82))]" />
+              <div className="relative z-10 p-8 pb-0">
                 <p className="text-[10px] font-medium text-gold-500">{locale === 'ar' ? 'موقعنا' : 'Our location'}</p>
                 <h3 className="mt-3 text-[28px] font-normal leading-tight sm:text-[32px]">{location}</h3>
               </div>
-              {mapUrl ? (
-                <a href={mapUrl} target="_blank" rel="noopener noreferrer" aria-label={t.contact_section.map} className="absolute start-[18%] top-[40%] z-10 flex h-24 w-24 items-center justify-center rounded-full bg-[#C99B2E] text-[#10213D] transition hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">
-                  <MapPin aria-hidden="true" size={18} />
-                </a>
-              ) : (
-                <span aria-hidden="true" className="absolute start-[18%] top-[40%] z-10 flex h-24 w-24 items-center justify-center rounded-full bg-[#C99B2E] text-[#10213D]">
-                  <MapPin size={18} />
-                </span>
-              )}
-              <div className="relative z-10 mt-auto rounded-2xl bg-[#F8F7F2] px-5 py-5 text-navy-900 sm:px-7">
+
+              <div className="relative z-10 mt-auto px-5 py-5 text-white sm:px-7">
                 <p className="text-[18px] leading-7 sm:text-[21px]">{address || (locale === 'ar' ? 'المملكة العربية السعودية' : 'Kingdom of Saudi Arabia')}</p>
                 {mapUrl && (
-                  <a href={mapUrl} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-2 text-[12px] text-[#A77C22] transition hover:text-[#806017] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500">
+                  <a href={mapUrl} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-2 text-[12px] text-gold-500 transition hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500">
                     {dir === 'rtl' ? <ArrowLeft aria-hidden="true" size={15} /> : <ArrowRight aria-hidden="true" size={15} />}
                     <span>{locale === 'ar' ? 'عرض على الخريطة' : 'View on map'}</span>
                   </a>
