@@ -803,8 +803,9 @@ img, video { max-inline-size: 100%; }
 
   .pattern {
     background-image: url("/brand-pattern.svg");
-    background-size: 300px 300px;
-    background-repeat: repeat;
+    background-size: contain;
+    background-position: left center;
+    background-repeat: no-repeat;
   }
 
   .about-companies__backdrop {
