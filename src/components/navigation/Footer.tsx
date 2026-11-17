@@ -90,7 +90,10 @@ export const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="relative bg-navy-900 text-white">
+    <footer
+      className="relative bg-navy-900 bg-cover bg-center text-white"
+      style={{ backgroundImage: "url('/bg-footer.png')" }}
+    >
       <button
         type="button"
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}

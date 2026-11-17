@@ -25,12 +25,10 @@ async function HomeContent() {
     wpClient.getNews(),
     wpClient.getProjects('all'),
   ]);
-  const featuredProjects = projects.filter((project) => project.featured);
-
   return (
     <>
       <HeroSlider slides={siteContent.heroSlides} />
-      <CompaniesSection projects={featuredProjects} />
+      <CompaniesSection projects={projects} />
       <ApproachSection />
       <SectorsSection />
       <NewsSection articles={news} />
