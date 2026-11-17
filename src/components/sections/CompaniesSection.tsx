@@ -64,7 +64,7 @@ export const CompaniesSection: React.FC<CompaniesProps> = ({ projects }) => {
   useEffect(() => {
     const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
     const updateMotionPreference = () => setReducedMotion(motionPreference.matches);
-    const updateStageHeight = () => setStageHeight(Math.max(window.innerHeight, minimumStageHeight));
+    const updateStageHeight = () => setStageHeight(window.innerHeight);
 
     updateMotionPreference();
     updateStageHeight();
@@ -117,7 +117,7 @@ export const CompaniesSection: React.FC<CompaniesProps> = ({ projects }) => {
 
   const goToSlide = useCallback((index: number) => {
     const nextIndex = Math.min(localizedProjects.length - 1, Math.max(0, index));
-    if (reducedMotion || localizedProjects.length < 2) {
+    if (reducedMotion || localizedProjects.length < 2 || stageHeight < minimumStageHeight) {
       setActiveProject(nextIndex);
       return;
     }
@@ -130,7 +130,7 @@ export const CompaniesSection: React.FC<CompaniesProps> = ({ projects }) => {
     const progress = (nextIndex + 0.5) / localizedProjects.length;
     const top = window.scrollY + section.getBoundingClientRect().top + scrollDistance * progress;
     window.scrollTo({ top, behavior: 'smooth' });
-  }, [localizedProjects.length, reducedMotion, setActiveProject]);
+  }, [localizedProjects.length, minimumStageHeight, reducedMotion, setActiveProject, stageHeight]);
 
   if (!localizedProjects.length && !content.previewMode) return null;
   if (!localizedProjects.length) return null;
@@ -151,12 +151,14 @@ export const CompaniesSection: React.FC<CompaniesProps> = ({ projects }) => {
     ? (activeIndex + 1) / localizedProjects.length
     : localizedProjects.length > 1 ? activeIndex / localizedProjects.length : 0;
   const sectionHeight = stageHeight * (localizedProjects.length + 1);
-  const scrollEnabled = !reducedMotion && localizedProjects.length > 1;
+  const scrollEnabled = !reducedMotion
+    && localizedProjects.length > 1
+    && stageHeight >= minimumStageHeight;
 
   return (
     <section
       ref={sectionRef}
-      className={`homepage-projects-track relative bg-navy-900 text-white ${scrollEnabled ? '' : 'min-h-[720px]'}`}
+      className={`homepage-projects-track relative bg-navy-900 text-white ${scrollEnabled ? '' : 'min-h-[100svh]'}`}
       style={scrollEnabled ? { height: `${sectionHeight}px` } : undefined}
     >
       <div
@@ -164,7 +166,7 @@ export const CompaniesSection: React.FC<CompaniesProps> = ({ projects }) => {
         className={`homepage-projects-stage relative isolate overflow-hidden bg-navy-900 ${scrollEnabled ? 'sticky top-0' : ''}`}
         style={{
           height: scrollEnabled ? `${stageHeight}px` : 'auto',
-          minHeight: `${minimumStageHeight}px`,
+          minHeight: scrollEnabled ? `${stageHeight}px` : '100svh',
         }}
       >
         <div className="absolute inset-0">
@@ -212,7 +214,7 @@ export const CompaniesSection: React.FC<CompaniesProps> = ({ projects }) => {
           />
         </div>
 
-        <div className="relative z-10 mx-auto flex h-full max-w-[1216px] flex-col px-5 py-10 sm:px-8 sm:py-12 lg:px-0 lg:py-[96px]">
+        <div className={`relative z-10 mx-auto flex ${scrollEnabled ? 'h-full' : 'min-h-[100svh]'} max-w-[1216px] flex-col px-5 py-8 sm:px-8 sm:py-10 lg:px-0 lg:py-12`}>
           <div className="grid grid-cols-2 border-b border-white/25 md:grid-cols-4">
             {localizedProjects.map((item, index) => (
               <button
@@ -220,7 +222,7 @@ export const CompaniesSection: React.FC<CompaniesProps> = ({ projects }) => {
                 type="button"
                 onClick={() => goToSlide(index)}
                 aria-pressed={index === activeIndex}
-                className={`border-b border-white/25 px-2 py-3 text-center text-xs font-bold transition-colors md:text-sm ${
+                className={`min-w-0 break-words border-b border-white/25 px-2 py-3 text-center text-xs font-bold transition-colors md:text-sm ${
                   index === activeIndex ? 'text-white' : 'text-white/60 hover:text-white'
                 }`}
               >
