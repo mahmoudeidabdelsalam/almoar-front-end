@@ -149,7 +149,7 @@ export function ContactSection({ pageContent, form }: ContactSectionProps) {
                   </div>
                 )}
               </div>
-              <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-[1] bg-[linear-gradient(180deg,rgba(16,33,61,0.42),rgba(16,33,61,0.12)_42%,rgba(16,33,61,0.82))]" />
+              <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-[1] bg-[linear-gradient(180deg,rgba(16,33,61),rgba(16,33,61,0.12)_28%,rgba(16,33,61))]" />
               <div className="relative z-10 p-8 pb-0">
                 <p className="text-[10px] font-medium text-gold-500">{locale === 'ar' ? 'موقعنا' : 'Our location'}</p>
                 <h3 className="mt-3 text-[28px] font-normal leading-tight sm:text-[32px]">{location}</h3>
